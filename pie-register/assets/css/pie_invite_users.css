@@ -1,0 +1,29 @@
+/* USER INVITATION - INVITE CODE*/
+.pieregister-admin .invite-tab-content, .pieregister-admin fieldset.pr-user-tracker, .pieregister-admin fieldset .pr-user-tracker{width:100%;float:left}
+.pieregister-admin .pr-user-tracker ul.clearfix{margin: 20px 0px;}
+.pieregister-admin .pr-user-tracker ul.clearfix .fields{margin-bottom: 30px;}
+.pieregister-admin .pr-user-tracker ul.clearfix .no-margin .fields{margin-bottom: 0px;}
+.piereg_fieldset_area-nobg.pr-user-tracker.pr-allow-user-invitation-menu #piereg-guide-link{display: none;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .fields select.multiselect{height:80px;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .fields select#user_invitation_user_roles{height:100px;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .cols-2{width:30%;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .pr-enable-user-invitation{margin-top: -10px;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .fields{margin-bottom: 10px;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu hr.seperator{float:left;width:98%;margin:10px 0px 15px;}
+.pieregister-admin .invitation .pr-user-tracker-menu .user-tracker-search-box-container{display: flex; justify-content: flex-start;}
+.pieregister-admin .invitation .pr-user-tracker-menu .user-tracker-search-box{width: 50%;display: flex;}
+
+.pieregister-admin .invitation .pr-user-tracker-menu .user-tracker-search-input{max-width: 400px; width: 100%; border: 1px solid rgba(84, 84, 84, 0.3)!important; border-radius: 0px!important; font-size: 12px; height: 40px; margin-right: 20px;color: tomato!important;}
+
+.pieregister-admin .invitation .pr-user-tracker-menu .user-tracker-search-button{height: 40px; width: 125px; border: none; background: rgba(54, 59, 63, 1); border-radius: 0px; cursor: pointer;margin-left: -2px;position: relative;}
+.pieregister-admin .invitation .pr-user-tracker-menu .user-tracker-search-button::before{content: "Search";font-size: 16px;color: #fff;font-weight: 700;position: absolute;top: 50%;left: 50%;transform: translate(-50% , -50%);}
+.pieregister-admin .invitation .pr-user-tracker-menu .user-tracker-search-button img{display: none;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .fields .radio_fields.user_invitation_add_capability{margin-top: -5px;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .fields .radio_fields.user_invitation_add_capability label{font-size: 14px;}
+.pieregister-admin .invitation .pr-user-tracker .invite_users_view_more{cursor: pointer; color: #0a4b78; font-weight: 700;}
+.pieregister-admin .invitation .widefat.pr-user-tracker *{word-wrap: break-word;}
+.pieregister-admin .invitation.settings .widefat.pr-user-tracker th.column-code_usage,.pieregister-admin .invitation.settings .widefat.pr-user-tracker th.column-user_role {width: 90px;}
+.pieregister-admin .invitation.settings .widefat.pr-user-tracker th.column-expiry_date{width: 120px;}
+.pieregister-admin .invitation.settings .widefat.pr-user-tracker th.column-name{width: 150px;}
+.pieregister-admin .invitation.settings .widefat.pr-user-tracker .user_not_exist{color: red; font-weight: 600;}
+.pieregister-admin .invitation .pr-allow-user-invitation-menu .fields .display_search,.pieregister-admin .invitation .pr-allow-user-invitation-menu .fields .select2-choices{width: 100%; background: #f1f1f1 ;}

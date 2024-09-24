@@ -1,0 +1,6 @@
+Username,Display name,E-mail,Website,User Registered,First Name,Last Name,Nickname,Biographical Info,Role,Password,Verified/Unverified
+pieregister,Pie Register,pie.register@localhost.localdomain,,,Pie,Register,PR,,subscriber,,Verified
+TestUser1,Test User 1,testuser1@example.com,,,Test,User1,TestUser1,,subscriber,,Admin Verification
+TestUser2,Test User 2,testuser2@example.com,,,Test,User2,TestUser2,,subscriber,,E-mail Verification
+TestUser3,Test User 3,testuser3@example.com,,,Test,User3,TestUser3,,subscriber,,E-mail & Admin Verification
+TestUser4,Test User 4,testuser4@example.com,,,Test,User4,TestUser4,,subscriber,,Payment Verification
