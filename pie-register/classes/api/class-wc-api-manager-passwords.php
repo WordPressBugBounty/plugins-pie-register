@@ -20,7 +20,7 @@ class API_Manager_Example_Password_Management {
 
 		// Reset $rnd_value after 14 uses
 		// 32(md5) + 40(sha1) + 40(sha1) / 8 = 14 random numbers from $rnd_value
-		if ( $rnd_value !== null && strlen($rnd_value) < 8 ) {
+		if ( $rnd_value == null || ($rnd_value !== null && strlen($rnd_value) < 8) ) {
 			if ( defined( 'WP_SETUP_CONFIG' ) )
 				static $seed = '';
 			else
