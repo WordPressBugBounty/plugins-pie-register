@@ -273,7 +273,7 @@ if( !isset($_GET['form_id']) )
               <!--Adding Label-->
               <div class="label_position"  id="field_label_<?php echo esc_attr($field['id'])?>"  <?php echo $data_field_id; ?>>
                 <?php if( isset($field['label']) && $field['label'] == "E-mail")  { ?>
-                <label><?php echo esc_html_e("Email"); ?></label>
+                <label><?php echo esc_html_e("Email", "pie-register" ); ?></label>
                 <?php } else if( $field['type'] == 'terms' ) {?>
                   <!-- do nothing here.. -->
                 <?php } else { ?>

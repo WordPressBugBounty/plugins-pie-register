@@ -63,7 +63,7 @@
             	<li class="pr-overrides-tab <?php echo ($action == "overrides") ? esc_attr($active) :""; ?>">
                 	<a href="admin.php?page=pie-settings&tab=overrides"><?php esc_html_e("Overrides",'pie-register') ?></a></li>
                 <li class="<?php echo ($action == "geo_location") ? esc_attr($active) : ""; ?>">
-                    <a href="admin.php?page=pie-settings&tab=geo_location"><?php esc_html_e("Geolocation", 'piereg') ?></a></li>
+                    <a href="admin.php?page=pie-settings&tab=geo_location"><?php esc_html_e("Geolocation", 'pie-register') ?></a></li>
                 <li class="pr-security-tab <?php echo ($action == "security") ? esc_attr($active) :""; ?>">
                 	<a href="admin.php?page=pie-settings&tab=security"><?php esc_html_e("Security",'pie-register') ?></a>
                     <ul class="tabLayer2">

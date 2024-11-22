@@ -44,7 +44,7 @@ class Pie_Attachment_Table extends WP_List_Table
     public function get_columns()
     {
         $columns = array(
-            'user_id'           => __( 'ID' ),
+            'user_id'           => __( 'ID', "pie-register" ),
             'username'          => __( 'Username', "pie-register" ),
             'email'             => __( 'Email Address', "pie-register"),
             'attachments'       => __( 'Attachments', "pie-register")

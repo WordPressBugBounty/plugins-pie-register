@@ -420,8 +420,9 @@ class Profile_admin extends PieReg_Base
 		
 		$page_id	= $this->field['cont'];
 		$page_url	= get_the_permalink($page_id);		
-			
-		echo apply_filters('piereg_terms_field_text',sprintf(__('Click <a target="_blank" href="%s">here</a> to view.','pie-register'),$page_url));
+
+		// translators: %s is replaced by the URL link to view the terms page
+		echo apply_filters('piereg_terms_field_text',sprintf( __('Click <a target="_blank" href="%s">here</a> to view.','pie-register'),$page_url));
 	}
 	function createFieldName($text)
     {

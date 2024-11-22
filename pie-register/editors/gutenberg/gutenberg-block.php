@@ -116,9 +116,9 @@ class PieRegGutenbergBlock {
 
 		$title        = ! empty( $attr['displayTitle'] ) ? true : false;
 		$description  = ! empty( $attr['displayDescription'] ) ? true : false;
-
+		$gutenberg = defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST['context'] ) && 'edit' === $_REQUEST['context'];
 		// Disable form fields if called from the Gutenberg editor.
-		if ( $this->is_gb_editor() ) {
+		if ( $gutenberg ) {
 			// Registration Form
 			add_filter(
 				'pie_register_frontend_container_class',

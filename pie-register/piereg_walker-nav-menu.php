@@ -154,7 +154,7 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 		if ( isset( $item->post_status ) && 'draft' == $item->post_status ) {
 			$classes[] = 'pending';
 			/* translators: %s: title of menu item in draft status */
-			$title = sprintf( __('%s (Pending)'), $item->title );
+			$title = sprintf( __('%s (Pending)', "pie-register" ), $item->title );
 		}
 
 		$title = empty( $item->label ) ? $title : $item->label;
@@ -165,7 +165,7 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 					<span class="item-title">'.esc_html( $title ).'</span>
 					<span class="item-controls">
 						<span class="item-type">'.esc_html( $item->type_label ).'</span>';
-						$output .= '<a class="item-edit" id="edit-'.esc_attr($item_id).'" title="'.esc_attr__('Edit Menu Item').'" href="'.(( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . $item_id ) ) ) ).'">'.esc_html__( 'Edit Menu Item' ).'</a>
+						$output .= '<a class="item-edit" id="edit-'.esc_attr($item_id).'" title="'.esc_attr__('Edit Menu Item', "pie-register" ).'" href="'.(( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . $item_id ) ) ) ).'">'.esc_html__( 'Edit Menu Item', "pie-register" ).'</a>
 					</span>
 				</dt>
 			</dl>';
@@ -173,44 +173,44 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 			$output .= '<div class="menu-item-settings" id="menu-item-settings-'.esc_attr($item_id).'">';
 				if( 'custom' == $item->type && $item->title !== 'Page List'  ) : 
 					$output .= '<p class="field-url description description-wide">
-						<label for="edit-menu-item-url-'.esc_attr($item_id).'">'.esc_html__( 'URL' ).'<br />
+						<label for="edit-menu-item-url-'.esc_attr($item_id).'">'.esc_html__( 'URL', "pie-register" ).'<br />
 							<input type="text" id="edit-menu-item-url-'.esc_attr($item_id).'" class="widefat code edit-menu-item-url" name="menu-item-url['.esc_attr($item_id).']" value="'.esc_attr( $item->url ).'" />
 						</label>
 					</p>';
 				endif; ?>
 				<?php if( $item->title !== 'Page List'  ) : // for advanced listers, we don't need any options
                     $output .= '<p class="description description-thin">
-                        <label for="edit-menu-item-title-'.esc_attr($item_id).'">'.esc_html__( 'Navigation Label' ).'<br />
+                        <label for="edit-menu-item-title-'.esc_attr($item_id).'">'.esc_html__( 'Navigation Label', "pie-register" ).'<br />
                             <input type="text" id="edit-menu-item-title-'.esc_attr($item_id).'" class="widefat edit-menu-item-title" name="menu-item-title['.esc_attr($item_id).']" value="'.esc_attr( $item->title ).'" />
                         </label>
                     </p>';
                     $output .= '<p class="description description-thin">
-                        <label for="edit-menu-item-attr-title-'.esc_attr($item_id).'">'.esc_html__( 'Title Attribute' ).'<br />
+                        <label for="edit-menu-item-attr-title-'.esc_attr($item_id).'">'.esc_html__( 'Title Attribute', "pie-register" ).'<br />
                             <input type="text" id="edit-menu-item-attr-title-'.esc_attr($item_id).'" class="widefat edit-menu-item-attr-title" name="menu-item-attr-title['.esc_attr($item_id).']" value="'.esc_attr( $item->post_excerpt ).'" />
                         </label>
                     </p>';
                     $output .= '<p class="field-link-target description description-thin">
-                        <label for="edit-menu-item-target-'.esc_attr($item_id).'">'.esc_html__( 'Link Target' ).'<br />
+                        <label for="edit-menu-item-target-'.esc_attr($item_id).'">'.esc_html__( 'Link Target', "pie-register" ).'<br />
                             <select id="edit-menu-item-target-'.esc_attr($item_id).'" class="widefat edit-menu-item-target" name="menu-item-target['.esc_attr($item_id).']">
-                                <option value="" '.selected( $item->target, '').'>'.esc_html__('Same window or tab').'</option>
-                                <option value="_blank" '.selected( $item->target, '_blank').'>'.esc_html__('New window or tab').'</option>
+                                <option value="" '.selected( $item->target, '').'>'.esc_html__('Same window or tab', "pie-register" ).'</option>
+                                <option value="_blank" '.selected( $item->target, '_blank').'>'.esc_html__('New window or tab',"pie-register" ).'</option>
                             </select>
                         </label>
                     </p>';
                     $output .= '<p class="field-css-classes description description-thin">
-                        <label for="edit-menu-item-classes-'.esc_attr($item_id).'">'.esc_html__( 'CSS Classes (optional)' ).'<br />
+                        <label for="edit-menu-item-classes-'.esc_attr($item_id).'">'.esc_html__( 'CSS Classes (optional)' , "pie-register" ).'<br />
                             <input type="text" id="edit-menu-item-classes-'.esc_attr($item_id).'" class="widefat code edit-menu-item-classes" name="menu-item-classes['.esc_attr($item_id).']" value="'.esc_attr( implode(' ', $item->classes ) ).'" />
                         </label>
                     </p>';
                     $output .= '<p class="field-xfn description description-thin">
-                        <label for="edit-menu-item-xfn-'.esc_attr($item_id).'">'.esc_html__( 'Link Relationship (XFN)' ).'<br />
+                        <label for="edit-menu-item-xfn-'.esc_attr($item_id).'">'.esc_html__( 'Link Relationship (XFN)', "pie-register" ).'<br />
                             <input type="text" id="edit-menu-item-xfn-'.esc_attr($item_id).'" class="widefat code edit-menu-item-xfn" name="menu-item-xfn['.esc_attr($item_id).']" value="'.esc_attr( $item->xfn ).'" />
                         </label>
                     </p>';
                     $output .= '<p class="field-description description description-wide">
-                        <label for="edit-menu-item-description-'.esc_attr($item_id).'">'.esc_html__( 'Description' ).'<br />
+                        <label for="edit-menu-item-description-'.esc_attr($item_id).'">'.esc_html__( 'Description', "pie-register" ).'<br />
                             <textarea id="edit-menu-item-description-'.esc_attr($item_id).'" class="widefat edit-menu-item-description" rows="3" cols="20" name="menu-item-description['.esc_attr($item_id).']">'.esc_html( $item->description ).'</textarea>
-                            <span class="description">'.esc_html__('The description will be displayed in the menu if the current theme supports it.').'</span>
+                            <span class="description">'.esc_html__('The description will be displayed in the menu if the current theme supports it.', "pie-register" ).'</span>
                         </label>
                     </p>';
 				endif; ?>
@@ -218,7 +218,7 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 				do_action('wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args, $id);
                 $output .= '<div class="menu-item-actions description-wide submitbox">';
 					if( 'custom' != $item->type ) : 
-                            $output .= '<p class="link-to-original">'.esc_html__('Original : ').'<a href="' . esc_attr( $item->url ) . '">' . esc_html( $original_title ) . '</a></p>';
+                            $output .= '<p class="link-to-original">'.esc_html__('Original : ', "pie-register" ).'<a href="' . esc_attr( $item->url ) . '">' . esc_html( $original_title ) . '</a></p>';
 					endif;
 					
 					$output .= '<a class="item-delete submitdelete deletion" id="delete-'.esc_attr($item_id).'" href="'.
@@ -231,7 +231,7 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 							remove_query_arg($removed_args, admin_url( 'nav-menus.php' ) )
 						),
 						'delete-menu_item_' . $item_id
-					).'">'.esc_html__('Remove').'</a> <span class="meta-sep"> | </span> <a class="item-cancel submitcancel" id="cancel-'.esc_attr($item_id).'" href="'.add_query_arg( array('edit-menu-item' => $item_id, 'cancel' => time()), remove_query_arg( $removed_args, admin_url( 'nav-menus.php' ) ) ).'#menu-item-settings-'.esc_attr($item_id).'">'.esc_html__('Cancel').'</a>
+					).'">'.esc_html__('Remove', "pie-register" ).'</a> <span class="meta-sep"> | </span> <a class="item-cancel submitcancel" id="cancel-'.esc_attr($item_id).'" href="'.add_query_arg( array('edit-menu-item' => $item_id, 'cancel' => time()), remove_query_arg( $removed_args, admin_url( 'nav-menus.php' ) ) ).'#menu-item-settings-'.esc_attr($item_id).'">'.esc_html__('Cancel', "pie-register" ).'</a>
 				</div>';
 
 				$output .= '

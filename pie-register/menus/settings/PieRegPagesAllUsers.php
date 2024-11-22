@@ -75,7 +75,7 @@
           ?>
       <select id="after_login" name="after_login" >
         <option value="-1"> Default </option>
-        <option value="-2" <?php if($piereg['after_login'] == '-2' ){ echo "selected"; } ?>> <?php esc_html_e("Last visited page") ?>  </option>
+        <option value="-2" <?php if($piereg['after_login'] == '-2' ){ echo "selected"; } ?>> <?php esc_html_e("Last visited page","pie-register" ) ?>  </option>
         <option value="" disabled> ---- Pages ---- </option>
         <?php foreach( $pages as $page ) : $page->post_content; ?>
           <option class="level-0" value="<?php echo esc_attr($page->ID); ?>" <?php if($page->ID == $piereg['after_login']){ echo "selected"; } ?>>

@@ -29,7 +29,7 @@ if (!$this->piereg_pro_is_activate())
                     
                     <h4 class="woocommerce-addon-message"><?php esc_html_e("If you already have the PieRegister Woocommerce Addon, head to Help>License Page and activate it.", 'pie-register');?></h4>
                     
-                    <h4 class="woocommerce-addon-message"><?php esc_html_e("If you haven't downloaded the Addon, get it from ", 'pie-register');?><a target='_blank' href='https://pieregister.com/addons/woocommerce-addon/'><?php esc_html_e("here.");?></a></h4>
+                    <h4 class="woocommerce-addon-message"><?php esc_html_e("If you haven't downloaded the Addon, get it from ", 'pie-register');?><a target='_blank' href='https://pieregister.com/addons/woocommerce-addon/'><?php esc_html_e("here.", "pie-register" );?></a></h4>
 
                     <div id="piereg-premium-link">
                         <div class="piereg-premium-link-items">

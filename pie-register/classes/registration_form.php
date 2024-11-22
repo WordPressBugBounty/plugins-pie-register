@@ -531,14 +531,14 @@ class Registration_form extends PieReg_Base
 			{
 				if(!is_numeric($field_name))
 				{
-					$errors->add( $slug , "<strong>". esc_html__(ucwords("Error"),"pie-register").":</strong> ".$field['label'] .apply_filters("piereg_field_must_contain_only_numbers",__(" Field must only contain numbers." ,"pie-register")));		
+					$errors->add( $slug , "<strong>". esc_html(ucwords(__("error","pie-register"))).":</strong> ".$field['label'] .apply_filters("piereg_field_must_contain_only_numbers",__(" Field must only contain numbers." ,"pie-register")));		
 				}	
 			}
 			else if($rule=="alphanumeric" && !empty($field_name))
 			{
 				if(! preg_match("/^([a-z 0-9])+$/i", $field_name))
 				{
-					$errors->add( $slug ,"<strong>". esc_html__(ucwords("Error"),"pie-register").":</strong> ".$field['label'] .apply_filters("piereg_field_may__alpha_numeric_characters",__(" Field must only contain alpha-numeric characters."  ,"pie-register")));		
+					$errors->add( $slug ,"<strong>". esc_html(ucwords(__("error","pie-register"))).":</strong> ".$field['label'] .apply_filters("piereg_field_may__alpha_numeric_characters",__(" Field must only contain alpha-numeric characters."  ,"pie-register")));		
 				}	
 			}	
 			else if($rule=="alphabetic" && !empty($field_name))
@@ -546,7 +546,7 @@ class Registration_form extends PieReg_Base
 				//if(! preg_match("/^[a-zA-Z ]+$/", $field_name)) //
 				if(! preg_match("/^[a-zA-Z\p{Cyrillic}\s\-]+$/u", $field_name))
 				{
-					$errors->add( $slug ,"<strong>". esc_html__(ucwords("Error"),"pie-register").":</strong> ".$field['label'] .apply_filters("piereg_field_may__alphabetic_characters",__(" Field must only contain letters."  ,"pie-register")));		
+					$errors->add( $slug ,"<strong>". esc_html(ucwords(__("error","pie-register"))).":</strong> ".$field['label'] .apply_filters("piereg_field_may__alphabetic_characters",__(" Field must only contain letters."  ,"pie-register")));		
 				}	
 			}
 			else if($rule=="email" && !empty($field_name))
@@ -555,20 +555,20 @@ class Registration_form extends PieReg_Base
 
 				if( !is_email($field_name) )
 				{
-					$errors->add( $slug ,"<strong>". esc_html__(ucwords("Error"),"pie-register").":</strong> ".$field['label'] .apply_filters("piereg_field_must_contain_valid_email",__(" Field must contain a valid email address." ,"pie-register")));		
+					$errors->add( $slug ,"<strong>". esc_html(ucwords(__("error","pie-register"))).":</strong> ".$field['label'] .apply_filters("piereg_field_must_contain_valid_email",__(" Field must contain a valid email address." ,"pie-register")));		
 				}	
 			}	
 			else if($rule=="website" && !empty($field_name) || (isset($field['field_name']) && $field['field_name'] == 'url'))
 			{
 				if(!filter_var($field_name,FILTER_VALIDATE_URL))
 				{
-					$errors->add( $slug ,"<strong>". esc_html__(ucwords("Error"),"pie-register").":</strong> ".$field['label'] .apply_filters("piereg_must_be_a_valid_URL",__(" Must be a valid URL." ,"pie-register")));
+					$errors->add( $slug ,"<strong>". esc_html(ucwords(__("error","pie-register"))).":</strong> ".$field['label'] .apply_filters("piereg_must_be_a_valid_URL",__(" Must be a valid URL." ,"pie-register")));
 				}	
 			}
 			if( $phone_format == "international" && isset($this->pie_post_array[$slug]) && !empty($this->pie_post_array[$slug]) ){
 				$regXinternational_phone = "/^(\+|00)?(?:[0-9]( |-)?){1,3}(?:[0-9]( |-)?){4,14}$/";
 				if(!preg_match($regXinternational_phone,$this->pie_post_array[$slug])){
-					$errors->add( $slug ,"<strong>". esc_html__(ucwords("Error"),"pie-register").":</strong> ".$field['label'] .apply_filters("piereg_invalid_phone_field",__(" is an invalid phone number." ,"pie-register")));
+					$errors->add( $slug ,"<strong>". esc_html(ucwords(__("error","pie-register"))).":</strong> ".$field['label'] .apply_filters("piereg_invalid_phone_field",__(" is an invalid phone number." ,"pie-register")));
 				}
 			}			
 		 }

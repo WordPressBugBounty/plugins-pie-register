@@ -23,14 +23,14 @@ class Piereg_API_Manager_Example_MENU{
 		register_setting( 'api_manager_example', 'api_manager_example', array( $this, 'validate_options' ) );
 		
 		// API Key
-		add_settings_section( 'api_key', __( 'License Information', $piereg_api_manager->piereg_text_domain ), array( $this, 'wc_am_api_key_text' ), 'api_manager_example_dashboard' );
-		add_settings_field( 'api_key', __( 'License Key', $piereg_api_manager->piereg_text_domain ), array( $this, 'wc_am_api_key_field' ), 'api_manager_example_dashboard', 'api_key' );
-		add_settings_field( 'api_email', __( 'License email', $piereg_api_manager->piereg_text_domain ), array( $this, 'wc_am_api_email_field' ), 'api_manager_example_dashboard', 'api_key' );
+		add_settings_section( 'api_key', __( 'License Information', 'pie-register' ), array( $this, 'wc_am_api_key_text' ), 'api_manager_example_dashboard' );
+		add_settings_field( 'api_key', __( 'License Key', 'pie-register' ), array( $this, 'wc_am_api_key_field' ), 'api_manager_example_dashboard', 'api_key' );
+		add_settings_field( 'api_email', __( 'License email', 'pie-register' ), array( $this, 'wc_am_api_email_field' ), 'api_manager_example_dashboard', 'api_key' );
 
 		// Activation settings
 		register_setting( 'am_deactivate_example_checkbox', 'am_deactivate_example_checkbox', array( $this, 'wc_am_license_key_deactivation' ) );
-		add_settings_section( 'deactivate_button', __( 'Plugin License Deactivation', $piereg_api_manager->piereg_text_domain ), array( $this, 'wc_am_deactivate_text' ), 'api_manager_example_deactivation' );
-		add_settings_field( 'deactivate_button', __( 'Deactivate Plugin License', $piereg_api_manager->piereg_text_domain ), array( $this, 'wc_am_deactivate_textarea' ), 'api_manager_example_deactivation', 'deactivate_button' );
+		add_settings_section( 'deactivate_button', __( 'Plugin License Deactivation', 'pie-register' ), array( $this, 'wc_am_deactivate_text' ), 'api_manager_example_deactivation' );
+		add_settings_field( 'deactivate_button', __( 'Deactivate Plugin License', 'pie-register' ), array( $this, 'wc_am_deactivate_textarea' ), 'api_manager_example_deactivation', 'deactivate_button' );
 
 	}
 
@@ -424,7 +424,7 @@ class Piereg_API_Manager_Example_MENU{
 		$activation_status = get_option( 'am_deactivate_example_checkbox' );
 		?>
 		<input type="checkbox" id="am_deactivate_example_checkbox" name="am_deactivate_example_checkbox" value="on" <?php checked( $activation_status, 'on' ); ?> />
-		<span class="description"><?php esc_html_e( 'Deactivates the plugin license so it can be used on another blog.', $piereg_api_manager->piereg_text_domain ); ?></span>
+		<span class="description"><?php esc_html_e( 'Deactivates the plugin license so it can be used on another blog.', 'pie-register' ); ?></span>
 		<?php
 	}
 
@@ -442,9 +442,9 @@ class Piereg_API_Manager_Example_MENU{
 	public function wc_am_sidebar() {
 		global $piereg_api_manager;
 		?>
-		<h3><?php esc_html_e( 'Prevent Comment Spam', $piereg_api_manager->piereg_text_domain ); ?></h3>
+		<h3><?php esc_html_e( 'Prevent Comment Spam', 'pie-register' ); ?></h3>
 		<ul class="celist">
-			<li><a href="http://www.toddlahman.com/shop/simple-comments/" target="_blank"><?php esc_html_e( 'Simple Comments', $piereg_api_manager->piereg_text_domain ); ?></a></li>
+			<li><a href="http://www.toddlahman.com/shop/simple-comments/" target="_blank"><?php esc_html_e( 'Simple Comments', 'pie-register' ); ?></a></li>
 		</ul>
 		<?php
 	}

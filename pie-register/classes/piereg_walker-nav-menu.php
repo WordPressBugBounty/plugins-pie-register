@@ -54,11 +54,11 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 		if ( ! empty( $item->_invalid ) ) {
 			$classes[] = 'menu-item-invalid';
 			/* translators: %s: title of menu item which is invalid */
-			$title = sprintf( __( '%s (Invalid)' ), $item->title );
+			$title = sprintf( __( '%s (Invalid)', "pie-register" ), $item->title );
 		} elseif ( isset( $item->post_status ) && 'draft' == $item->post_status ) {
 			$classes[] = 'pending';
 			/* translators: %s: title of menu item in draft status */
-			$title = sprintf( __('%s (Pending)'), $item->title );
+			$title = sprintf( __('%s (Pending)', "pie-register" ), $item->title );
 		}
 
 		$title = ( ! isset( $item->label ) || '' == $item->label ) ? $title : $item->label;
@@ -71,7 +71,7 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 		<li id="menu-item-<?php echo esc_attr($item_id); ?>" class="<?php echo esc_attr(implode(' ', $classes )); ?>">
 			<div class="menu-item-bar">
 				<div class="menu-item-handle">
-					<span class="item-title"><span class="menu-item-title"><?php echo esc_html( $title ); ?></span> <span class="is-submenu" style="<?php echo esc_attr($submenu_text); ?>" ><?php esc_html_e( 'sub item' ); ?></span></span>
+					<span class="item-title"><span class="menu-item-title"><?php echo esc_html( $title ); ?></span> <span class="is-submenu" style="<?php echo esc_attr($submenu_text); ?>" ><?php esc_html_e( 'sub item', "pie-register" ); ?></span></span>
 					<span class="item-controls">
 						<span class="item-type"><?php echo esc_html( $item->type_label ); ?></span>
 						<span class="item-order hide-if-js">
@@ -86,7 +86,7 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 									),
 									'move-menu_item'
 								));
-							?>" class="item-move-up" aria-label="<?php esc_attr_e( 'Move up' ) ?>">&#8593;</a>
+							?>" class="item-move-up" aria-label="<?php esc_attr_e( 'Move up', "pie-register" ) ?>">&#8593;</a>
 							|
 							<a href="<?php
 								echo esc_url(wp_nonce_url(
@@ -99,11 +99,11 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 									),
 									'move-menu_item'
 								));
-							?>" class="item-move-down" aria-label="<?php esc_attr_e( 'Move down' ) ?>">&#8595;</a>
+							?>" class="item-move-down" aria-label="<?php esc_attr_e( 'Move down', "pie-register" ) ?>">&#8595;</a>
 						</span>
 						<a class="item-edit" id="edit-<?php echo esc_attr($item_id); ?>" href="<?php
 							echo ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . intval($item_id) ) ) );
-						?>" aria-label="<?php esc_attr_e( 'Edit menu item' ); ?>"><span class="screen-reader-text"><?php esc_html_e( 'Edit' ); ?></span></a>
+						?>" aria-label="<?php esc_attr_e( 'Edit menu item', "pie-register" ); ?>"><span class="screen-reader-text"><?php esc_html_e( 'Edit', "pie-register" ); ?></span></a>
 					</span>
 				</div>
 			</div>
@@ -112,62 +112,64 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 				<?php if ( 'custom' == $item->type ) : ?>
 					<p class="field-url description description-wide">
 						<label for="edit-menu-item-url-<?php echo esc_attr($item_id); ?>">
-							<?php esc_html_e( 'URL' ); ?><br />
+							<?php esc_html_e( 'URL',"pie-register" ); ?><br />
 							<input type="text" id="edit-menu-item-url-<?php echo esc_attr($item_id); ?>" class="widefat code edit-menu-item-url" name="menu-item-url[<?php echo esc_attr($item_id); ?>]" value="<?php echo esc_attr( $item->url ); ?>" />
 						</label>
 					</p>
 				<?php endif; ?>
 				<p class="description description-wide">
 					<label for="edit-menu-item-title-<?php echo esc_attr($item_id); ?>">
-						<?php esc_html_e( 'Navigation Label' ); ?><br />
+						<?php esc_html_e( 'Navigation Label', "pie-register" ); ?><br />
 						<input type="text" id="edit-menu-item-title-<?php echo esc_attr($item_id); ?>" class="widefat edit-menu-item-title" name="menu-item-title[<?php echo esc_attr($item_id); ?>]" value="<?php echo esc_attr( $item->title ); ?>" />
 					</label>
 				</p>
 				<p class="field-title-attribute field-attr-title description description-wide">
 					<label for="edit-menu-item-attr-title-<?php echo esc_attr($item_id); ?>">
-						<?php esc_html_e( 'Title Attribute' ); ?><br />
+						<?php esc_html_e( 'Title Attribute', "pie-register" ); ?><br />
 						<input type="text" id="edit-menu-item-attr-title-<?php echo esc_attr($item_id); ?>" class="widefat edit-menu-item-attr-title" name="menu-item-attr-title[<?php echo esc_attr($item_id); ?>]" value="<?php echo esc_attr( $item->post_excerpt ); ?>" />
 					</label>
 				</p>
 				<p class="field-link-target description">
 					<label for="edit-menu-item-target-<?php echo esc_attr($item_id); ?>">
 						<input type="checkbox" id="edit-menu-item-target-<?php echo esc_attr($item_id); ?>" value="_blank" name="menu-item-target[<?php echo esc_attr($item_id); ?>]"<?php checked( $item->target, '_blank' ); ?> />
-						<?php esc_html_e( 'Open link in a new tab' ); ?>
+						<?php esc_html_e( 'Open link in a new tab', "pie-register" ); ?>
 					</label>
 				</p>
 				<p class="field-css-classes description description-thin">
 					<label for="edit-menu-item-classes-<?php echo esc_attr($item_id); ?>">
-						<?php esc_html_e( 'CSS Classes (optional)' ); ?><br />
+						<?php esc_html_e( 'CSS Classes (optional)', "pie-register" ); ?><br />
 						<input type="text" id="edit-menu-item-classes-<?php echo esc_attr($item_id); ?>" class="widefat code edit-menu-item-classes" name="menu-item-classes[<?php echo esc_attr($item_id); ?>]" value="<?php echo esc_attr( implode(' ', $item->classes ) ); ?>" />
 					</label>
 				</p>
 				<p class="field-xfn description description-thin">
 					<label for="edit-menu-item-xfn-<?php echo esc_attr($item_id); ?>">
-						<?php esc_html_e( 'Link Relationship (XFN)' ); ?><br />
+						<?php esc_html_e( 'Link Relationship (XFN)', "pie-register" ); ?><br />
 						<input type="text" id="edit-menu-item-xfn-<?php echo esc_attr($item_id); ?>" class="widefat code edit-menu-item-xfn" name="menu-item-xfn[<?php echo esc_attr($item_id); ?>]" value="<?php echo esc_attr( $item->xfn ); ?>" />
 					</label>
 				</p>
 				<p class="field-description description description-wide">
 					<label for="edit-menu-item-description-<?php echo esc_attr($item_id); ?>">
-						<?php esc_html_e( 'Description' ); ?><br />
+						<?php esc_html_e( 'Description', "pie-register" ); ?><br />
 						<textarea id="edit-menu-item-description-<?php echo esc_attr($item_id); ?>" class="widefat edit-menu-item-description" rows="3" cols="20" name="menu-item-description[<?php echo esc_attr($item_id); ?>]"><?php echo esc_html( $item->description ); // textarea_escaped ?></textarea>
-						<span class="description"><?php esc_html_e('The description will be displayed in the menu if the current theme supports it.'); ?></span>
+						<span class="description"><?php esc_html_e('The description will be displayed in the menu if the current theme supports it.', "pie-register" ); ?></span>
 					</label>
 				</p>
 				<?php do_action('wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args, $id); ?>
 				<fieldset class="field-move hide-if-no-js description description-wide">
-					<span class="field-move-visual-label" aria-hidden="true"><?php esc_html_e( 'Move' ); ?></span>
-					<button type="button" class="button-link menus-move menus-move-up" data-dir="up"><?php esc_html_e( 'Up one' ); ?></button>
-					<button type="button" class="button-link menus-move menus-move-down" data-dir="down"><?php esc_html_e( 'Down one' ); ?></button>
+					<span class="field-move-visual-label" aria-hidden="true"><?php esc_html_e( 'Move', "pie-register" ); ?></span>
+					<button type="button" class="button-link menus-move menus-move-up" data-dir="up"><?php esc_html_e( 'Up one',"pie-register" ); ?></button>
+					<button type="button" class="button-link menus-move menus-move-down" data-dir="down"><?php esc_html_e( 'Down one', "pie-register" ); ?></button>
 					<button type="button" class="button-link menus-move menus-move-left" data-dir="left"></button>
 					<button type="button" class="button-link menus-move menus-move-right" data-dir="right"></button>
-					<button type="button" class="button-link menus-move menus-move-top" data-dir="top"><?php esc_html_e( 'To the top' ); ?></button>
+					<button type="button" class="button-link menus-move menus-move-top" data-dir="top"><?php esc_html_e( 'To the top', "pie-register" ); ?></button>
 				</fieldset>
 
 				<div class="menu-item-actions description-wide submitbox">
 					<?php if ( 'custom' != $item->type && $original_title !== false ) : ?>
 						<p class="link-to-original">
-							<?php printf( __('Original: %s'), '<a href="' . esc_url( $item->url ) . '">' . esc_html( $original_title ) . '</a>' ); ?>
+							<?php 
+							// translators: %s is replaced by the original title with a hyperlink
+							printf( __('Original: %s', "pie-register" ), '<a href="' . esc_url( $item->url ) . '">' . esc_html( $original_title ) . '</a>' ); ?>
 						</p>
 					<?php endif; ?>
 					<a class="item-delete submitdelete deletion" id="delete-<?php echo esc_attr($item_id); ?>" href="<?php
@@ -180,8 +182,8 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 							admin_url( 'nav-menus.php' )
 						),
 						'delete-menu_item_' . $item_id
-					)); ?>"><?php esc_html_e( 'Remove' ); ?></a> <span class="meta-sep hide-if-no-js"> | </span> <a class="item-cancel submitcancel hide-if-no-js" id="cancel-<?php echo esc_attr($item_id); ?>" href="<?php echo esc_url( add_query_arg( array( 'edit-menu-item' => $item_id, 'cancel' => time() ), admin_url( 'nav-menus.php' ) ) );
-						?>#menu-item-settings-<?php echo esc_attr($item_id); ?>"><?php esc_html_e('Cancel'); ?></a>
+					)); ?>"><?php esc_html_e( 'Remove', "pie-register" ); ?></a> <span class="meta-sep hide-if-no-js"> | </span> <a class="item-cancel submitcancel hide-if-no-js" id="cancel-<?php echo esc_attr($item_id); ?>" href="<?php echo esc_url( add_query_arg( array( 'edit-menu-item' => $item_id, 'cancel' => time() ), admin_url( 'nav-menus.php' ) ) );
+						?>#menu-item-settings-<?php echo esc_attr($item_id); ?>"><?php esc_html_e('Cancel', "pie-register" ); ?></a>
 				</div>
 
 				<input class="menu-item-data-db-id" type="hidden" name="menu-item-db-id[<?php echo esc_attr($item_id); ?>]" value="<?php echo esc_attr($item_id); ?>" />

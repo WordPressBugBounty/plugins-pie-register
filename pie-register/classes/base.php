@@ -101,6 +101,7 @@ if( !class_exists('PieReg_Base') ){
 									$page_id	= $form_field['cont'];
 									$page_url	= get_the_permalink($page_id);	
 									
+									// Translators: %s is the URL that will be linked in the message.
 									$get_value .= sprintf(__('Click <a target="_blank" href="%s">here</a> to view.','pie-register'), $page_url);
 								}
 							}
@@ -2572,7 +2573,7 @@ if( !class_exists('PieReg_Base') ){
 						if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 						{
 							if(!move_uploaded_file($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
-								$errors->add( $field_slug , '<strong>'.__(ucwords('error'),'pie-register').'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
+								$errors->add( $field_slug , '<strong>'.__('Error','pie-register').'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 							}else{
 								/*Upload Index.html file on User dir*/
 								$this->upload_forbidden_html_file( realpath($upload_dir['basedir'])."/piereg_users_files" );
@@ -2595,7 +2596,7 @@ if( !class_exists('PieReg_Base') ){
 							$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_fail_to_upload_profile_picture",__('File Type Is Not Permitted','pie-register' )));
 						}
 					}else{
-						$errors->add( $field_slug , '<strong>'.__(ucwords('error'),'pie-register').'</strong>: '.apply_filters("piereg_invalid_file",__('Invalid File.','pie-register' )));
+						$errors->add( $field_slug , '<strong>'.__('Error','pie-register').'</strong>: '.apply_filters("piereg_invalid_file",__('Invalid File.','pie-register' )));
 					}
 				}
 				elseif($field['file_types'] == ""){
@@ -4427,7 +4428,7 @@ if( !class_exists('PieReg_Base') ){
 			{
 				if ( isset( $current_screen->id ) && in_array( $current_screen->id, $pie_pages ) ) {
 					?>            	
-						<p>If you like Pie Register please leave us a <a href="https://wordpress.org/support/plugin/pie-register/reviews/?filter=5" target="_blank" class="pie-admin-rating-link" data-nonce="<?php esc_attr_e(wp_create_nonce('pie_rated_nonce')); ?>" data-rated="<?php esc_attr_e( 'Thanks :)', 'pie-register' ) ?>"> &#9733;&#9733;&#9733;&#9733;&#9733;</a> rating. A huge thanks in advance!</p>
+						<p>If you like Pie Register please leave us a <a href="https://wordpress.org/support/plugin/pie-register/reviews/?filter=5" target="_blank" class="pie-admin-rating-link" data-nonce="<?php esc_attr_e(wp_create_nonce('pie_rated_nonce'), 'pie-register' ); ?>" data-rated="<?php esc_attr_e( 'Thanks :)', 'pie-register' ) ?>"> &#9733;&#9733;&#9733;&#9733;&#9733;</a> rating. A huge thanks in advance!</p>
 						
 						<script type="text/javascript">
 							jQuery( 'a.pie-admin-rating-link' ).click(function() {

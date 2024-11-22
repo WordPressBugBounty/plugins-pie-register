@@ -35,7 +35,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
   }
 
   function no_items() {
-    esc_html_e( 'No unverfied users found.' );
+    esc_html_e( 'No unverfied users found.', "pie-register" );
   }
 
   function column_default( $item, $column_name ) {
@@ -219,7 +219,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
       </div>
       <?php
 
-      submit_button( __( 'Filter' ), '', 'filter_action', false, array( 'id' => 'users-query-submit' ) );
+      submit_button( __( 'Filter', "pie-register" ), '', 'filter_action', false, array( 'id' => 'users-query-submit' ) );
       ?>
       <div hidden class="alignleft actions piereg_user_verification_rejected_reason_container">
         <textarea name="piereg_user_verification_rejected_reason" id="piereg_user_verification_rejected_reason" placeholder="Type here your reason for rejecting the user verification." rows="3" cols="68"></textarea>

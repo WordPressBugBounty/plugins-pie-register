@@ -1245,6 +1245,7 @@ class Registration_form_template extends Registration_form
 			$data .= $this->field['label'];
 			$data .= (substr_compare($this->field['label'], '.', -strlen('.')) === 0) ? '' : '. ';		
 		}		
+		// Translators: %s is the URL for the terms page that the user can click to view.
 		$data  .= apply_filters('piereg_terms_field_text',sprintf(__('Click <a target="_blank" href="%s">here</a> to view.','pie-register'),$page_url));		
 		$data .= '</label></div>';
 		return $data;

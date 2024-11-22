@@ -365,7 +365,7 @@ class Edit_form extends PieReg_Base
 				//if(! preg_match("/^[a-zA-Z ]+$/", $field_name))
 				if(! preg_match("/^[a-zA-Z\p{Cyrillic}\s\-]+$/u", $field_name))
 				{
-					$errors->add( $slug ,"<strong>". esc_html(__(ucwords("Error"),"pie-register")).":</strong> ".$field['label'] .apply_filters("piereg_field_may_only_contain_alphabetic_characters",__(" Field must only contain letters."  ,"pie-register")));		
+					$errors->add( $slug ,"<strong>". esc_html(__("Error","pie-register")).":</strong> ".$field['label'] .apply_filters("piereg_field_may_only_contain_alphabetic_characters",__(" Field must only contain letters."  ,"pie-register")));		
 				}	
 			}
 			else if($rule=="email" && !empty($field_name))
@@ -386,7 +386,7 @@ class Edit_form extends PieReg_Base
 			if( (isset($phone_format) && $phone_format == "international") && isset($this->pie_post_array[$slug]) && !empty($this->pie_post_array[$slug]) ){
 				$regXinternational_phone = "/^(\+|00)?(?:[0-9]( |-)?){1,3}(?:[0-9]( |-)?){4,14}$/";
 				if(!preg_match($regXinternational_phone,$field_name)){
-					$errors->add( $slug ,"<strong>". esc_html(__(ucwords("Error"),"pie-register")).":</strong> ".$field['label'] .apply_filters("piereg_invalid_phone_field",__(" invalid phone number." ,"pie-register")));
+					$errors->add( $slug ,"<strong>". esc_html(__("Error","pie-register")).":</strong> ".$field['label'] .apply_filters("piereg_invalid_phone_field",__(" invalid phone number." ,"pie-register")));
 				}
 			}
 		 }	

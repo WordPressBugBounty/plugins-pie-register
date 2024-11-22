@@ -174,7 +174,7 @@ class Pie_Invitation_Table extends WP_List_Table
         foreach ( $posts_array as $key => $post )
         {
             $link     = "#";
-            $no_title = esc_html__( 'No title set' );
+            $no_title = esc_html__( 'No title set', "pie-register" );
             $title    = ! $post->name ? "<em>{$no_title}</em>" : $post->name;
 			$post_name = $post->name;
             $post_description = !empty ( $post->code_description ) ? $post->code_description: 'None' ;

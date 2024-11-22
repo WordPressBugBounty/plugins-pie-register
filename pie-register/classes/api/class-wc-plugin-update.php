@@ -395,7 +395,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The license key for %s has expired. You can reactivate or purchase another license key from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s represents the plugin name, and %2$s represents the URL to the dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'The license key for %1$s has expired. You can reactivate or purchase another license key from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -410,7 +411,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %s is on-hold. You can reactivate the subscription from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s is on-hold. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -425,7 +427,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %s has been cancelled. You can renew the subscription from your account <a href="%s" target="_blank">dashboard</a>. A new license key will be emailed to you after your order has been processed.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been cancelled. You can renew the subscription from your account <a href="%2$s" target="_blank">dashboard</a>. A new license key will be emailed to you after your order has been processed.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 	}
 
 	/**
@@ -439,7 +442,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %s has expired. You can reactivate the subscription from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has expired. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -454,7 +458,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %s has been suspended. You can reactivate the subscription from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been suspended. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -469,7 +474,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %s has been moved to the trash bin and will be deleted soon. You can purchase a new subscription from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been moved to the trash bin and will be deleted soon. You can purchase a new subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -484,7 +490,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %s has been placed in the trash and will be deleted soon. You can purchase a new subscription from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been placed in the trash and will be deleted soon. You can purchase a new subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -499,7 +506,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'A subscription for %s could not be found. You can purchase a subscription from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'A subscription for %1$s could not be found. You can purchase a subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -514,7 +522,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'A license key for %s could not be found. Verify that a license key was entered when setting up %s, and that the key is not deactivated in your account. You can reactivate or purchase a license key from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, %2$s is the plugin name again, and %3$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'A license key for %1$s could not be found. Verify that a license key was entered when setting up %2$s, and that the key is not deactivated in your account. You can reactivate or purchase a license key from your account <a href="%3$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -529,7 +538,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'Download permission for %s has been revoked. Possibly  because the license key or subscription has expired. You can reactivate or purchase a license key from your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'Download permission for %1$s has been revoked. Possibly  because the license key or subscription has expired. You can reactivate or purchase a license key from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 
@@ -544,7 +554,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( '%s has not been activated. Go to the settings page and enter the license key and license email to activate %s.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_html($plugin_name) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( '%1$s has not been activated. Go to the settings page and enter the license key and license email to activate %2$s.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_html($plugin_name) ) ;
 
 	}
 
@@ -559,7 +570,8 @@ class API_Manager_Example_Update_API_Check {
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'You changed the subscription for %s, please enter a new API License Key on the settings page. The License Key was sent to your email. If you have not received it, you can get it by logging into your account <a href="%s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+		echo sprintf( '<div id="message" class="error"><p>' . __( 'You changed the subscription for %1$s, please enter a new API License Key on the settings page. The License Key was sent to your email. If you have not received it, you can get it by logging into your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
 
 	}
 

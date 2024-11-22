@@ -67,7 +67,7 @@ class PieRedirectSettings extends WP_List_Table
     public function get_columns()
     {
         $columns = array(
-			'id'         => __( '#' ),
+			'id'         => __( '#', "pie-register" ),
             'user_role' => __( 'User Role',"pie-register" ),
             'logged_in_page_id'  => __( 'After Login Page' ,"pie-register"),
             'log_out_page_id'  => __( 'After Logout Page' ,"pie-register"),

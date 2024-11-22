@@ -73,7 +73,7 @@ class Pie_Register_Widget extends WP_Widget
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = __( 'Pie Registration Form', 'pie_forgot' );
+			$title = __( 'Pie Registration Form', 'pie-register' );
 		}
 		$form_id = ((isset($instance['form_id']))?$instance['form_id']:"");
 		$form_title = ((isset($instance['form_title']))?$instance['form_title']:"true");
@@ -81,11 +81,11 @@ class Pie_Register_Widget extends WP_Widget
 		// Widget admin form
 		?>
 		<p>
-		<label for="<?php echo esc_attr($this->get_field_id( 'title' )); ?>"><?php esc_html_e( 'Title:' ); ?></label> 
+		<label for="<?php echo esc_attr($this->get_field_id( 'title' )); ?>"><?php esc_html_e( 'Title:', "pie-register" ); ?></label> 
 		<input class="widefat" id="<?php echo esc_attr($this->get_field_id( 'title' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'title' )); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
 		<p>
-            <label for="<?php echo esc_attr($this->get_field_id( 'form_id' )); ?>"><?php esc_html_e( 'Form:' );?></label>
+            <label for="<?php echo esc_attr($this->get_field_id( 'form_id' )); ?>"><?php esc_html_e( 'Form:', "pie-register" );?></label>
             <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'form_id' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'form_id' )); ?>">
 				<?php
                 $fields_id = get_option("piereg_form_fields_id");
@@ -104,7 +104,7 @@ class Pie_Register_Widget extends WP_Widget
             </select>
 		</p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id( 'form_title' )); ?>"><?php esc_html_e( 'Form Title:' );?></label>
+            <label for="<?php echo esc_attr($this->get_field_id( 'form_title' )); ?>"><?php esc_html_e( 'Form Title:', "pie-register" );?></label>
             <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'form_title' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'form_title' )); ?>">
             <?php
 		        echo '<option '.selected((!empty($form_title) && $form_title == "true"), true).' value="true" >Show</option>';
@@ -113,7 +113,7 @@ class Pie_Register_Widget extends WP_Widget
             </select>
 		</p>
         <p>
-            <label for="<?php echo esc_attr($this->get_field_id( 'form_desc' )); ?>"><?php esc_html_e( 'Form Description:' );?></label>
+            <label for="<?php echo esc_attr($this->get_field_id( 'form_desc' )); ?>"><?php esc_html_e( 'Form Description:', "pie-register" );?></label>
             <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'form_desc' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'form_desc' )); ?>">
             <?php
 		        echo '<option '.selected((!empty($form_desc) && $form_desc == "true"), true).' value="true" >Show</option>';
@@ -148,7 +148,7 @@ class Pie_Login_Widget extends WP_Widget {
 	{
 		parent::__construct(
 			'pie_login_widget', // Base ID
-			__('Pie Register - Login Form', 'pie_login'), // Name
+			__('Pie Register - Login Form', 'pie-register'), // Name
 			array( 'description' => __( 'Display Pie Register Login Form on Sidebar', 'pie-register' ), ) // Args
 		);		
 	}
@@ -221,13 +221,13 @@ class Pie_Login_Widget extends WP_Widget {
 			$before_title = $instance[ 'before_title' ];
 		}
 		else {
-			$before_title = __( 'Pie Login', 'pie_login' );
+			$before_title = __( 'Pie Login', 'pie-register' );
 		}
 		if ( isset( $instance[ 'after_title' ] ) ) {
 			$after_title = $instance[ 'after_title' ];
 		}
 		else {
-			$after_title = __( 'Welcome User', 'pie_login' );
+			$after_title = __( 'Welcome User', 'pie-register' );
 		}
 		if ( isset( $instance[ 'social_login' ] ) ) {
 			$social_login = $instance[ 'social_login' ];
@@ -238,14 +238,14 @@ class Pie_Login_Widget extends WP_Widget {
 		// Widget admin form
 		?>
 		<p>
-		<label for="<?php echo esc_attr($this->get_field_id( 'before_title' )); ?>"><?php esc_html_e( 'Before Login Title:' ); ?></label> 
+		<label for="<?php echo esc_attr($this->get_field_id( 'before_title' )); ?>"><?php esc_html_e( 'Before Login Title:', "pie-register" ); ?></label> 
 		<input class="widefat" id="<?php echo esc_attr($this->get_field_id( 'before_title' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'before_title' )); ?>" type="text" value="<?php echo esc_attr( $before_title ); ?>" />
-        <label for="<?php echo esc_attr($this->get_field_id( 'after_title' )); ?>"><?php esc_html_e( 'After Login Title:' ); ?></label> 
+        <label for="<?php echo esc_attr($this->get_field_id( 'after_title' )); ?>"><?php esc_html_e( 'After Login Title:', "pie-register" ); ?></label> 
 		<input class="widefat" id="<?php echo esc_attr($this->get_field_id( 'after_title' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'after_title' )); ?>" type="text" value="<?php echo esc_attr( $after_title ); ?>" />
         <?php
 		if(is_plugin_active('pie-register-social-site/pie-register-social-site.php')):
 		?>
-            <label for="<?php echo esc_attr($this->get_field_id( 'social_login' )); ?>"><?php esc_html_e( 'Social Login:' ); ?></label> 
+            <label for="<?php echo esc_attr($this->get_field_id( 'social_login' )); ?>"><?php esc_html_e( 'Social Login:', "pie-register" ); ?></label> 
             <select class="widefat" name="<?php echo esc_attr($this->get_field_name( 'social_login' )); ?>" id="<?php echo esc_attr($this->get_field_id( 'social_login' )); ?>">
                 <option value="0" <?php selected( $social_login == 0, true); ?>><?php esc_html_e("Disable","pie-register"); ?></option>
                 <option value="1" <?php selected( $social_login == 1, true); ?>><?php esc_html_e("Enable","pie-register"); ?></option>

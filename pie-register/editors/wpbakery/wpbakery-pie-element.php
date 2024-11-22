@@ -15,7 +15,7 @@ class PieReg_WPBakery extends WPBakeryShortCode {
 
         foreach ( $param['value'] as $val => $text_val ) {
 
-                $text_val = __($text_val, "js_composer");
+                $text_val = __($text_val, "pie-register");
                 $selected = '';
 
                 if(!is_array($value)) {
@@ -49,10 +49,10 @@ class PieReg_WPBakery extends WPBakeryShortCode {
         // Map the block with vc_map()
         vc_map(
             array(
-                'name'          => __('Pie Register', 'bit14'),
+                'name'          => __('Pie Register', 'pie-register'),
                 'base'          => 'pieregister_for_wpb',
-                'description'   => __('Custom Registration Form Plugin for your WordPress Website', 'bit14'),
-                'category'      => __('Pie Register', 'bit14'),
+                'description'   => __('Custom Registration Form Plugin for your WordPress Website', 'pie-register'),
+                'category'      => __('Pie Register', 'pie-register'),
                 'icon'          => PIEREG_PLUGIN_URL . 'assets/images/editors/wpbakery/pie-register-element.png',
                 'params'        => array(
                     array(

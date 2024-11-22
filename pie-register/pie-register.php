@@ -4,7 +4,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.3.8
+Version: 3.8.3.9
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -1543,6 +1543,7 @@ if( !class_exists('PieRegister') ){
 							if (is_user_logged_in() && !is_admin() && !$is_preview && !$this->is_pr_preview && !$gutenberg_preview && !$WPBakery_preview ) {
 								$global_options = $this->get_pr_global_options();
 									
+								// Translators: Message shown to logged-in users with a link to edit their profile.
 								return apply_filters("pie_reg_form_logged_in_msg",sprintf(__("<p>Already logged in, Click <a href='%s'>here</a> to edit profile.<p>","pie-register"),esc_url($this->get_page_uri($global_options["alternate_profilepage"],"edit_user=1")) ) );
 							} 
 							if(!$is_preview){
@@ -1828,7 +1829,10 @@ if( !class_exists('PieRegister') ){
 				$review_url = 'https://wordpress.org/support/plugin/pie-register/reviews/';
 				?>
 					<div class="notice notice-info pie-admin-notice-3 is-dismissible" data-leavereview= "<?php echo esc_attr(wp_create_nonce('pie_leave_review_nonce')); ?>">
-					<p><?php echo  sprintf(
+						
+					<p><?php 
+					// Translators: %1$s is the opening HTML <a> tag for the review link, %2$s is the closing </a> tag for the link.
+					echo  sprintf(
 								__( 'Hello there, Thank you for using Pie Register. If you are happy and satisfied, will you leave us a 5-star %1$sreview on WordPress?%2$s We would love to know about your experience so far with the plugin. Your feedback helps us grow and reach more people. Thanks!','pie-register'),
 								'<a href="' . esc_url($review_url) . '" target="_blank">',
 								'</a>'
@@ -1891,7 +1895,9 @@ if( !class_exists('PieRegister') ){
 			if($status_addon && empty( $show_review_notice )) {
 				?>
 					<div class="notice notice-info pie-notice-license-expire is-dismissible" data-expire= "<?php echo esc_attr(wp_create_nonce('pie_expire_msg')); ?>">
-					<p><?php echo  sprintf(
+					<p><?php
+					// Translators: %1$s is the opening HTML <a> tag for the renewal link, %2$s is the text 'here' for the status link, and %3$s is the closing </a> tag for both links.
+					echo  sprintf(
 								__( 'Your Pie Register Premium License key has expired; click %2$shere%3$s to check the status. Please %1$srenew%3$s your order to get all the plugin updates and support.','pie-register'),
 								'<a href="' . esc_url($renew_url) . '" target="_blank">',
 								'<a href="'.esc_url(get_admin_url()."admin.php?page=pie-help&tab=license").'" >',
@@ -2248,9 +2254,11 @@ if( !class_exists('PieRegister') ){
 			if ( empty( $show_release_notice ) ) {
 				
 				?>
-                <div style="border-left-color: #c00;background-color: #f9e3e3;" class="notice notice-info free_promo_users_upgrade is-dismissible" data-alert="<?php echo (esc_attr_e(wp_create_nonce('pie_alert_nonce'))); ?>">
+                <div style="border-left-color: #c00;background-color: #f9e3e3;" class="notice notice-info free_promo_users_upgrade is-dismissible" data-alert="<?php echo (esc_attr(wp_create_nonce('pie_alert_nonce'))); ?>">
 					<h3><?php echo esc_html('ALERT','pie-register'); ?>:</h3>
-					<p style="font-size:14px;"><?php echo sprintf( __( ' Looks like you haven\'t installed Pie Register Premium Version. Before changing any settings or option make sure to install and activate Pie Register Premium plugin. You can get the Premium plugin from  <a style="color:#c30604;" target="_blank" id="pie_opt_in_start" href="%s">My Account dashboard</a></strong>.','pie-register'), esc_url('https://store.genetech.co/my-account')); ?></p> 
+					<p style="font-size:14px;"><?php
+					// Translators: Message displayed when the Pie Register Premium plugin is not installed, advising the user to install and activate it before changing settings.
+					echo sprintf( __( ' Looks like you haven\'t installed Pie Register Premium Version. Before changing any settings or option make sure to install and activate Pie Register Premium plugin. You can get the Premium plugin from  <a style="color:#c30604;" target="_blank" id="pie_opt_in_start" href="%s">My Account dashboard</a></strong>.','pie-register'), esc_url('https://store.genetech.co/my-account')); ?></p> 
                 </div>
                 <script type="text/javascript">
 					
@@ -4637,7 +4645,7 @@ if( !class_exists('PieRegister') ){
 									if((isset($option['user_enable_email_verification']) && $option['user_enable_email_verification'] == 1) && !wp_mail($user_email, $subject, $message , $headers)){
 										$this->pr_error_log("'The e-mail could not be sent. Possible reason: mail() function may have disabled by your host.'".($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 									}
-									$this->pie_post_array['notice'] = esc_html__("User(s) activated");
+									$this->pie_post_array['notice'] = esc_html__("User(s) activated", "pie-register" );
 								} else {
 									$this->pie_post_array['error'] = esc_html__("Invitation code has expired", "pie-register");
 								}
@@ -4706,7 +4714,7 @@ if( !class_exists('PieRegister') ){
 									}
 									// mailchimp related code within PR
 									do_action('pireg_after_verification_users', $user);
-									$this->pie_post_array['notice'] = esc_html__("User(s) activated");
+									$this->pie_post_array['notice'] = esc_html__("User(s) activated", "pie-register" );
 								} else {
 									$this->pie_post_array['error'] = esc_html__("Invitation code has expired", "pie-register");
 								}
@@ -4905,7 +4913,7 @@ if( !class_exists('PieRegister') ){
 							wp_delete_user($user_id);
 						}
 					}
-					$this->pie_post_array['notice'] = esc_html__("User(s) deleted");
+					$this->pie_post_array['notice'] = esc_html__("User(s) deleted", "pie-register" );
 				}
 			}
 		}

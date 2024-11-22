@@ -166,8 +166,10 @@
         </legend>
         <?php
 			if(isset( $this->pie_post_array['successfull_import_all_users_data'] ) && !empty( $this->pie_post_array['successfull_import_all_users_data'] ))
+      // translators: %d is the number of users successfully imported
 				echo '<p class="success">' . sprintf( __("(%d) user(s) successfully imported","pie-register"), intval($this->pie_post_array['successfull_import_all_users_data']) ) . "</p>";
 			if(isset( $this->pie_post_array['unsuccessfull_import_all_users_data'] ) && !empty( $this->pie_post_array['unsuccessfull_import_all_users_data'] ))
+      // translators: %d is the number of users already exist
 				echo '<p class="error">' . sprintf( __("(%d) user(s) are already exist(s)","pie-register"), intval($this->pie_post_array['unsuccessfull_import_all_users_data']) ) . "</p>";
 			?>
         <div class="fields">

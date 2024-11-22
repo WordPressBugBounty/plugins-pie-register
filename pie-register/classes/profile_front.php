@@ -387,6 +387,8 @@ class Profile_front extends PieReg_Base
 								$data .= '<input disabled'. checked($this->getValue() == '1', true, false) .' type="checkbox" value="1" >';
 								$page_id	= $this->field['cont'];
 								$page_url	= get_the_permalink($page_id);		
+
+								// translators: %s is replaced by the URL link to view
 								$data .= apply_filters('piereg_terms_field_text',sprintf(__('Click <a target="_blank" href="%s">here</a> to view.','pie-register'),$page_url));
 								$data .= '</span></td></tr>';
 			
