@@ -879,9 +879,30 @@ if( !class_exists('PieReg_Base') ){
 			update_option('piereg_plugin_db_version',PIEREG_DB_VERSION);
 
 			// Create error directory for pieregister error logs
-			$upload_dir = wp_upload_dir();
-			$temp_dir = realpath($upload_dir['basedir'])."/pie-logs/";
-			wp_mkdir_p($temp_dir);
+			// $upload_dir = wp_upload_dir();
+			// $temp_dir = realpath($upload_dir['basedir'])."/pie-logs/";
+			// wp_mkdir_p($temp_dir);
+
+			$secure_log_dir = WP_CONTENT_DIR . "/pie-logs"; // Secure directory
+
+			// Ensure the directory exists
+			if (!file_exists($secure_log_dir)) {
+				wp_mkdir_p($secure_log_dir);
+			}
+
+			// Create .htaccess file to block access
+			$htaccess_file = $secure_log_dir . '/.htaccess';
+			if (!file_exists($htaccess_file)) {
+				$htaccess_content = "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n";
+				$htaccess_content .= "<IfModule !mod_authz_core.c>\nOrder allow,deny\nDeny from all\n</IfModule>\n";
+				file_put_contents($htaccess_file, $htaccess_content);
+			}
+
+			// Add an index.php file for extra security
+			$index_file = $secure_log_dir . '/index.php';
+			if (!file_exists($index_file)) {
+				file_put_contents($index_file, "<?php\n// Silence is golden.");
+			}
 			
 		}
 		
@@ -2712,6 +2733,10 @@ if( !class_exists('PieReg_Base') ){
 			return error_log($error_message, $message_type, PIE_LOG_FILE."/piereg_log.log");
 		}
 		function pr_payment_log($log_message,$file_name = "payment-log",$error_type = 'error',$message_type = 3){
+			
+			// stoping payment logs - security reasons
+			return false;
+			
 			if(!$log_message)
 				return false;
 

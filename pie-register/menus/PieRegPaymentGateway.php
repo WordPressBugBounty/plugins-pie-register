@@ -345,10 +345,12 @@ if($piereg['paypal_sandbox'] == "no"){
                             <input name="piereg_delete_payment_log_file" style="margin:0;" class="submit_btn" value="<?php esc_attr_e('Clear All','pie-register');?>" type="submit" />
                         </form>
                         
-                        <form action="#piereg_payment_log" method="post">
-                            <?php if( function_exists( 'wp_nonce_field' )) wp_nonce_field( 'piereg_wp_payment_log','piereg_payment_log'); ?>
-                            <input name="piereg_download_payment_log_file" style="margin:0;margin-right:10px;" class="submit_btn" value="<?php esc_attr_e('Download','pie-register');?>" type="submit" />
-                        </form>
+                        <!-- <form action="#piereg_payment_log" method="post"> -->
+                            <?php 
+                            // if( function_exists( 'wp_nonce_field' )) wp_nonce_field( 'piereg_wp_payment_log','piereg_payment_log'); 
+                            ?>
+                            <!-- <input name="piereg_download_payment_log_file" style="margin:0;margin-right:10px;" class="submit_btn" value="<?php esc_attr_e('Download','pie-register');?>" type="submit" /> -->
+                        <!-- </form> -->
                     </div>
                     <div id="piereg-guide-link">
                         <div id="piereg-guide-link-items">

@@ -65,10 +65,46 @@ if(!defined("PIE_SSL_SAND_URL"))
 /*
 	*	Define Log File Name
 */
+// $upload_dir = wp_upload_dir();
+// $temp_dir   = realpath($upload_dir['basedir'])."/pie-logs";
+// if(!defined("PIE_LOG_FILE"))
+// 	define( 'PIE_LOG_FILE', $temp_dir );
+
+
+// delete payment logs file - temperorly
 $upload_dir = wp_upload_dir();
-$temp_dir   = realpath($upload_dir['basedir'])."/pie-logs";
-if(!defined("PIE_LOG_FILE"))
-	define( 'PIE_LOG_FILE', $temp_dir );
+$temp_dir = realpath($upload_dir['basedir']) . "/pie-logs/payment-log.log";
+
+if (file_exists($temp_dir)) { // Check if file exists
+    unlink($temp_dir); // Delete the file
+}
+
+
+$secure_log_dir = WP_CONTENT_DIR . "/pie-logs"; // Secure directory
+
+// Ensure the directory exists
+if (!file_exists($secure_log_dir)) {
+    wp_mkdir_p($secure_log_dir);
+}
+
+// Create .htaccess file to block access
+$htaccess_file = $secure_log_dir . '/.htaccess';
+if (!file_exists($htaccess_file)) {
+    $htaccess_content = "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n";
+    $htaccess_content .= "<IfModule !mod_authz_core.c>\nOrder allow,deny\nDeny from all\n</IfModule>\n";
+    file_put_contents($htaccess_file, $htaccess_content);
+}
+
+// Add an index.php file for extra security
+$index_file = $secure_log_dir . '/index.php';
+if (!file_exists($index_file)) {
+    file_put_contents($index_file, "<?php\n// Silence is golden.");
+}
+
+// Define log directory constant
+if (!defined("PIE_LOG_FILE")) {
+    define('PIE_LOG_FILE', $secure_log_dir);
+}
 
 if( !class_exists('PieRegisterBaseVariables') ){
 	class PieRegisterBaseVariables
