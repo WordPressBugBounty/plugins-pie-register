@@ -5,7 +5,7 @@ Tags: login form, user profile, User Registration, registration form, membership
 Requires at least: 4.0
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 3.8.4.2
+Stable tag: 3.8.4.3
 License: GNU Version 2 or Any Later Version
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -17,15 +17,12 @@ Restrict content for exclusive Membership-based websites based on different user
 
 Pie Register has extensive documentation and video tutorials to help you get started. It has an active support system that responds to your queries within 24 hours.
 
-**The Best Part**
-
-Pie Register offers 
-
-**perpetual licensing – purchase once and use for a lifetime!**
+**The Best Part**  
+Pie Register offers **perpetual licensing – purchase once and use for a lifetime!**  
 
 [youtube https://www.youtube.com/watch?v=yjyPZ-E_fqg]
 
-= FREE KEY FEATURES: =
+== FREE KEY FEATURES ==
 
 * Drag and Drop Form Builder
 * Front-end User Profiles
@@ -50,8 +47,8 @@ Pie Register offers 
 * Community Support
 * Developer friendly with dozens of actions and filters
 
-= KEY FEATURES AVAILABLE IN FREE AND PRO VERSIONS WITH 
-BASIC AND ADVANCED OPTIONS: =
+== KEY FEATURES AVAILABLE IN FREE AND PRO VERSIONS WITH 
+BASIC AND ADVANCED OPTIONS ==
 
 * File Upload 
 * Verify and Moderate User Registration 
@@ -63,7 +60,7 @@ BASIC AND ADVANCED OPTIONS: =
 * Content Restriction
 * Frontend User Login and forgot password forms 
 
-= PREMIUM KEY FEATURES: =
+== PREMIUM KEY FEATURES ==
 
 * Unlimited Registration Forms
 * Advanced Fields
@@ -87,7 +84,7 @@ BASIC AND ADVANCED OPTIONS: =
 
 [Complete Feature List](https://pieregister.com/features/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=website)
 
-= Invitation-based Registration: =
+== Invitation-based Registration ==
 
 * Generate invitation codes
 * Auto Generate invitation codes
@@ -95,50 +92,50 @@ BASIC AND ADVANCED OPTIONS: =
 * Allow Users to Invite Other Users
 * Track user Invitations
 
-= Make Your Forms More Advanced With Our Premium Add-ons =
+== Make Your Forms More Advanced With Our Premium Add-ons ==
 
-**[PayPal Subscriptions (Payment Gateway) Add-on](https://pieregister.com/addons/paypal-recurring-payments-add-on/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[PayPal Subscriptions (Payment Gateway) Add-on](https://pieregister.com/addons/paypal-recurring-payments-add-on/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Allow users to make recurring payments and view subscription using the PayPal Subscriptions add-on.
 
-**[Stripe Recurring (Payment Gateway) Add-on](https://pieregister.com/addons/stripe-recurring-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Stripe Recurring (Payment Gateway) Add-on](https://pieregister.com/addons/stripe-recurring-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Allow users to make recurring payments and view active subscriptions using the Stripe recurring payment add-on.
 
-**[Stripe One-Time (Payment Gateway) Add-on](https://pieregister.com/addons/stripe-payment-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Stripe One-Time (Payment Gateway) Add-on](https://pieregister.com/addons/stripe-payment-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Process membership payments using Pie Register’s Stripe Add-on.
 
-**[Authroize.net (Payment Gateway ) Add-on](https://pieregister.com/addons/authorize-net-payment-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Authroize.net (Payment Gateway ) Add-on](https://pieregister.com/addons/authorize-net-payment-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Use Authorize.net Add-on to collect membership payments on Pie Register.
 
-**[Social Login Add-on](https://pieregister.com/addons/social-login-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Social Login Add-on](https://pieregister.com/addons/social-login-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Let users log in via their social handles, i-e, Facebook, Twitter, Google, LinkedIn, Yahoo, and WordPress accounts, to make the registration process quick and hassle-free.
 
-**[MailChimp Add-on](https://pieregister.com/addons/mailchimp-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[MailChimp Add-on](https://pieregister.com/addons/mailchimp-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Export site users into MailChimp lists to send communication, sales, and marketing emails using the admin dashboard.
 
-**[Twilio - Two-step Authentication (SMS) Add-on](https://pieregister.com/addons/two-step-authentication-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Twilio - Two-step Authentication (SMS) Add-on](https://pieregister.com/addons/two-step-authentication-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Want to have a super-secure site? No Problem. With Pie Register and TWILIO, you can verify registration via SMS/Text messages sent to their cell phones. The admin can get notified when new users register.
 
-**[Profile Search Add-on](https://pieregister.com/addons/profile-search-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Profile Search Add-on](https://pieregister.com/addons/profile-search-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Allow users to search/filter to display user data with the Profile Search tool. User information displayed in the filtered/search results can be limited based on the admin’s choice.
 
-**[Geo Location Add-on](https://pieregister.com/addons/geolocation/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Geo Location Add-on](https://pieregister.com/addons/geolocation/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 It lets you collect user Geolocation data and provides information like country, city, zip code, latitude/longitude, and location map for registered users.
 
-**[Bulk Email Add-on](https://pieregister.com/addons/bulk-email-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Bulk Email Add-on](https://pieregister.com/addons/bulk-email-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Send emails in bulk to all the registered users at once. Select the form name, and all the users registered through that form and send emails in one go!
 
-**[Field visibility Add-on](https://pieregister.com/addons/field-visibility-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[Field visibility Add-on](https://pieregister.com/addons/field-visibility-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Allows you to show or hide specific fields on the front-end registration form or the user’s profile page.
 
-**[WooCommerce Add-on](https://pieregister.com/addons/woocommerce-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[WooCommerce Add-on](https://pieregister.com/addons/woocommerce-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Hide or display specific Pie Register fields on the WooCommerce checkout page.  Also, you can add billing and shipping  fields to your registration form. Replace the default WooCommerce login and registration forms with Pie Register login and registration forms, and send a free gift product upon registration.
 
-**[bbPress Add-on](https://pieregister.com/addons/bbpress-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
+* **[bbPress Add-on](https://pieregister.com/addons/bbpress-addon/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=addons)**
 Show the Pie Register fields on your bbPress User profile, and let your users edit the profile directly from bbPress.
 
 [Add-ons Details](https://pieregister.com/addons/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=website)
 
-= INTEGRATIONS WITH THIRD-PARTY APPLICATIONS =
+== INTEGRATIONS WITH THIRD-PARTY APPLICATIONS ==
 
 1. [Paypal](https://www.paypal.com/pk/home)
 2. [Stripe](https://stripe.com/)
@@ -150,7 +147,7 @@ Show the Pie Register fields on your bbPress User profile, and let your users ed
 8. [Divi](https://www.elegantthemes.com/)
 9. [WooCommerce](https://woocommerce.com/)
 
-= Useful Resources: =
+== Useful Resources ==
 
 Community forum: [https://wordpress.org/support/plugin/pie-register/](https://wordpress.org/support/plugin/pie-register/)
 
@@ -165,7 +162,7 @@ Give Pie Register a try! And you will know how amazing it is!
 
 ***Unlock more features? Upgrade to our [PRO version](https://pieregister.com/plan-and-pricing/?utm_source=plugin-freeversion&utm_medium=wordpressorg&utm_campaign=go_pro&utm_content=website)***
 
-= SHORTCODES: =
+== SHORTCODES ==
 
 Here are some basic form shortcodes that you can embed:
 
@@ -233,6 +230,12 @@ To make your forms more interactive, you can simply add custom CSS in the styles
 Remove the password field from your forms and send an automated email on registrations by adding the auto-generated password in the email body using the replacement key.
 
 == CHANGELOG ==
+
+### 3.8.4.3
+
+*Released Date 24th March 2025*
+
+* readme.txt updated.
 
 ### 3.8.4.2
 
