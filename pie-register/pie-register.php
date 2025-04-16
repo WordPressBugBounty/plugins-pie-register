@@ -4,7 +4,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.3
+Version: 3.8.4.4
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
