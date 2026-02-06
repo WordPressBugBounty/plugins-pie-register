@@ -30,6 +30,13 @@
             'wporg' => 'https://wordpress.org/plugins/vc-addons-by-bit14/',
             'url'   => 'https://downloads.wordpress.org/plugin/vc-addons-by-bit14.zip',
         ),
+        'site-checker-all-in-one-qa-testing/site-checker-all-in-one-qa-testing.php' => array(
+            'icon'  => $images_url . 'wp-site-checker.svg',
+            'name'  => esc_html__( 'Site Checker: All-in-One QA Testing, Speed, Link & Security Audit', 'pie-register' ),
+            'desc'  => esc_html__( "WP Site Checker, every QA Tester's one-stop toolbox for all their site testing and optimization needs. Made by QA, for QA", 'pie-register' ),
+            'wporg' => 'https://wordpress.org/plugins/site-checker-all-in-one-qa-testing/',
+            'url'   => 'https://downloads.wordpress.org/plugin/site-checker-all-in-one-qa-testing.zip',
+        ),
     );
 	?>
 
@@ -65,8 +72,9 @@
 
                             <p class="about-us-p genetech-resource">Pie Register is a product of <a class="red-anchor" href="https://www.genetechsolutions.com/?utm_source=PRplugindashboard&utm_medium=prabouttab&utm_campaign=Genetech" target="_blank" rel="noopener noreferrer">Genetech Solutions</a>.</p>
                             <p class="about-us-p">Other products by the Team include:</p>
-                            <p class="about-us-p"><a class="red-anchor" href="https://pieforms.com/?utm_source=PRplugindashboard&utm_medium=prabouttab&utm_campaign=pieformsfrompr" target="_blank" rel="noopener noreferrer">Pie Forms</a>, the Easiest Drag and Drop WordPress Form Builder Plugin.</p>
-                            <p class="about-us-p"><a class="red-anchor" href="https://pagebuilderaddons.com/?utm_source=PRplugindashboard&utm_medium=prabouttab&utm_campaign=pbfrompr" target="_blank" rel="noopener noreferrer">PB Add-ons for WP Bakery</a>, a collection of free and premium add-ons to build your website using WP Bakery.</p>
+                            <li><p class="about-us-p"><a class="red-anchor" href="https://pieforms.com/?utm_source=PRplugindashboard&utm_medium=prabouttab&utm_campaign=pieformsfrompr" target="_blank" rel="noopener noreferrer">Pie Forms</a>, the Easiest Drag and Drop WordPress Form Builder Plugin.</p></li>
+                            <li><p class="about-us-p"><a class="red-anchor" href="https://pagebuilderaddons.com/?utm_source=PRplugindashboard&utm_medium=prabouttab&utm_campaign=pbfrompr" target="_blank" rel="noopener noreferrer">PB Add-ons for WP Bakery</a>, a collection of free and premium add-ons to build your website using WP Bakery.</p></li>
+                            <li><p class="about-us-p"><a class="red-anchor" href="https://wpsitechecker.com/?utm_source=pieregister&utm_medium=adminpanel&utm_campaign=promote" target="_blank" rel="noopener noreferrer">WP Site Checker</a>, every QA Tester's one-stop toolbox for all their site testing and optimization needs. Made by QA, for QA.</p></li>
                         </div>
                         <div class="about-links">
                             <div class="about-pr-video">
