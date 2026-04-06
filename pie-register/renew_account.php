@@ -79,24 +79,24 @@ global $wp_session;
         }
 
 		if ( !empty($message) )
-			$pr_data .= '<p class="msg_div piereg_login_error"> ' . esc_html(apply_filters('piereg_messages', $message)) . "</p>";
+			$pr_data .= '<p class="msg_div piereg_login_error"> ' . apply_filters('piereg_messages', $message) . "</p>";
 		if ( !empty($success) )
-			$pr_data .= '<p class="msg_div piereg_message">' . esc_html(apply_filters('piereg_messages', __($success,"pie-register"))) . "</p>";
+			$pr_data .= '<p class="msg_div piereg_message">' . apply_filters('piereg_messages', $success) . "</p>";
 		if($this->pie_post_array['success'] != "")
-			$pr_data .= '<p class="msg_div piereg_message">'.esc_html(apply_filters('piereg_messages', __($this->pie_post_array['success'],"pie-register"))).'</p>';
+			$pr_data .= '<p class="msg_div piereg_message">'.apply_filters('piereg_messages', $this->pie_post_array['success']).'</p>';
 		elseif($this->pie_post_array['error'] != "")
-			$pr_data .= '<p class="msg_div piereg_login_error">'.esc_html(apply_filters('piereg_messages', __($this->pie_post_array['error'],"pie-register"))).'</p>';
+			$pr_data .= '<p class="msg_div piereg_login_error">'.apply_filters('piereg_messages', $this->pie_post_array['error']).'</p>';
 		elseif(isset($errors->errors['renew-account-error']) && $errors->errors['renew-account-error'] != ""){
 			$error_msg = "";
 			foreach($errors->errors['renew-account-error'] as $renew_error_val){
 				$error_msg = $renew_error_val."<br />";
 			}
-			$pr_data .= '<p class="msg_div piereg_login_error">'.esc_html(apply_filters('piereg_messages_error', $error_msg)).'</p>';
+			$pr_data .= '<p class="msg_div piereg_login_error">'.apply_filters('piereg_messages_error', $error_msg).'</p>';
 			unset($error_msg);
 		}
 		else{
 			if(isset($piereg['payment_renew_msg']) && !empty($piereg['payment_renew_msg']))
-				$pr_data .= '<p class="msg_div piereg_warning">'.esc_html(apply_filters('piereg_messages_warning', $piereg['payment_renew_msg'])).'</p>';
+				$pr_data .= '<p class="msg_div piereg_warning">'.apply_filters('piereg_messages_warning', $piereg['payment_renew_msg']).'</p>';
 		}
 	
 	$pr_data .= '<div id="show_pie_register_error_js"></div>';

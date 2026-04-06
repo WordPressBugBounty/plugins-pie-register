@@ -1,5 +1,8 @@
 <?php
-
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
  * Welcome page class.
  *
@@ -121,7 +124,7 @@ class PieRegister_Welcome extends PieReg_Base {
 			<div class="container">
 				<div class="intro">
 					<div class="pie-register-logo">
-						<img src="<?php echo plugins_url("assets/images/pie-register-logo.png",dirname(__FILE__)) ?>" alt="<?php esc_attr_e( 'Pie Register Logo', 'pie-register' ); ?>">
+						<img src="<?php echo esc_url( plugins_url("assets/images/pie-register-logo.png",dirname(__FILE__)) ); ?>" alt="<?php esc_attr_e( 'Pie Register Logo', 'pie-register' ); ?>">
 					</div>
 					<div class="block">
 						<h6 class="welcome-msg"><?php esc_html_e( 'How to create and use your first registration form', 'pie-register' ); ?></h6>
@@ -155,7 +158,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<a href="<?php echo esc_url(get_admin_url(null, 'admin.php?page=pie-notifications')) ?>" target="_blank">
 								<div class="feature-block first">
 									<div class="feature-block-icon">
-										<img src="<?php echo plugins_url("assets/images/welcome/email-notifications.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/email-notifications.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<div class="feature-block-content">
 										<h5><?php esc_html_e( 'Set Email Notifications', 'pie-register' ); ?></h5>
@@ -166,7 +169,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<a href="<?php echo esc_url(get_admin_url(null, 'admin.php?page=pie-invitation-codes')) ?>" target="_blank">
 								<div class="feature-block last">
 									<div class="feature-block-icon">
-										<img src="<?php echo plugins_url("assets/images/welcome/invitation-codes.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/invitation-codes.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<div class="feature-block-content">
 										<h5><?php esc_html_e( 'Generate Invitation Codes', 'pie-register' ); ?></h5>
@@ -177,7 +180,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<a href="<?php echo esc_url(get_admin_url(null, 'admin.php?page=pie-gateway-settings')) ?>" target="_blank">
 								<div class="feature-block first">
 									<div class="feature-block-icon">
-										<img src="<?php echo plugins_url("assets/images/welcome/payment-methods.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/payment-methods.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<div class="feature-block-content">
 										<h5><?php esc_html_e( 'Setup Payment Methods', 'pie-register' ); ?></h5>
@@ -188,7 +191,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<a href="<?php echo esc_url(get_admin_url(null, 'admin.php?page=pie-user-roles-custom')) ?>" target="_blank">
 								<div class="feature-block last">
 									<div class="feature-block-icon">
-										<img src="<?php echo plugins_url("assets/images/welcome/user-roles.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/user-roles.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<div class="feature-block-content">
 										<h5><?php esc_html_e( 'Create User Roles', 'pie-register' ); ?></h5>
@@ -199,7 +202,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<a href="<?php echo esc_url(get_admin_url(null, 'admin.php?page=pie-black-listed-users')) ?>" target="_blank">
 								<div class="feature-block first">
 									<div class="feature-block-icon">
-										<img src="<?php echo plugins_url("assets/images/welcome/control-users.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/control-users.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<div class="feature-block-content">
 										<h5><?php esc_html_e( 'Control Users', 'pie-register' ); ?></h5>
@@ -210,7 +213,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<a href="<?php echo esc_url(get_admin_url(null, 'admin.php?page=pie-settings&tab=security')) ?>" target="_blank">
 								<div class="feature-block last">
 									<div class="feature-block-icon">
-										<img src="<?php echo plugins_url("assets/images/welcome/update-security.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/update-security.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<div class="feature-block-content">
 										<h5><?php esc_html_e( 'Update Security', 'pie-register' ); ?></h5>
@@ -228,7 +231,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<div class="resourceful-link">
 								<a href="https://pieregister.com/docs-category/getting-started/?utm_source=plugindashboard&utm_medium=abouttab&utm_campaign=documentlink" target="_blank">
 									<div class="resourceful-link-image">
-										<img src="<?php echo plugins_url("assets/images/welcome/getting-started.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/getting-started.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<h6><?php esc_html_e( 'Getting Started', 'pie-register' ); ?></h6>
 								</a>
@@ -237,7 +240,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<div class="resourceful-link">
 								<a href="https://pieregister.com/docs-category/addons/?utm_source=plugindashboard&utm_medium=abouttab&utm_campaign=documentlink" target="_blank">
 									<div class="resourceful-link-image">
-										<img src="<?php echo plugins_url("assets/images/welcome/addons.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/addons.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<h6><?php esc_html_e( 'Add-ons', 'pie-register' ); ?></h6>
 								</a>
@@ -246,7 +249,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<div class="resourceful-link">
 								<a href="https://pieregister.com/docs-category/features/?utm_source=plugindashboard&utm_medium=abouttab&utm_campaign=documentlink" target="_blank">
 									<div class="resourceful-link-image">
-										<img src="<?php echo plugins_url("assets/images/welcome/features.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/features.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<h6><?php esc_html_e( 'Features', 'pie-register' ); ?></h6>
 								</a>
@@ -255,7 +258,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<div class="resourceful-link">
 								<a href="https://pieregister.com/docs-category/shortcuts/?utm_source=plugindashboard&utm_medium=abouttab&utm_campaign=documentlink" target="_blank">
 									<div class="resourceful-link-image">
-										<img src="<?php echo plugins_url("assets/images/welcome/shortcuts.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/shortcuts.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<h6><?php esc_html_e( 'Shortcuts', 'pie-register' ); ?></h6>
 								</a>
@@ -264,7 +267,7 @@ class PieRegister_Welcome extends PieReg_Base {
 							<div class="resourceful-link">
 								<a href="https://pieregister.com/docs-category/how-to-articles/?utm_source=plugindashboard&utm_medium=abouttab&utm_campaign=documentlink" target="_blank">
 									<div class="resourceful-link-image">
-										<img src="<?php echo plugins_url("assets/images/welcome/how-to-articles.png",dirname(__FILE__)) ?>">
+										<img src="<?php echo esc_url( plugins_url("assets/images/welcome/how-to-articles.png",dirname(__FILE__)) ); ?>">
 									</div>
 									<h6><?php esc_html_e( 'How-to', 'pie-register' ); ?></h6>
 								</a>

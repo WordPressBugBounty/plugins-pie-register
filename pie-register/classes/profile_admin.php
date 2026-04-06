@@ -1,4 +1,9 @@
 <?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 if( file_exists( dirname(__FILE__) . '/base.php') ) 
 	require_once('base.php');
 class Profile_admin extends PieReg_Base
@@ -144,14 +149,14 @@ class Profile_admin extends PieReg_Base
                     $checked = 'checked="checked"';
                 }
                 echo '<span style="margin-left:5px;">'.esc_html($this->field['display'][$a]).'</span>';
-                echo '<input' . esc_attr($disabled) . ' style="margin-left:5px;" value="' . esc_attr($this->field['value'][$a]) . '" ' . $checked . ' type="' . esc_attr($this->type) . '" name="' . esc_attr($this->slug) . '[]" class="' . esc_attr($this->field['css']) . '"  >';
+                echo '<input' . esc_attr($disabled) . ' style="margin-left:5px;" value="' . esc_attr($this->field['value'][$a]) . '" ' . esc_attr($checked) . ' type="' . esc_attr($this->type) . '" name="' . esc_attr($this->slug) . '[]" class="' . esc_attr($this->field['css']) . '"  >';
             }
         }
     }
 
     function addHTML()
     {
-        echo html_entity_decode($this->field['html']);
+        echo wp_kses(html_entity_decode($this->field['html']), $this->piereg_forms_get_allowed_tags());
     }
 
 	function addUpload($disabled)
@@ -192,42 +197,42 @@ class Profile_admin extends PieReg_Base
         $address = get_user_meta($this->user_id, $this->slug, true); #get_usermeta deprecated
         echo '<div class="address">
 		  <input'.esc_attr($disabled).' type="text" name="' . esc_attr($this->slug) . '[address]" id="' . esc_attr($this->id) . '" value="' . ((isset($address['address']))?esc_attr($address['address']):"") . '" >
-		  <label>'.esc_html_e("Street Address","pie-register").'</label>
+		  <label>'.esc_html__("Street Address","pie-register").'</label>
 		</div>';
         if (empty($this->field['hide_address2'])) {
             echo '<div class="address">
 			  <input'.esc_attr($disabled).' type="text" name="' . esc_attr($this->slug) . '[address2]" id="address2_' . esc_attr($this->id) . '" value="' . ((isset($address['address2']))?esc_attr($address['address2']):"") . '" >
-			  <label>'.esc_html_e("Address Line 2","pie-register").'</label>
+			  <label>'.esc_html__("Address Line 2","pie-register").'</label>
 			</div>';
         }
         echo '<div class="address">
 		  <div class="address2">
 			<input'.esc_attr($disabled).' type="text" name="' . esc_attr($this->slug) . '[city]" id="city_' . esc_attr($this->id) . '" value="' . ((isset($address['city']))?esc_attr($address['city']):"") . '">
-			<label>'.esc_html_e("City","pie-register").'</label>
+			<label>'.esc_html__("City","pie-register").'</label>
 		  </div>';
         if (empty($this->field['hide_state'])) {
             if ($this->field['address_type'] == "International") {
                 echo '<div class="address2"  >
 					<input'.esc_attr($disabled).' type="text" name="' . esc_attr($this->slug) . '[state]" id="state_' . esc_attr($this->id) . '" value="' . ((isset($address['state']))?esc_attr($address['state']):"") . '">
-					<label>'.esc_html_e("State / Province / Region","pie-register").'</label>
+					<label>'.esc_html__("State / Province / Region","pie-register").'</label>
 				 	 </div>';
             } else if ($this->field['address_type'] == "United States") {
                 $us_states = get_option("pie_us_states");
-                $options   = wp_kses($this->createDropdown($us_states, ((isset($address['state']))?$address['state']:"")),$this->piereg_forms_get_allowed_tags());
+                $options   = $this->createDropdown($us_states, ((isset($address['state']))?$address['state']:""));
                 echo '<div class="address2"  >
 					<select'.esc_attr($disabled).' id="state_' . esc_attr($this->id) . '" name="' . esc_attr($this->slug) . '[state]">
-					 ' . $options . ' 
+					 ' . wp_kses($options, $this->piereg_forms_get_allowed_tags()) . ' 
 					</select>
-					<label>'.esc_html_e("State","pie-register").'</label>
+					<label>'.esc_html__("State","pie-register").'</label>
 				  </div>';
             } else if ($this->field['address_type'] == "Canada") {
                 $can_states = get_option("pie_can_states");
-                $options    = wp_kses($this->createDropdown($can_states, ((isset($address['state']))?$address['state']:"")),$this->piereg_forms_get_allowed_tags());
+                $options    = $this->createDropdown($can_states, ((isset($address['state']))?$address['state']:""));
                 echo '<div class="address2">
 						<select'.esc_attr($disabled).' id="state_' . esc_attr($this->id) . '" name="' . esc_attr($this->slug) . '[state]">
-						  ' . $options . '
+						  ' . wp_kses($options, $this->piereg_forms_get_allowed_tags()) . '
 						</select>
-						<label>'.esc_html_e("Province","pie-register").'</label>
+						<label>'.esc_html__("Province","pie-register").'</label>
 					  </div>';
             }
         }
@@ -235,17 +240,17 @@ class Profile_admin extends PieReg_Base
         echo '<div class="address">';
         echo ' <div class="address2">
 		<input'.esc_attr($disabled).' id="zip_' . esc_attr($this->id) . '" name="' . esc_attr($this->slug) . '[zip]" type="text" value="' . ((isset($address['zip']))?esc_attr($address['zip']):"") . '" >
-		<label>'.esc_html_e("Zip / Postal Code","pie-register").'</label>
+		<label>'.esc_html__("Zip / Postal Code","pie-register").'</label>
 		</div>';
         if ($this->field['address_type'] == "International") {
             $countries = get_option("pie_countries");
-            $options   = wp_kses($this->createDropdown($countries, ((isset($address['country']))?$address['country']:"")),$this->piereg_forms_get_allowed_tags());
+            $options   = $this->createDropdown($countries, ((isset($address['country']))?$address['country']:""));
             echo '<div class="address2" >
 					<select'.esc_attr($disabled).' id="country_' . esc_attr($this->id) . '" name="' . esc_attr($this->slug) . '[country]" >
                     <option value="">'.esc_html(__("Select Country","pie-register")).'</option>
-					' . $options . '
+					' . wp_kses($options, $this->piereg_forms_get_allowed_tags()) . '
 					 </select>
-					<label>'.esc_html_e("Country","pie-register").'</label>
+					<label>'.esc_html__("Country","pie-register").'</label>
 		  		</div>';
         }
         echo '</div>';
@@ -369,7 +374,7 @@ class Profile_admin extends PieReg_Base
                 if ((int) $a == (int) $date['date']['mm']) {
                     $sel = 'selected';
                 }
-                echo '<option ' . esc_attr($sel) . ' value="' . esc_attr($a) . '">' . esc_html(__(sprintf("%02s", $a),"pie-register")) . '</option>';
+                echo '<option ' . esc_attr($sel) . ' value="' . esc_attr($a) . '">' . esc_html( sprintf( "%02s", $a ) ) . '</option>';
             }
             echo '</select>
 					<select'.esc_attr($disabled).' id="dd_' . esc_attr($this->id) . '" name="' . esc_attr($this->slug) . '[date][dd]" data-type="date">
@@ -379,7 +384,7 @@ class Profile_admin extends PieReg_Base
                 if ((int) $a == (int) $date['date']['dd']) {
                     $sel = 'selected';
                 }
-                echo '<option ' . esc_attr($sel) . ' value="' . esc_attr($a) . '">' . esc_html(__(sprintf("%02s", $a),"pie-register")) . '</option>';
+                echo '<option ' . esc_attr($sel) . ' value="' . esc_attr($a) . '">' . esc_html(__sprintf("%02s", $a ) ) . '</option>';
             }
             echo '</select>
 					<select'.esc_attr($disabled).' id="yy_' . esc_attr($this->id) . '" name="' . esc_attr($this->slug) . '[date][yy]" data-type="date">
@@ -422,7 +427,7 @@ class Profile_admin extends PieReg_Base
 		$page_url	= get_the_permalink($page_id);		
 
 		// translators: %s is replaced by the URL link to view the terms page
-		echo apply_filters('piereg_terms_field_text',sprintf( __('Click <a target="_blank" href="%s">here</a> to view.','pie-register'),$page_url));
+		echo wp_kses(apply_filters('piereg_terms_field_text',sprintf( __('Click <a target="_blank" href="%s">here</a> to view.','pie-register'),$page_url)), $this->piereg_forms_get_allowed_tags());
 	}
 	function createFieldName($text)
     {
@@ -486,13 +491,13 @@ class Profile_admin extends PieReg_Base
 				case 'wc_billing_address':
 					if ($this->woocommerce_and_piereg_wc_addon_active)
 					{
-						echo apply_filters("pieregister_print_woocommerce_billing_address_admin_profile", $disabled); 
+						echo wp_kses(apply_filters("pieregister_print_woocommerce_billing_address_admin_profile", $disabled), $this->piereg_forms_get_allowed_tags()); 
 					}
 					break;
 				case 'wc_shipping_address':
 					if ($this->woocommerce_and_piereg_wc_addon_active)
 					{
-						echo apply_filters("pieregister_print_woocommerce_shipping_address_admin_profile", $disabled); 	
+						echo wp_kses(apply_filters("pieregister_print_woocommerce_shipping_address_admin_profile", $disabled), $this->piereg_forms_get_allowed_tags()); 	
 					}
 					break;
             case 'phone':
@@ -646,7 +651,7 @@ class Profile_admin extends PieReg_Base
             $rule               = $this->field['validation_rule'];
             $validation_message = (!empty($this->field['validation_message']) ? $this->field['validation_message'] : $this->field['label'] . " is required.");
             if ((!isset($field_name) || empty($field_name)) && $required) {
-                $errors->add($this->slug, '<strong>'.ucwords(__('error','pie-register')).'</strong>: ' . $validation_message);
+                    $errors->add($this->slug, '<strong>'.esc_html(ucwords(__('error','pie-register'))).'</strong>: ' . esc_html($validation_message));
             } else if ($rule == "number") {
                 if (!is_numeric($field_name)) {
                     $errors->add( $this->slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.$this->field['label'] .apply_filters("piereg_field_must_contain_only_numbers",__('Field must only contain numbers.','pie-register' )));
@@ -773,7 +778,8 @@ class Profile_admin extends PieReg_Base
 				$temp_file_name = sanitize_file_name("profile_pic_".crc32($user_id."_".$extension."_".time()).".".$extension);
 				$temp_file_url = $upload_dir['baseurl']."/piereg_users_files/".$user_id."/".$temp_file_name;
 				$required           = $field['required'];
-				if(!move_uploaded_file($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
+				$wp_filesystem = $this->pie_get_filesystem();
+				if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
 					$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 				}else{
 					update_user_meta($user_id,$field_slug, $temp_file_url);
@@ -792,9 +798,10 @@ class Profile_admin extends PieReg_Base
 			$file = $file[0];
 		}
 		if( !empty($file ) ){
-			if( file_exists($temp_dir."/".basename( $file  )) ){
-				unlink( $temp_dir."/".basename( $file  ) );
-			} else if ( file_exists($temp_dir."/".$field_slug."/".basename( $file  )) ) {
+			$wp_filesystem = $this->pie_get_filesystem();
+			if( $wp_filesystem->exists($temp_dir."/".basename( $file  )) ){
+				$wp_filesystem->delete( $temp_dir."/".basename( $file  ) );
+			} else if ( $wp_filesystem->exists($temp_dir."/".$field_slug."/".basename( $file  )) ) {
 				$this->delete_directory( realpath($temp_dir."/".$field_slug));
 			}
 		}
@@ -830,7 +837,8 @@ class Profile_admin extends PieReg_Base
 					
 					if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 					{
-						if(!move_uploaded_file($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
+						$wp_filesystem = $this->pie_get_filesystem();
+						if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
 							$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 						}else{
 							update_user_meta($user_id,$field_slug, $temp_file_url);
@@ -862,7 +870,8 @@ class Profile_admin extends PieReg_Base
 				
 				if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 				{
-					if(!move_uploaded_file($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
+					$wp_filesystem = $this->pie_get_filesystem();
+					if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
 						$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 					}else{
 						update_user_meta($user_id,$field_slug, $temp_file_url);
@@ -876,25 +885,19 @@ class Profile_admin extends PieReg_Base
 		}
 	}
 	function delete_directory($dirname) {
-		$dir_handle = '';
-
-		if (is_dir($dirname))
-		  $dir_handle = opendir($dirname);
-
-		if (!$dir_handle)
-		 return false;
-
-		while($file = readdir($dir_handle)) {
-		  if ($file != "." && $file != "..") {
-			   if (!is_dir($dirname."/".$file))
-					unlink($dirname."/".$file);
-			   else
-					$this->delete_directory($dirname.'/'.$file);
-		  }
+		$wp_filesystem = $this->pie_get_filesystem();
+		if ($wp_filesystem->is_dir($dirname)) {
+			return $wp_filesystem->rmdir($dirname, true);
 		}
-		closedir($dir_handle);
-		rmdir($dirname);
-		return true;
+		return false;
+	}
+	private function pie_get_filesystem() {
+		global $wp_filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			WP_Filesystem();
+		}
+		return $wp_filesystem;
 	}
 	function piereg_wp_admin_form_tag(){
 		echo ' enctype="multipart/form-data" ';

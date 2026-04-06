@@ -35,14 +35,14 @@ $newpasspageLock = 0;
 			if(isset($_GET['payment']) && sanitize_key($_GET['payment']) == "success")
 			{
 				$fields = maybe_unserialize(get_option("pie_fields"));
-				$login_success = apply_filters("piereg_success_message",__( $option['payment_success_msg'], "pie-register" ));
+				$login_success = apply_filters("piereg_success_message",esc_html( $option['payment_success_msg']));
 				unset($fields);
 			}elseif(isset($_GET['payment']) && sanitize_key($_GET['payment']) == "cancel"){
 				$login_error = apply_filters("piereg_cancled_message",__("You have cancelled the payment.","pie-register"));
 			}
 			if(isset($errors->errors['login-error'][0]) > 0)
 			{
-				$login_error = apply_filters("piereg_login_error",__($errors->errors['login-error'][0],"pie-register"));
+				$login_error = apply_filters("piereg_login_error",esc_html($errors->errors['login-error'][0]));
 				$newpasspageLock = 1;
 			}
 			elseif( 
@@ -53,7 +53,7 @@ $newpasspageLock = 0;
 			{
 				$pr_error_message = sanitize_text_field(base64_decode($_GET['pr_key']));
 				if(!empty($pr_error_message))
-					$login_error = apply_filters("piereg_login_after_registration_error",esc_html(__($pr_error_message,"pie-register")));
+					$login_error = apply_filters("piereg_login_after_registration_error",esc_html($pr_error_message));
 				else
 					$login_error = apply_filters("piereg_login_after_registration_error",esc_html(__("Invalid username","pie-register")));
 			}
@@ -107,7 +107,7 @@ $newpasspageLock = 0;
 							}
 							$message_temp = "";
 							if($option['user_formate_email_email_thankyou'] == "0"){
-								$message_temp	= nl2br(strip_tags($option['user_message_email_email_thankyou']));
+								$message_temp	= nl2br(wp_strip_all_tags($option['user_message_email_email_thankyou']));
 							}else{
 								$message_temp	= $option['user_message_email_email_thankyou'];
 							}
@@ -140,16 +140,14 @@ $newpasspageLock = 0;
 							}
 							if ( !empty($invite_code) )
 							{
-								$prefix		= $wpdb->prefix."pieregister_";
-								$codetable	= $prefix."code";		
-								$codeDetails = 	$wpdb->get_results( $wpdb->prepare("SELECT * FROM $codetable where BINARY name = %s and status = %d", $invite_code, 1) );
+								$codeDetails = 	$wpdb->get_results( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_code` where BINARY name = %s and status = %d", array($invite_code, 1)) );
 					
 								$times_used = intval($codeDetails[0]->count);
 								$usage 		= intval($codeDetails[0]->code_usage);
 	
 								if( (($times_used < $usage) && ($usage != 0)) || $usage == 0)
 								{
-									$codes 		= $wpdb->query( $wpdb->prepare("update $codetable set count = count + 1 where BINARY name = %s and status = %d", $invite_code, 1) );
+									$codes 		= $wpdb->query( $wpdb->prepare("update `{$wpdb->prefix}pieregister_code` set count = count + 1 where BINARY name = %s and status = %d", array($invite_code, 1)) );
 								}		
 							}
 							do_action( "piereg_action_hook_after_user_activate", $user_id, $user_login, $user_email ); # newlyAddedHookFilter
@@ -222,7 +220,7 @@ $newpasspageLock = 0;
         }
 		if(isset($wp_session['message']) && trim($wp_session['message']) != "" )
 		{
-			$form_data .= '<p class="piereg_login_error"> ' . apply_filters('piereg_messages',__($wp_session['message'],"pie-register")) . "</p>";
+			$form_data .= '<p class="piereg_login_error"> ' . apply_filters('piereg_messages',esc_html($wp_session['message'])) . "</p>";
 			$wp_session['message'] = "";
 		}
 		if ( !empty($login_error) )
@@ -235,10 +233,10 @@ $newpasspageLock = 0;
 			$form_data .= '<p class="piereg_warning">' . apply_filters('piereg_messages',wp_kses($login_warning, $pie_register_base->piereg_forms_get_allowed_tags())) . "</p>";
 
 		if(isset($pie_register_base->pie_post_array['success']) && $pie_register_base->pie_post_array['success'] != "")
-			$form_data .= '<p class="piereg_message">'.apply_filters('piereg_messages',__($pie_register_base->pie_post_array['success'],"pie-register")).'</p>';
+			$form_data .= '<p class="piereg_message">'.apply_filters('piereg_messages',esc_html($pie_register_base->pie_post_array['success'])).'</p>';
 
 		if(isset($pie_register_base->pie_post_array['error']) && $pie_register_base->pie_post_array['error'] != "")
-			$form_data .= '<p class="piereg_login_error">'.apply_filters('piereg_messages',__($pie_register_base->pie_post_array['error'],"pie-register")).'</p>';
+			$form_data .= '<p class="piereg_login_error">'.apply_filters('piereg_messages',esc_html($pie_register_base->pie_post_array['error'])).'</p>';
 
 
 if ( isset($_GET['action']) && ('rp' == $action || 'resetpass' == $action) && ($newpasspageLock == 0) ){
@@ -287,7 +285,7 @@ else{
 			$pr_loginform_id	= 'piereg_login_form';
 		}
 
-		$form_data = apply_filters( 'pie_register_frontend_login_output_before', __($form_data,"pie-register") );
+		$form_data = apply_filters( 'pie_register_frontend_login_output_before', $form_data );
 
 		$form_data .= '
 		<form method="post" id="'.esc_attr($pr_loginform_id).'" class="piereg_loginform" name="loginform" action="'.esc_url(htmlentities($_SERVER['REQUEST_URI'])).'">';
@@ -305,10 +303,9 @@ else{
 			
 			$form_data .= '<li class="fields"><div class="fieldset">';
 			global $piereg_math_captcha_login,$piereg_math_captcha_login_widget,$wpdb;
-			$table_name = $wpdb->prefix . "pieregister_lockdowns";
 			$user_ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
 			
-			$get_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM `".$table_name."` WHERE `user_ip` = %s;",$user_ip));
+			$get_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_lockdowns` WHERE `user_ip` = %s;", array($user_ip)));
 			
 			if(isset($wpdb->last_error) && !empty($wpdb->last_error))
 			{
@@ -371,7 +368,7 @@ else{
 			
 		$form_data .= '
 		</form>';
-		$form_data = apply_filters( 'pie_register_frontend_login_output_after', __($form_data,"pie-register") );
+		$form_data = apply_filters( 'pie_register_frontend_login_output_after', $form_data );
 	
 }
 

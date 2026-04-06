@@ -1,4 +1,10 @@
-<?php $piereg = $this->get_pr_global_options(); ?>
+<?php 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+$piereg = $this->get_pr_global_options(); ?>
 <?php
 $pie_user_email_types 	= get_option( 'pie_user_email_types' );
 $replacement_fields = "";		
@@ -79,7 +85,7 @@ if( (is_array($fields) || is_object($fields)) && sizeof($fields ) > 0 )
         ?>
       <div class="notification-item">
         <div class="notification-item-toggler">
-          <p><?php esc_html_e(str_replace('.','',$type) ,"pie-register"); ?></p>
+          <p><?php echo esc_html(str_replace('.','',$type)); ?></p>
           <div class="pie-email-notif-accordian-icon"></div>
         </div>
         <div class="content clearfix">

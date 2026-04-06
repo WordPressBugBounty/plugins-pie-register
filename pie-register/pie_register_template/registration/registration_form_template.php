@@ -17,6 +17,7 @@ class Registration_form_template extends Registration_form
 		{
 			return '<p class="desc">'.html_entity_decode($this->field['desc']).'</p>';
 		}
+		return "";
 	}
 	function addLabel($isblank="")
 	{
@@ -42,7 +43,7 @@ class Registration_form_template extends Registration_form
 	
 		$labelled = "";
 		if(isset($this->field['label'])) {
-			$labelled = __(html_entity_decode(stripslashes($this->field['label'])),"pie-register").$field_required;
+			$labelled = esc_html(html_entity_decode(stripslashes($this->field['label']))).$field_required;
 		}
 		
 		if($isblank == 'empty'){
@@ -408,7 +409,7 @@ class Registration_form_template extends Registration_form
 		$placeholder2 	= (isset($this->field['placeholder2']) and !empty($this->field['placeholder2']))?$this->field['placeholder2'] : "";
 		
 		$data  = '<div class="fieldset">';
-		if(!empty($this->field['label'])) $data .= '<label>'.esc_html(__($this->field['label'],"pie-register")) . $field_required . '</label>';
+		if(!empty($this->field['label'])) $data .= '<label>'.esc_html($this->field['label']) . $field_required . '</label>';
 		$data .= '<input '.$this->read_only.' value="'.esc_attr($this->getDefaultValue('first_name')).'" placeholder="'.esc_attr($placeholder).'" data-field_id="'.esc_attr($this->get_pr_widget_prefix()).'piereg_field_'.esc_attr($this->no).'" id="'.esc_attr($this->id).'_firstname" name="first_name" class="'.esc_attr($this->addClass()).' input_fields piereg_name_input_field" '.$this->addValidation().'  type="text"  />';				
 		
 		$topclass = "";
@@ -1091,7 +1092,7 @@ class Registration_form_template extends Registration_form
 								$sel = ' selected=""';
 							  else
 							  $sel = '';	
-							  $data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+							  $data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 						  }
 						  $data .= '</select>';
 					  $data .= '</div>';
@@ -1103,19 +1104,19 @@ class Registration_form_template extends Registration_form
 						  	$sel = ' selected=""';
 						  else
 						  $sel = '';	
-						  $data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						  $data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					  $data .= '</select>';
 				  $data .= '</div>';
 				  $data .= '<div class="time_fields">';
 					$data .= '<select '.$this->read_only.' id="yy_'.esc_attr($this->id).'" name="'.esc_attr($this->name).'[date][yy]" class="'.esc_attr($this->addClass("input_fields",array("custom[year]"))).'" '.$this->addValidation().' data-type="date">';
 					  $data .= '<option value="">'.esc_html(__("Year","pie-register")).'</option>';
-					  for($a=((int)date("Y") + 10);$a>=(((int)date("Y"))-100);$a--){
+					  for ($a = ((int)gmdate("Y") + 10); $a >= (((int)gmdate("Y")) - 100); $a--){
 						  if(isset($date_this_values['date']['yy']) && $date_this_values['date']['yy'] == $a)
 						  	$sel = ' selected=""';
 						  else
 						  	$sel = '';	
-						  $data .= '<option value="'.esc_attr($a).'" '.esc_attr($sel).'>'.esc_html(__($a,"pie-register")).'</option>';
+						  $data .= '<option value="'.esc_attr($a).'" '.esc_attr($sel).'>'.esc_html($a,).'</option>';
 					  }
 					  $data .= '</select>';
 				  $data .= '</div>';
@@ -1127,12 +1128,12 @@ class Registration_form_template extends Registration_form
 					 $data .= '<div class="time_fields">';
 					$data .= '<select '.$this->read_only.' id="yy_'.esc_attr($this->id).'" name="'.esc_attr($this->name).'[date][yy]" class="'.esc_attr($this->addClass("input_fields",array("custom[year]"))).'" data-type="date">';
 					  $data .= '<option value="">'.esc_html(__("Year","pie-register")).'</option>';
-					  for($a=((int)date("Y") + 10);$a>=(((int)date("Y"))-100);$a--){
+					  for($a=((int)gmdate("Y") + 10);$a>=(((int)gmdate("Y"))-100);$a--){
 						  if(isset($date_this_values['date']['yy']) && $date_this_values['date']['yy'] == $a)
 						  	$sel = ' selected=""';
 						  else
 						  $sel = '';	
-						  $data .=  '<option value="'.esc_attr($a).'" '.esc_attr($sel).'>'.esc_html(__($a,"pie-register")).'</option>';
+						  $data .=  '<option value="'.esc_attr($a).'" '.esc_attr($sel).'>'.esc_html($a).'</option>';
 					  }
 					  $data .=  '</select>';
 				  $data .= '</div>';
@@ -1144,7 +1145,7 @@ class Registration_form_template extends Registration_form
 						  	$sel = ' selected=""';
 						  else
 						  $sel = '';	
-						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					  $data .=  '</select>';
 				  $data .= '</div>';
@@ -1156,7 +1157,7 @@ class Registration_form_template extends Registration_form
 						  	$sel = ' selected=""';
 						  else
 						  $sel = '';	
-						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					  $data .= '</select>';
 				  $data .= '</div>';
@@ -1173,7 +1174,7 @@ class Registration_form_template extends Registration_form
 						  	$sel = ' selected=""';
 						  else
 							  $sel = '';	
-						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					  $data .= '</select>';
 				  $data .= '</div>';
@@ -1185,19 +1186,19 @@ class Registration_form_template extends Registration_form
 						  	$sel = ' selected=""';
 						  else
 							  $sel = '';
-						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>'; 
+						  $data .=  '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'" '.$sel.'>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>'; 
 					  }
 					  $data .=  '</select>';
 				  $data .= '</div>';
 				  	 $data .= '<div class="time_fields">';
 					$data .= '<select '.$this->read_only.' id="yy_'.esc_attr($this->id).'" name="'.esc_attr($this->name).'[date][yy]" class="'.esc_attr($this->addClass("input_fields",array("custom[year]"))).'" data-type="date">';
 					  $data .= '<option value="">'.esc_html(__("Year","pie-register")).'</option>';
-					  for($a=((int)date("Y") + 10);$a>=(((int)date("Y"))-100);$a--){
+					  for($a=((int)gmdate("Y") + 10);$a>=(((int)gmdate("Y"))-100);$a--){
 						  if(isset($date_this_values['date']['yy']) && $date_this_values['date']['yy'] == $a)
 						  	$sel = ' selected=""';
 						  else
 							  $sel = '';	
-						  $data .=  '<option value="'.esc_attr($a).'" '.esc_attr($sel).'>'.esc_html(__($a,"pie-register")).'</option>';
+						  $data .=  '<option value="'.esc_attr($a).'" '.esc_attr($sel).'>'.esc_html($a).'</option>';
 					  }
 					  $data .=  '</select>';
 				  $data .= '</div>';
@@ -1301,7 +1302,7 @@ class Registration_form_template extends Registration_form
 			$cookie = 'registration';
 		}
 		$data = '<div class="fieldset">'.wp_kses_post($this->addLabel());
-		$operator = rand(0,1);
+		$operator = wp_rand(0,1);
 		////1 for add(+)
 		////0 for subtract(-)
 		$data = "";
@@ -1339,16 +1340,16 @@ class Registration_form_template extends Registration_form
 				if($this->pageBreak_prev_label == '')
 					$this->pageBreak_prev_label = "Previous";
 					
-				$data .= '<input class="pie_prev" name="pie_prev" id="pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(__($this->pageBreak_prev_label,"pie-register")).'" />';
+				$data .= '<input class="pie_prev" name="pie_prev" id="pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(($this->pageBreak_prev_label)).'" />';
 			}			
 			$data .= '<input id="pie_prev_'.esc_attr($this->pages).'_curr" name="page_no" type="hidden" value="'.esc_attr($this->pages-1).'" />';						
 		}
 		
-		$data .= '<input name="pie_submit" class="pie_submit" type="submit" value="'.esc_attr(__($this->field['text'],"pie-register")).'" />';		// stripe_changes	
+		$data .= '<input name="pie_submit" class="pie_submit" type="submit" value="'.esc_attr(($this->field['text'])).'" />';		// stripe_changes	
 		
 		if($this->field['reset']==1)
 		{
-			$data .= '<input name="pie_reset" type="reset" value="'.esc_attr(__($this->field['reset_text'],"pie-register")).'" />';
+			$data .= '<input name="pie_reset" type="reset" value="'.esc_attr(($this->field['reset_text'])).'" />';
 		}
 		
 		$data .= wp_kses_post($this->addDesc());
@@ -1391,7 +1392,7 @@ class Registration_form_template extends Registration_form
 			
 			if($this->pageBreak_prev_type == "text")
 			{
-				$data .= '<input class="pie_prev" name="pie_prev" id="'.esc_attr($cl).'pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(__($this->pageBreak_prev_label,"pie-register")).'" />';	
+				$data .= '<input class="pie_prev" name="pie_prev" id="'.esc_attr($cl).'pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(($this->pageBreak_prev_label)).'" />';	
 			}
 			else if($this->pageBreak_prev_type == "url")
 			{
@@ -1412,7 +1413,7 @@ class Registration_form_template extends Registration_form
 		$data .= '<input id="'.esc_attr($cl).'pie_next_'.esc_attr($this->pages).'_curr" name="page_no" type="hidden" value="'.esc_attr($this->pages+1).'" />';	
 		if($this->field['next_button']=="text")
 		{
-			$data .= '<input class="'.esc_attr($cl).'pie_next" name="pie_next" id="'.esc_attr($cl).'pie_next_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(__($this->field['next_button_text'],"pie-register")).'" />';
+			$data .= '<input class="'.esc_attr($cl).'pie_next" name="pie_next" id="'.esc_attr($cl).'pie_next_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(($this->field['next_button_text'])).'" />';
 		}
 		else if($this->field['next_button']=="url")
 		{
@@ -1678,7 +1679,7 @@ class Registration_form_template extends Registration_form
 					$widget = (isset($fromwidget) && $fromwidget == true)? '_widget' : '';
 					$pie_reg_fields .= '<input class="prMinimumPasswordStrengthlength" type="hidden" id="password_strength_meter_'.esc_attr($id).'" data-id="'.esc_attr($id).'" value="'.esc_attr((isset($this->field['restrict_strength']))?intval($this->field['restrict_strength']):0).'" />';
 					//Weak Password	
-					$strength_message = ((isset($this->field['strength_message']) && !empty($this->field['strength_message']))?esc_html__($this->field['strength_message'],"pie-register"):esc_html__("Weak Password","pie-register"));
+					$strength_message = ((isset($this->field['strength_message']) && !empty($this->field['strength_message']))?esc_html($this->field['strength_message']):esc_html("Weak Password"));
                     $pie_reg_fields .= '<span class="prMinimumPasswordStrengthMessage" id="password_strength_message_'.esc_attr($id).'" style="display:none;">'.esc_html($strength_message).'</span>';
 				}
 	
@@ -1695,7 +1696,7 @@ class Registration_form_template extends Registration_form
 					$widget_style = (isset($fromwidget) && $fromwidget == true)? 'display: none;' : 'visibility: hidden;';
 					$pie_reg_fields .=  '<div id="password_meter" class="fieldset">';
 					$pie_reg_fields .=  '<label style="'.esc_attr($widget_style).'">'.esc_html(__("Password not entered","pie-register")).'</label>';
-					$pie_reg_fields .=  '<div id="piereg_passwordStrength'.esc_attr($widget).'" class="piereg_pass prPasswordStrengthMeter" >'.esc_html__($update['pass_strength_indicator_label'],"pie-register").'</div>';
+					$pie_reg_fields .=  '<div id="piereg_passwordStrength'.esc_attr($widget).'" class="piereg_pass prPasswordStrengthMeter" >'.esc_html($update['pass_strength_indicator_label']).'</div>';
 					$pie_reg_fields .=  '</div>';
 					$pie_reg_fields .=  '</li>';
 

@@ -1,4 +1,8 @@
 <?php 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 

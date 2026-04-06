@@ -22,17 +22,7 @@ class Pie_Custom_Role_Table extends WP_List_Table
     private function get_sql_results()
     {
         global $wpdb;
-        $args = array( "`id`", "`role_key`", "`role_name`","`wp_role_name`" ); 
-        
-        $sql_select = implode( ', ', $args );
-		$prefix=$wpdb->prefix."pieregister_";
-        $roletable=$prefix."custom_user_roles";
-        $order_by = "`id` DESC";
-
-        $query = $wpdb->prepare("SELECT $sql_select,%s as `action` FROM `$roletable` ORDER BY $order_by",  "action");
-        
-        $sql_results = $wpdb->get_results( $query );
-		
+        $sql_results = $wpdb->get_results( $wpdb->prepare("SELECT `id`, `role_key`, `role_name`, `wp_role_name`, %s as `action` FROM `{$wpdb->prefix}pieregister_custom_user_roles` ORDER BY `id` DESC", "action") );
         return $sql_results;
     }
     public function search_box($text, $input_id)

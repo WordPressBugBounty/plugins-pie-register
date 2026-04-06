@@ -14,10 +14,10 @@ if(!class_exists("Login_form_template"))
 		function add_username(){
 			$form_data = '<div class="fieldset">';
 			if(isset($this->pr_option['login_username_label']) && !empty($this->pr_option['login_username_label'])){
-					$form_data .= '<label for="user_login">'.esc_html((isset($this->pr_option['login_username_label']) && !empty($this->pr_option['login_username_label']))? __($this->pr_option['login_username_label'],"pie-register") : __("Username","pie-register")) .'</label>';
+					$form_data .= '<label for="user_login">'.esc_html((isset($this->pr_option['login_username_label']) && !empty($this->pr_option['login_username_label']))? esc_attr($this->pr_option['login_username_label']) : __("Username","pie-register")) .'</label>';
 			}
 			$user_name_val = ((isset($_POST['log']) && !empty($_POST['log']))? sanitize_user($_POST['log']):"");
-			$form_data .= '<input placeholder="'.((isset($this->pr_option['login_username_placeholder']) && !empty($this->pr_option['login_username_placeholder']))? esc_attr(__($this->pr_option['login_username_placeholder'],"pie-register")) : "").'" type="text" value="'.esc_attr($user_name_val).'" class="input input_fields piereg_validate[required]" id="user_login" name="log">';
+			$form_data .= '<input placeholder="'.((isset($this->pr_option['login_username_placeholder']) && !empty($this->pr_option['login_username_placeholder']))? esc_attr($this->pr_option['login_username_placeholder']) : "").'" type="text" value="'.esc_attr($user_name_val).'" class="input input_fields piereg_validate[required]" id="user_login" name="log">';
 			$form_data .= '</div>';
 			return $form_data;
 		}
@@ -26,9 +26,9 @@ if(!class_exists("Login_form_template"))
 			$form_data = '<div class="fieldset">';
 			$form_data .= '<div class="password_field">';
 			if(isset($this->pr_option['login_password_label']) && !empty($this->pr_option['login_password_label'])){
-				$form_data .= '<label for="user_pass">'.esc_html((isset($this->pr_option['login_password_label']) && !empty($this->pr_option['login_password_label']))? __($this->pr_option['login_password_label'],"pie-register") : __("Password","pie-register")).'</label>';
+				$form_data .= '<label for="user_pass">'.esc_html((isset($this->pr_option['login_password_label']) && !empty($this->pr_option['login_password_label']))? esc_html($this->pr_option['login_password_label']) : __("Password","pie-register")).'</label>';
 			}
-			$form_data .= '<input placeholder="'.((isset($this->pr_option['login_password_placeholder']) && !empty($this->pr_option['login_password_placeholder']))? esc_attr(__($this->pr_option['login_password_placeholder'],"pie-register")) : "").'" type="password" value="" class="input input_fields piereg_validate[required]" id="user_pass" name="pwd">';
+			$form_data .= '<input placeholder="'.((isset($this->pr_option['login_password_placeholder']) && !empty($this->pr_option['login_password_placeholder']))? esc_attr($this->pr_option['login_password_placeholder']) : "").'" type="password" value="" class="input input_fields piereg_validate[required]" id="user_pass" name="pwd">';
 			$form_data .= '<span class="show-hide-password-innerbtn pass-eye-login eye"></span>';
 			$form_data .= '</div>';
 			$form_data .= '</div>';
@@ -63,7 +63,7 @@ if(!class_exists("Login_form_template"))
 			$form_data .= '</p>';
 			if(isset($pagenow) && $pagenow == 'wp-login.php' ){
 				$form_data .= '<p id="backtoblog">';
-					$form_data .= '<a title="'.esc_attr__("Are you lost?","pie-register").'" href="'.esc_url(get_bloginfo("url")).'">&larr;'.esc_html__(" Back to ".get_bloginfo("name"),"pie-register").'</a>';
+					$form_data .= '<a title="'.esc_attr__("Are you lost?","pie-register").'" href="'.esc_url(get_bloginfo("url")).'">&larr;'.esc_html(" Back to ".get_bloginfo("name")).'</a>';
 				$form_data .= '</p>';
 			}
 			

@@ -102,7 +102,7 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 							?>" class="item-move-down" aria-label="<?php esc_attr_e( 'Move down', "pie-register" ) ?>">&#8595;</a>
 						</span>
 						<a class="item-edit" id="edit-<?php echo esc_attr($item_id); ?>" href="<?php
-							echo ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . intval($item_id) ) ) );
+							echo esc_url( ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . intval($item_id) ) ) ) );
 						?>" aria-label="<?php esc_attr_e( 'Edit menu item', "pie-register" ); ?>"><span class="screen-reader-text"><?php esc_html_e( 'Edit', "pie-register" ); ?></span></a>
 					</span>
 				</div>
@@ -169,7 +169,7 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 						<p class="link-to-original">
 							<?php 
 							// translators: %s is replaced by the original title with a hyperlink
-							printf( __('Original: %s', "pie-register" ), '<a href="' . esc_url( $item->url ) . '">' . esc_html( $original_title ) . '</a>' ); ?>
+							echo wp_kses( sprintf( __('Original: %s', "pie-register" ), '<a href="' . esc_url( $item->url ) . '">' . esc_html( $original_title ) . '</a>' ), array( 'a' => array( 'href' => array() ) ) ); ?>
 						</p>
 					<?php endif; ?>
 					<a class="item-delete submitdelete deletion" id="delete-<?php echo esc_attr($item_id); ?>" href="<?php

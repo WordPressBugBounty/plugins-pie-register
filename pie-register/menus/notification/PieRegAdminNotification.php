@@ -1,4 +1,8 @@
 <?php 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 $piereg_base   = new PieReg_Base();
 $piereg        = $piereg_base->get_pr_global_options();
 $piereg_forms  = $piereg_base->get_pr_forms_info();

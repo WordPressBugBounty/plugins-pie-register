@@ -4,7 +4,7 @@
 <div class="pieregister-admin">
 <div class="pie_restrictions_area">
     <div class="settings pad_bot_none">
-        <h2 class="headingwidth"><?php _e("User Control",'pie-register') ?></h2>
+        <h2 class="headingwidth"><?php esc_html_e("User Control",'pie-register') ?></h2>
         <div id="piereg-detailed-guide-link">
           <a target="_blank" href="https://pieregister.com/documentation/user-control/"><?php esc_html_e("Learn how to Control Users","pie-register"); ?></a>
         </div>  

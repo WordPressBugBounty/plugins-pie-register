@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 if( file_exists( dirname(__FILE__) . '/base.php') ) 
 	require_once('base.php');
 
@@ -166,12 +170,12 @@ class Edit_form extends PieReg_Base
 							$keys_array = array("reset_email_key"=>$email_key);
 							$email_slug = "email_edit_verification";
 							$user_email_address = sanitize_email($this->pie_post_array['e_mail']);
-							$email_edit_success_msg = "Use the link sent to your email to verify and apply the change.";
+							$email_edit_success_msg = __( 'Use the link sent to your email to verify and apply the change.', 'pie-register' );
 						}elseif(intval($global_options['email_edit_verification_step']) == "2"){
 							$keys_array = array("confirm_current_email_key"=>$email_key);
 							$email_slug = "current_email_verification";
 							$user_email_address = sanitize_email($this->user->data->user_email);
-							$email_edit_success_msg = "Please confirm the link sent to your current Email to verify and make the change applied!";
+							$email_edit_success_msg = __( 'Please confirm the link sent to your current Email to verify and make the change applied!', 'pie-register' );
 						}
 						/*
 							*	Email send snipt
@@ -180,7 +184,7 @@ class Edit_form extends PieReg_Base
 						$subject 		= $this->filterSubject($this->user->data->user_login,$subject);
 						$message_temp = "";
 						if($global_options["user_formate_email_{$email_slug}"] == "0"){
-							$message_temp	= nl2br(strip_tags($global_options["user_message_email_{$email_slug}"]));
+							$message_temp	= nl2br(wp_strip_all_tags($global_options["user_message_email_{$email_slug}"]));
 						}else{
 							$message_temp	= $global_options["user_message_email_{$email_slug}"];
 						}
@@ -219,7 +223,7 @@ class Edit_form extends PieReg_Base
 						$this->pie_post_array['e_mail'] = $this->user->data->user_email;
 						
 						if(!$error_sending_email):
-							$this->pie_post_array['success'] = __($email_edit_success_msg,"pie-register");
+							$this->pie_post_array['success'] = $email_edit_success_msg;
 						else:
 							$this->pie_post_array['success'] = "";
 						endif;

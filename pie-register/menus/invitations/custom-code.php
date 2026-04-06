@@ -1,3 +1,9 @@
+<?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+?>
 <form method="post" action="">
   <?php if( function_exists( 'wp_nonce_field' )) wp_nonce_field( 'piereg_wp_invitation_code_nonce','piereg_invitation_code_nonce'); ?>
   <ul class="bg-white clearfix invite-form">
@@ -47,7 +53,13 @@
                   {
                     $roles[] = $role['name'];
                   }
-                  echo $this->createDropdown($roles,((isset($_POST['invitation_code_user_role']))?$_POST['invitation_code_user_role']:""));
+                  $selected_role = (isset($_POST['invitation_code_user_role'])) ? sanitize_text_field($_POST['invitation_code_user_role']) : "";
+                  echo wp_kses($this->createDropdown($roles, $selected_role), array(
+                      'option' => array(
+                          'value'    => array(),
+                          'selected' => array(),
+                      ),
+                  ));
               ?>
             </select>
             <span data-available="(Available in premium version.)" style="text-align:left;" class="note pie_usage_note pro-ver pie_invitation_code_user_role_note">

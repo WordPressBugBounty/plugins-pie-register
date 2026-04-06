@@ -30,8 +30,18 @@
       <label for="alternate_login">
         <?php esc_html_e("Login Page",'pie-register') ?>
       </label>
-      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_login","name"=>"alternate_login","selected"=>$piereg['alternate_login'],"post_status"=>$post_status);         
-                wp_dropdown_pages( $args ); ?>
+      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_login","name"=>"alternate_login","selected"=>$piereg['alternate_login'],"post_status"=>$post_status, "echo" => 0);         
+                echo wp_kses(wp_dropdown_pages( $args ), array(
+                    'select' => array(
+                        'name' => array(),
+                        'id' => array(),
+                        'class' => array(),
+                    ),
+                    'option' => array(
+                        'value' => array(),
+                        'selected' => array(),
+                    ),
+                )); ?>
       <span class="quotation">
       <?php esc_html_e("This page must contain the Pie Register Login form short code.",'pie-register') ?>
       </span> </div>
@@ -39,8 +49,18 @@
       <label for="alternate_register">
         <?php esc_html_e("Registration Page",'pie-register') ?>
       </label>
-      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_register","name"=>"alternate_register","selected"=>$piereg['alternate_register'],"post_status"=>$post_status);         
-                wp_dropdown_pages( $args ); ?>
+      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_register","name"=>"alternate_register","selected"=>$piereg['alternate_register'],"post_status"=>$post_status, "echo" => 0);         
+                echo wp_kses(wp_dropdown_pages( $args ), array(
+                    'select' => array(
+                        'name' => array(),
+                        'id' => array(),
+                        'class' => array(),
+                    ),
+                    'option' => array(
+                        'value' => array(),
+                        'selected' => array(),
+                    ),
+                )); ?>
       <span class="quotation">
       <?php esc_html_e("This page must contain the Pie Register Registration form short code.",'pie-register') ?>
       </span> </div>
@@ -48,8 +68,18 @@
       <label for="alternate_forgotpass">
         <?php esc_html_e("Forgot Password Page",'pie-register') ?>
       </label>
-      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_forgotpass","name"=>"alternate_forgotpass","selected"=>$piereg['alternate_forgotpass'],"post_status"=>$post_status);         
-                wp_dropdown_pages( $args ); ?>
+      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_forgotpass","name"=>"alternate_forgotpass","selected"=>$piereg['alternate_forgotpass'],"post_status"=>$post_status, "echo" => 0);         
+                echo wp_kses(wp_dropdown_pages( $args ), array(
+                    'select' => array(
+                        'name' => array(),
+                        'id' => array(),
+                        'class' => array(),
+                    ),
+                    'option' => array(
+                        'value' => array(),
+                        'selected' => array(),
+                    ),
+                )); ?>
       <span class="quotation">
       <?php esc_html_e("This page must contain the Pie Register Forgot Password form short code.",'pie-register') ?>
       </span> </div>
@@ -57,8 +87,18 @@
       <label for="alternate_profilepage">
         <?php esc_html_e("Profile Page",'pie-register') ?>
       </label>
-      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_profilepage","name"=>"alternate_profilepage","selected"=>$piereg['alternate_profilepage'],"post_status"=>$post_status);         
-                wp_dropdown_pages( $args ); ?>
+      <?php  $args =  array("show_option_no_change"=>"-- Please select one --","id"=>"alternate_profilepage","name"=>"alternate_profilepage","selected"=>$piereg['alternate_profilepage'],"post_status"=>$post_status, "echo" => 0);         
+                echo wp_kses(wp_dropdown_pages( $args ), array(
+                    'select' => array(
+                        'name' => array(),
+                        'id' => array(),
+                        'class' => array(),
+                    ),
+                    'option' => array(
+                        'value' => array(),
+                        'selected' => array(),
+                    ),
+                )); ?>
       <span class="quotation">
       <?php esc_html_e("This page must contain the Pie Register Profile section short code.",'pie-register') ?>
       </span> </div>
@@ -84,8 +124,8 @@
         <?php endforeach; ?>
         <option value="" disabled> ---- Posts ---- </option>
         <?php foreach( $posts as $post ) : setup_postdata($post); ?>
-          <option class="level-0" value="<?php echo esc_attr($post->ID); ?>" <?php if($post->ID == $piereg['after_login']){ echo "selected"; } ?>>
-            <?php esc_html(the_title()); ?>
+          <option class="level-0" value="<?php echo esc_attr($post->ID); ?>" <?php selected($post->ID == $piereg['after_login']); ?>>
+            <?php echo esc_html(get_the_title($post)); ?>
           </option>
         <?php endforeach; ?>
         <option value="url" <?php if('url' == $piereg['after_login']){ echo "selected"; } ?>>&lt;URL&gt;</option>
@@ -110,7 +150,7 @@
         <option value="" disabled> ---- Posts ---- </option>
         <?php foreach( $posts as $post ) : setup_postdata($post); ?>
           <option class="level-0" value="<?php echo esc_attr($post->ID); ?>" <?php if($post->ID == $piereg['alternate_logout']){ echo "selected"; } ?>>
-            <?php esc_html(the_title()); ?>
+            <?php echo esc_html(get_the_title()); ?>
           </option>
         <?php endforeach; ?>
         <option value="url" <?php if('url' == $piereg['alternate_logout']){ echo "selected"; } ?>>&lt;URL&gt;</option>

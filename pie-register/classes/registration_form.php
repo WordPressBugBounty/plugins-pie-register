@@ -1,4 +1,9 @@
 <?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 if( file_exists( dirname(__FILE__) . '/base.php') ) 
 	require_once('base.php');
 
@@ -711,8 +716,7 @@ class Registration_form extends PieReg_Base
 	function get_usermeta_id_by_key($user_id, $meta_key)
 	{
 		global $wpdb;
-		$sql = "SELECT * FROM {$wpdb->prefix}usermeta WHERE `user_id` = ".$user_id." AND `meta_key` = '".$meta_key."'";
-		$query = $wpdb->get_row( $sql, OBJECT );
+		$query = $wpdb->get_row( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}usermeta` WHERE `user_id` = %d AND `meta_key` = %s", array($user_id, $meta_key)), OBJECT );
 		return $query->umeta_id;
 	}
 }

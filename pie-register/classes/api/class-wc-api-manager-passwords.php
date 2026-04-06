@@ -25,7 +25,7 @@ class API_Manager_Example_Password_Management {
 				static $seed = '';
 			else
 				$seed = get_transient('random_seed');
-			$rnd_value = md5( uniqid(microtime() . mt_rand(), true ) . $seed );
+			$rnd_value = md5( uniqid(microtime() . wp_rand(), true ) . $seed );
 			$rnd_value .= sha1($rnd_value);
 			$rnd_value .= sha1($rnd_value . $seed);
 			$seed = md5($seed . $rnd_value);

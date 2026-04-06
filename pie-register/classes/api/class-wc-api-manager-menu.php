@@ -132,44 +132,51 @@ class Piereg_API_Manager_Example_MENU{
 					}
 					
 					switch ( $activate_results['code'] ) {
-						case '100'://api_email_text
-							$errors->add("piereg_license_error",__($activate_results['error'].". ".$activate_results['additional info'],"pie-register"));
+						case '100':
+							// translators: 1: Error message, 2: Additional info.
+							$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 							$options['activation_email'] = '';
 							$options['api_key'] = '';
 							update_option( 'piereg_api_manager_activated', 'Deactivated' );
 						break;
-						case '101'://api_key_text
-							$errors->add("piereg_license_error",__($activate_results['error'].". ".$activate_results['additional info'] ,"pie-register"));
+						case '101':
+							// translators: 1: Error message, 2: Additional info.
+							$errors->add("piereg_license_error",sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 							$options['api_key'] = '';
 							$options['activation_email'] = '';
 							update_option( 'piereg_api_manager_activated', 'Deactivated' );
 						break;
-						case '102'://api_key_purchase_incomplete_text
-							$errors->add("piereg_license_error",__($activate_results['error'].". " .$activate_results['additional info'] ,"pie-register"));
+						case '102':
+							// translators: 1: Error message, 2: Additional info.
+							$errors->add("piereg_license_error",sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 							$options['api_key'] = '';
 							$options['activation_email'] = '';
 							update_option( 'piereg_api_manager_activated', 'Deactivated' );
 						break;
-						case '103'://api_key_exceeded_text
-								$errors->add("piereg_license_error",__($activate_results['error']. ". " .$activate_results['additional info'],"pie-register"));
+						case '103':
+								// translators: 1: Error message, 2: Additional info.
+								$errors->add("piereg_license_error",sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 								$options['api_key'] = '';
 								$options['activation_email'] = '';
 								update_option( 'piereg_api_manager_activated', 'Deactivated' );
 						break;
-						case '104'://api_key_not_activated_text
-								$errors->add("piereg_license_error",__($activate_results['error']. ". ".$activate_results['additional info'],"pie-register"));
+						case '104':
+								// translators: 1: Error message, 2: Additional info.
+								$errors->add("piereg_license_error",sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 								$options['api_key'] = '';
 								$options['activation_email'] = '';
 								update_option( 'piereg_api_manager_activated', 'Deactivated' );
 						break;
-						case '105'://api_key_invalid_text
-								$errors->add("piereg_license_error",__($activate_results['error'],"pie-register"));
+						case '105':
+								// translators: 1: Error message, 2: Additional info.
+								$errors->add("piereg_license_error",sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 								$options['api_key'] = '';
 								$options['activation_email'] = '';
 								update_option( 'piereg_api_manager_activated', 'Deactivated' );
 						break;
-						case '106'://sub_not_active_text
-								$errors->add("piereg_license_error",__($activate_results['error']. ". ".$activate_results['additional info'] ,"pie-register"));
+						case '106':
+								// translators: 1: Error message, 2: Additional info.
+								$errors->add("piereg_license_error",sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 								$options['api_key'] = '';
 								$options['activation_email'] = '';
 								update_option( 'piereg_api_manager_activated', 'Deactivated' );
@@ -244,36 +251,42 @@ class Piereg_API_Manager_Example_MENU{
 
 						switch ( $activate_results['code'] ) {
 							case '100':
-								$errors->add("piereg_license_error",__($activate_results['error'].". ".$activate_results['additional info'],"pie-register"));
+								// translators: 1: Error message, 2: Additional info.
+								$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 								
 							break;
 							case '101':
-								$errors->add("piereg_license_error",__($activate_results['error'].". ".$activate_results['additional info'] ,"pie-register"));
-								
+								// translators: 1: Error message, 2: Additional info.
+								$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 							break;
 							case '102':
-								
-								$errors->add("piereg_license_error",__($activate_results['error'].". " .$activate_results['additional info'] ,"pie-register"));
-								
+									// translators: 1: Error message, 2: Additional info.
+									$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
+
 							break;
 							case '103':
-									$errors->add("piereg_license_error",__($activate_results['error']. ". " .$activate_results['additional info'],"pie-register"));
+									// translators: 1: Error message, 2: Additional info.
+									$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 									
 							break;
 							case '104':
-									$errors->add("piereg_license_error",__($activate_results['error']. ". ".$activate_results['additional info'],"pie-register"));
+									// translators: 1: Error message, 2: Additional info.
+									$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 									
 							break;
 							case '105':
-									$errors->add("piereg_license_error",__($activate_results['error'],"pie-register"));
+									// translators: 1: Error message, 2: Additional info.
+									$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 									
 							break;
 							case '106':
-									$errors->add("piereg_license_error",__($activate_results['error']. ". ".$activate_results['additional info'] ,"pie-register"));
+									// translators: 1: Error message, 2: Additional info.
+									$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 									
 							break;
 							case '107':
-									$errors->add("piereg_license_error",__($activate_results['error']. ". ".$activate_results['additional info'] ,"pie-register"));
+									// translators: 1: Error message, 2: Additional info.
+									$errors->add("piereg_license_error", sprintf( __( '%1$s. %2$s', 'pie-register' ), $activate_results['error'], $activate_results['additional info'] ));
 									
 							break;
 						}

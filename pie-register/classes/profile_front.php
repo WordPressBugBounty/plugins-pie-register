@@ -1,4 +1,9 @@
 <?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 if( file_exists( dirname(__FILE__) . '/base.php') ) 
 	require_once('base.php');
 class Profile_front extends PieReg_Base
@@ -33,7 +38,7 @@ class Profile_front extends PieReg_Base
 
     function addLabel()
     {
-        return '<label for="' . esc_attr($this->id) . '">' . esc_html__($this->field['label'],"pie-register") . '</label>';
+        return '<label for="' . esc_attr($this->id) . '">' . esc_html($this->field['label']) . '</label>';
     }   
 
 	function print_user_profile($form_id = "default")

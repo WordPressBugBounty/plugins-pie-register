@@ -73,10 +73,17 @@ if(!defined("PIE_SSL_SAND_URL"))
 
 // delete payment logs file - temperorly
 $upload_dir = wp_upload_dir();
-$temp_dir = realpath($upload_dir['basedir']) . "/pie-logs/payment-log.log";
+$temp_dir = $upload_dir['basedir'] . "/pie-logs/payment-log.log";
 
-if (file_exists($temp_dir)) { // Check if file exists
-    unlink($temp_dir); // Delete the file
+if ( file_exists($temp_dir) ) { // Check if file exists
+    global $wp_filesystem;
+    if ( empty( $wp_filesystem ) ) {
+        require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        WP_Filesystem();
+    }
+    if ( $wp_filesystem ) {
+        $wp_filesystem->delete( $temp_dir );
+    }
 }
 
 
@@ -90,15 +97,29 @@ if (!file_exists($secure_log_dir)) {
 // Create .htaccess file to block access
 $htaccess_file = $secure_log_dir . '/.htaccess';
 if (!file_exists($htaccess_file)) {
+    global $wp_filesystem;
+    if ( empty( $wp_filesystem ) ) {
+        require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        WP_Filesystem();
+    }
     $htaccess_content = "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n";
     $htaccess_content .= "<IfModule !mod_authz_core.c>\nOrder allow,deny\nDeny from all\n</IfModule>\n";
-    file_put_contents($htaccess_file, $htaccess_content);
+    if ( $wp_filesystem ) {
+		$wp_filesystem->put_contents($htaccess_file, $htaccess_content, FS_CHMOD_FILE);
+	}
 }
 
 // Add an index.php file for extra security
 $index_file = $secure_log_dir . '/index.php';
 if (!file_exists($index_file)) {
-    file_put_contents($index_file, "<?php\n// Silence is golden.");
+	global $wp_filesystem;
+    if ( empty( $wp_filesystem ) ) {
+        require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        WP_Filesystem();
+    }
+	if ( $wp_filesystem ) {
+		$wp_filesystem->put_contents($index_file, "<?php\n// Silence is golden.", FS_CHMOD_FILE);
+	}
 }
 
 // Define log directory constant

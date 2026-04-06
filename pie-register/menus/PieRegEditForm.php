@@ -242,17 +242,8 @@ if( !isset($_GET['form_id']) )
 			$field['type'] = "default";	
 		}
 				
-				$data_field_id = '';
+				$data_field_id = false;
 				  switch($field['type']) :
-            //case 'username' :
-						//case 'password' :
-						//case 'email' :
-            //case 'multiselect':
-						//case 'radio':
-						//case 'checkbox':
-						//case 'pricing':
-            //case 'hidden' :
-						
             case 'text' :
 						case 'website' :
 						case 'phone':
@@ -262,7 +253,7 @@ if( !isset($_GET['form_id']) )
 						case 'custom_role':
 						case 'number':
 						case 'name':
-							$data_field_id = ' data-field_id="'.esc_attr($field['id']).'" '; // Applied conditional logic in these fields. 
+							$data_field_id = $field['id']; // Applied conditional logic in these fields. 
 						break; 
 				  endswitch;
 		
@@ -271,7 +262,7 @@ if( !isset($_GET['form_id']) )
 		 echo '<a href="javascript:;" class="edit_btn" title="'.esc_attr(__("Edit","pie-register")).'"></a>';
           ?>
               <!--Adding Label-->
-              <div class="label_position"  id="field_label_<?php echo esc_attr($field['id'])?>"  <?php echo $data_field_id; ?>>
+              <div class="label_position"  id="field_label_<?php echo esc_attr($field['id'])?>" <?php if($data_field_id) echo ' data-field_id="'.esc_attr($data_field_id).'"'; ?>>
                 <?php if( isset($field['label']) && $field['label'] == "E-mail")  { ?>
                 <label><?php echo esc_html_e("Email", "pie-register" ); ?></label>
                 <?php } else if( $field['type'] == 'terms' ) {?>
@@ -433,15 +424,12 @@ if( !isset($_GET['form_id']) )
 					$payment_gateways_html .= '<label for="allow_payment_gateways_'.esc_attr($pgKey).'" class="required piereg-payment-list"><input name="field['.esc_attr($field['id']).'][allow_payment_gateways][]" id="allow_payment_gateways_'.esc_attr($pgKey).'" value="'.esc_attr($pgKey).'" type="checkbox" '.$selected_pnl.' class="checkbox_fields">'.esc_html($pgval).'</label>';
 				}
 				
-				if( $payment_gateways_html == "" )
-				{
-					$payment_gateways_html .= "<label class='piereg-payment-list'>No payment gateway enable.</label>";	
+				if (isset($meta[$field['type']])) {
+					$output = str_replace(array("%d%", "%payment_gateways_list_box%"), array($field['id'], $payment_gateways_html), $meta[$field['type']]);
+					echo wp_kses($output, $this->piereg_forms_get_allowed_tags());
 				}
-				
-				echo str_replace( array("%d%","%payment_gateways_list_box%") , array($field['id'],$payment_gateways_html) , $meta[$field['type']] );
-				
-			}elseif(isset($meta[$field['type']])){
-				echo str_replace("%d%",$field['id'],$meta[$field['type']]);
+			} elseif (isset($meta[$field['type']])) {
+				echo wp_kses(str_replace("%d%", $field['id'], $meta[$field['type']]), $this->piereg_forms_get_allowed_tags());
 			}
 		  		
 		  	?>
@@ -522,15 +510,24 @@ if( !isset($_GET['form_id']) )
                   </label>
                   <?php
                     $submit_page = isset($data['submit']['page']) ? $data['submit']['page'] : '';   
-                    $args =  array("name"=>"field[submit][page]","selected"=>$submit_page);
-                    wp_dropdown_pages( $args ); 
-                  ?>
+                    $args =  array("name"=>"field[submit][page]","selected"=>$submit_page, "echo" => 0);
+                    echo wp_kses(wp_dropdown_pages($args), array(
+                        'select' => array(
+                            'name' => array(),
+                            'id' => array(),
+                            'class' => array(),
+                        ),
+                        'option' => array(
+                            'value' => array(),
+                            'selected' => array(),
+                        ),
+                    ));                  ?>
                 </div>
                 <div class="advance_fields submit_meta submit_meta_text">
                   <label>
                     <?php esc_html_e("Registration Success Message","pie-register"); ?>
                   </label>
-                  <textarea name="field[submit][message]" rows="8" cols="16"><?php echo stripcslashes(esc_textarea($data['submit']['message'])); ?></textarea>
+                  <textarea name="field[submit][message]" rows="8" cols="16"><?php echo esc_textarea(stripcslashes($data['submit']['message'])); ?></textarea>
                 </div>
               </div>
             </div>

@@ -34,6 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *	}
  */
 
+/*
 class API_Manager_Example_Update_API_Check {
 
 	private $upgrade_url; // URL to access the Update API Manager.
@@ -48,13 +49,6 @@ class API_Manager_Example_Update_API_Check {
 	private $plugin_or_theme; // 'theme' or 'plugin'
 	private $piereg_text_domain; // localization for translation
 
-	/**
-	 * Constructor.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @return void
-	 */
 	public function __construct( $upgrade_url, $plugin_name, $product_id, $api_key, $activation_email, $renew_license_url, $instance, $domain, $software_version, $plugin_or_theme, $piereg_text_domain ) {
 		// API data
 		$this->upgrade_url 				= $upgrade_url;
@@ -68,51 +62,13 @@ class API_Manager_Example_Update_API_Check {
 		$this->software_version 		= $software_version;
 		$this->piereg_text_domain 		= $piereg_text_domain;
 
-		/**
-		 * Flag for plugin or theme updates
-		 * @access public
-		 * @since  1.0.0
-		 * @param string, plugin or theme
-		 */
 		$this->plugin_or_theme		= $plugin_or_theme; // 'theme' or 'plugin'
 
-		/*********************************************************************
-		 * The plugin and theme filters should not be active at the same time
-		 *********************************************************************/
-
-		/**
-		 * More info:
-		 * function set_site_transient moved from wp-includes/functions.php
-		 * to wp-includes/option.php in WordPress 3.4
-		 *
-		 * set_site_transient() contains the pre_set_site_transient_{$transient} filter
-		 * {$transient} is either update_plugins or update_themes
-		 *
-		 * Transient data for plugins and themes exist in the Options table:
-		 * _site_transient_update_themes
-		 * _site_transient_update_plugins
-		 */
 
 		// uses the flag above to determine if this is a plugin or a theme update request
 		if ( $this->plugin_or_theme == 'plugin' ) {
-			/**
-			 * Plugin Updates
-			 */
-			// Check For Plugin Updates
-			add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_check' ) );
-
-			// Check For Plugin Information to display on the update details page
-			add_filter( 'plugins_api', array( $this, 'request' ), 10, 3 );
 
 		} else if ( $this->plugin_or_theme == 'theme' ) {
-			/**
-			 * Theme Updates
-			 */
-			// Check For Theme Updates
-			add_filter( 'pre_set_site_transient_update_themes', array( $this, 'update_check' ) );
-
-			// Check For Theme Information to display on the update details page
-			//add_filter( 'themes_api', array( $this, 'request' ), 10, 3 );
 
 		}
 
@@ -125,14 +81,6 @@ class API_Manager_Example_Update_API_Check {
 		return $upgrade_url . '&' . http_build_query( $args );
 	}
 
-	/**
-	 * Check for updates against the remote server.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @param  object $transient
-	 * @return object $transient
-	 */
 	public function update_check( $transient ) {
 
 		if( empty( $transient->checked ) )	return $transient;
@@ -242,13 +190,6 @@ class API_Manager_Example_Update_API_Check {
 		return $transient;
 	}
 
-	/**
-	 * Sends and receives data to and from the server API
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @return object $response
-	 */
 	public function plugin_information( $args ) {
 
 		$target_url = $this->create_upgrade_api_url( $args );
@@ -260,15 +201,6 @@ class API_Manager_Example_Update_API_Check {
 
 		$response = unserialize( wp_remote_retrieve_body( $request ) );
 
-		/**
-		 * For debugging errors from the API
-		 * For errors like: unserialize(): Error at offset 0 of 170 bytes
-		 * Comment out $response above first
-		 */
-		// $response = wp_remote_retrieve_body( $request );
-		// print_r($response); exit;
-
-
 		if( is_object( $response ) ) {
 			return $response;
 		} else {
@@ -276,24 +208,16 @@ class API_Manager_Example_Update_API_Check {
 		}
 	}
 
-	/**
-	 * Generic request helper.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @param  array $args
-	 * @return object $response or boolean false
-	 */
 	public function request( $false, $action, $args ) {
 
 		// Is this a plugin or a theme?
 		if ( $this->plugin_or_theme == 'plugin' ) {
 
-			$version = get_site_transient( 'update_plugins' );
+			$version = get_site_transient( 'deprecated_upd_p' );
 
 		} else if ( $this->plugin_or_theme == 'theme' ) {
 
-			$version = get_site_transient( 'update_themes' );
+			$version = get_site_transient( 'deprecated_upd_t' );
 
 		}
 
@@ -384,11 +308,6 @@ class API_Manager_Example_Update_API_Check {
 
 	}
 
-	/**
-	 * Display license expired error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function expired_license_error_notice( $message ){
 
 		$plugins = get_plugins();
@@ -396,62 +315,73 @@ class API_Manager_Example_Update_API_Check {
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
 		// translators: %1$s represents the plugin name, and %2$s represents the URL to the dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The license key for %1$s has expired. You can reactivate or purchase another license key from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
-
+		echo sprintf(
+		wp_kses_post(
+			// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
+			__(
+				'<div id="message" class="error"><p>The license key for %1$s has expired. You can reactivate or purchase another license key from your account <a href="%2$s" target="_blank">dashboard</a>.</p></div>',
+				'pie-register'
+			)
+		),
+		esc_html( $plugin_name ),
+		esc_url( $this->renew_license_url )
+	);
 	}
 
-	/**
-	 * Display subscription on-hold error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function on_hold_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s is on-hold. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+			__(
+				'The subscription for %1$s is on-hold. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.',
+				'pie-register'
+			),
+			esc_html( $plugin_name ),
+			esc_url( $this->renew_license_url )
+		);
 
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display subscription cancelled error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function cancelled_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been cancelled. You can renew the subscription from your account <a href="%2$s" target="_blank">dashboard</a>. A new license key will be emailed to you after your order has been processed.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+    __(
+        'The subscription for %1$s has been cancelled. You can renew the subscription from your account <a href="%2$s" target="_blank">dashboard</a>. A new license key will be emailed to you after your order has been processed.',
+		'pie-register'
+    ),
+    esc_html( $plugin_name ),
+    esc_url( $this->renew_license_url )
+);
+
+echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display subscription expired error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function expired_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has expired. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+			__(
+				'The subscription for %1$s has expired. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.',
+				'pie-register'
+			),
+			esc_html( $plugin_name ),
+			esc_url( $this->renew_license_url )
+		);
 
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display subscription expired error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function suspended_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
@@ -459,121 +389,148 @@ class API_Manager_Example_Update_API_Check {
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
 		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been suspended. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+		__(
+			'The subscription for %1$s has been suspended. You can reactivate the subscription from your account <a href="%2$s" target="_blank">dashboard</a>.',
+			'pie-register'
+		),
+		esc_html( $plugin_name ),
+		esc_url( $this->renew_license_url )
+		);
 
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display subscription expired error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function pending_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been moved to the trash bin and will be deleted soon. You can purchase a new subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+			__(
+				'The subscription for %1$s has been moved to the trash bin and will be deleted soon. You can purchase a new subscription from your account <a href="%2$s" target="_blank">dashboard</a>.',
+				'pie-register'
+			),
+			esc_html( $plugin_name ),
+			esc_url( $this->renew_license_url )
+		);
 
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display subscription expired error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function trash_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'The subscription for %1$s has been placed in the trash and will be deleted soon. You can purchase a new subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+    __(
+        'The subscription for %1$s has been placed in the trash and will be deleted soon. You can purchase a new subscription from your account <a href="%2$s" target="_blank">dashboard</a>.',
+        'pie-register'
+    ),
+    esc_html( $plugin_name ),
+    esc_url( $this->renew_license_url )
+);
 
+echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display subscription expired error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function no_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'A subscription for %1$s could not be found. You can purchase a subscription from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+			__(
+				'A subscription for %1$s could not be found. You can purchase a subscription from your account <a href="%2$s" target="_blank">dashboard</a>.',
+				'pie-register'
+			),
+			esc_html( $plugin_name ),
+			esc_url( $this->renew_license_url )
+		);
+
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 
 	}
 
-	/**
-	 * Display missing key error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function no_key_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, %2$s is the plugin name again, and %3$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'A license key for %1$s could not be found. Verify that a license key was entered when setting up %2$s, and that the key is not deactivated in your account. You can reactivate or purchase a license key from your account <a href="%3$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+			__(
+				'A license key for %1$s could not be found. Verify that a license key was entered when setting up %2$s, and that the key is not deactivated in your account. You can reactivate or purchase a license key from your account <a href="%3$s" target="_blank">dashboard</a>.',
+				'pie-register'
+			),
+			esc_html( $plugin_name ),
+			esc_html( $plugin_name ),
+			esc_url( $this->renew_license_url )
+		);
 
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display missing download permission revoked error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function download_revoked_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'Download permission for %1$s has been revoked. Possibly  because the license key or subscription has expired. You can reactivate or purchase a license key from your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+    __(
+        'Download permission for %1$s has been revoked. Possibly because the license key or subscription has expired. You can reactivate or purchase a license key from your account <a href="%2$s" target="_blank">dashboard</a>.',
+        'pie-register'
+    ),
+    esc_html( $plugin_name ),
+    esc_url( $this->renew_license_url )
+);
 
+echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 	}
 
-	/**
-	 * Display no activation error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function no_activation_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( '%1$s has not been activated. Go to the settings page and enter the license key and license email to activate %2$s.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_html($plugin_name) ) ;
+		$message = sprintf(
+			__(
+				'%1$s has not been activated. Go to the settings page and enter the license key and license email to activate %2$s.',
+				'pie-register'
+			),
+			esc_html( $plugin_name ),
+			esc_html( $plugin_name )
+		);
+
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 
 	}
 
-	/**
-	 * Display switched activation error notice
-	 * @param  string $message
-	 * @return void
-	 */
 	public function switched_subscription_error_notice( $message ){
 
 		$plugins = get_plugins();
 
 		$plugin_name = isset( $plugins[$this->plugin_name] ) ? $plugins[$this->plugin_name]['Name'] : $this->plugin_name;
 
-		// translators: %1$s is the plugin name, and %2$s is the URL to the account dashboard.
-		echo sprintf( '<div id="message" class="error"><p>' . __( 'You changed the subscription for %1$s, please enter a new API License Key on the settings page. The License Key was sent to your email. If you have not received it, you can get it by logging into your account <a href="%2$s" target="_blank">dashboard</a>.', $this->piereg_text_domain ) . '</p></div>', esc_html($plugin_name), esc_url($this->renew_license_url) ) ;
+		$message = sprintf(
+			__(
+				'You changed the subscription for %1$s, please enter a new API License Key on the settings page. The License Key was sent to your email. If you have not received it, you can get it by logging into your account <a href="%2$s" target="_blank">dashboard</a>.',
+				'pie-register'
+			),
+			esc_html( $plugin_name ),
+			esc_url( $this->renew_license_url )
+		);
+
+		echo '<div id="message" class="error"><p>' . wp_kses_post( $message ) . '</p></div>';
 
 	}
 
 
 } // End of class
+*/

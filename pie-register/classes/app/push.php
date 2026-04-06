@@ -1,5 +1,8 @@
 <?php
- 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+} 
 /**
  * @author PIE REGISTER
  * @link pieregister.com
@@ -49,7 +52,7 @@ class Pie_App_Push {
         $res['data']['message'] = $this->message;
         $res['data']['image'] = $this->image;
         $res['data']['payload'] = $this->data;
-        $res['data']['timestamp'] = date('Y-m-d G:i:s');
+        $res['data']['timestamp'] = gmdate('Y-m-d G:i:s');
         return $res;
     }
  

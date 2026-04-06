@@ -378,15 +378,13 @@ class Pie_api extends PieReg_Base {
             $date               = $value->expiry_date;
             
             if($this->piereg_pro_is_activate && $date != "0000-00-00"){
-              $expiry_date        = date( "M d, Y", strtotime( $date ) );
+              $expiry_date        = gmdate( "M d, Y", strtotime( $date ) );
             }else{
               $expiry_date = "0000-00-00";
             }
   
               
-              $prefix     = $wpdb->prefix."pieregister_";
-              $emailtable = $prefix."invite_code_emails";
-              $results    = $wpdb->get_results("SELECT `*` FROM ".$emailtable." WHERE code_id=".$value->id);
+              $results    = $wpdb->get_results($wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_invite_code_emails` WHERE code_id=%d", array($value->id)));
               $email_sent = array();
               
               $total_emails_sent = $wpdb->num_rows;
@@ -744,7 +742,7 @@ class Pie_api extends PieReg_Base {
             
             $udata            = get_userdata( $user_id );
             $registered       = $udata->user_registered;
-            $date             = date( "d M Y", strtotime( $registered ) );
+            $date             = gmdate( "d M Y", strtotime( $registered ) );
 
             $data['data'][]  =   array(
                       'user_id'               => $user_id,
@@ -997,12 +995,10 @@ class Pie_api extends PieReg_Base {
               global $wpdb;
               $prefix = $wpdb->prefix."pieregister_";
               $invite_code_emails_table_name = $prefix."invite_code_emails";
-              $invite_code_table_name        = $prefix."code";
-              //var_dump($invite_code);
-              $code_id = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM ".$invite_code_table_name." WHERE name=%s", esc_sql(htmlentities($invite_code)) ) );
+              $code_id = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}pieregister_code` WHERE name=%s", array(htmlentities($invite_code)) ) );
               $code_id = (int)$code_id[0]->id;
   
-              $add_address = $wpdb->query($wpdb->prepare("INSERT INTO ".$invite_code_emails_table_name." (`code_id`,`email_address`)VALUES(%s,%s)", $code_id, $email));
+              $add_address = $wpdb->query($wpdb->prepare("INSERT INTO `{$wpdb->prefix}pieregister_invite_code_emails` (`code_id`,`email_address`) VALUES (%d,%s)", array($code_id, $email)));
   
                $data['message'][] = $email;							
              } else {
@@ -1199,16 +1195,10 @@ class Pie_api extends PieReg_Base {
 
         $prefix = $wpdb->prefix . "pieregister_";
         $codetable  = $prefix."code";
-        $order_by = "`id` DESC";
-        
         $items_per_page = 5;
         $page = isset( $_paged ) ? abs( (int) $_paged ) : 1;
         $offset = ( $page * $items_per_page ) - $items_per_page;
-
-        
-        //$list_invitation_code       = $wpdb->get_results( "SELECT * FROM $codetable" );
-        
-        $latestposts = $wpdb->get_results("SELECT * FROM $codetable ORDER BY $order_by LIMIT {$offset}, {$items_per_page}" );
+        $latestposts = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}pieregister_code` ORDER BY `id` DESC LIMIT %d, %d", array($offset, $items_per_page) ) );
         
         return $latestposts;
         
@@ -1229,7 +1219,7 @@ class Pie_api extends PieReg_Base {
         $data     = [ 'name' => $code_name, 'code_usage' => $code_usage, 'expiry_date' => $expiry_date  ]; 
         $where    = [ 'id' => $code_id ];
 
-        $codes    = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $codetable WHERE id != %s AND (BINARY `name`=%s OR `name`=%s)", $code_id, $name_lower, $name_upper) );
+        $codes    = $wpdb->get_results( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_code` WHERE id != %s AND (BINARY `name`=%s OR `name`=%s)", array($code_id, $name_lower, $name_upper)) );
 
         $counts   = count($codes);
         
@@ -1257,7 +1247,7 @@ class Pie_api extends PieReg_Base {
       $name_lower           = htmlentities( strtolower($insert_codes) );
       $name_upper           = htmlentities( strtoupper($insert_codes) );
 
-      $codes = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $codetable WHERE BINARY `name`=%s OR `name`=%s" , $name_lower, $name_upper) );
+      $codes = $wpdb->get_results( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_code` WHERE BINARY `name`=%s OR `name`=%s" , array($name_lower, $name_upper)) );
       $counts = count($codes);
 
       $data   = array('created' => $date, 'modified' => $date, 'name' => $insert_codes, 'count' => $counts, 'status' => "1", "code_usage" => $usage, 'expiry_date' => $expiry);
@@ -1301,7 +1291,7 @@ class Pie_api extends PieReg_Base {
         $input_length = strlen($input);
         $random_string = '';
         for($i = 0; $i < $strength; $i++) {
-            $random_character = $input[mt_rand(0, $input_length - 1)];
+            $random_character = $input[wp_rand(0, $input_length - 1)];
             $random_string .= $random_character;
         }
      

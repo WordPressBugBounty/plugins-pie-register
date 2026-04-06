@@ -48,7 +48,7 @@
     </div>
         
         <ul class="aboutus-menu-tabs">
-            <li <?php echo ($action != "addons") ? $active :""; ?>>
+            <li <?php echo ($action != "addons") ? wp_kses_post($active) :""; ?>>
                 <a href="admin.php?page=pie-about-us"><?php esc_html_e("About Us","pie-register") ?></a>
             </li>
         </ul>

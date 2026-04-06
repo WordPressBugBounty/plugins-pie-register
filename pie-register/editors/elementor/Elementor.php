@@ -1,5 +1,8 @@
 <?php
-
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 use Elementor\Plugin as ElementorPlugin;
 /**
  * Improve Elementor Compatibility.

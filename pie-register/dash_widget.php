@@ -42,7 +42,7 @@ if( !class_exists('PieRegisterWidget') ){
 					</style>
 			</div>';
 			echo '<table width="100%" class="piereg_dash_widget" cellspacing="0" cellpaddinig="10">';
-			echo '<tr><td colspan="2" align="center"><em>'. __("Showing invitation code of currently registered users only","pie-register") .'</em></td></tr>';
+			echo '<tr><td colspan="2" align="center"><em>'. esc_html__("Showing invitation code of currently registered users only","pie-register") .'</em></td></tr>';
 			foreach($users as $user){
 				$total_users = $user->total_users;
 				$count++;

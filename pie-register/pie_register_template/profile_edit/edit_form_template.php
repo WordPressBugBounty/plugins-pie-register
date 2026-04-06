@@ -110,7 +110,7 @@ class Edit_form_template extends Edit_form
 				if( !isset( $this->field['hide_confirm_password'] ) )
 				{
 						if(!empty($this->field['label2'])) 
-							$data .= '<label>'.esc_html(__($this->field['label2'],"pie-register")).'</label>';
+							$data .= '<label>'.esc_html($this->field['label2']).'</label>';
 
 					$data .= '<div '.esc_attr($fclass).'><input id="confirm_password_'.esc_attr($this->id).'" type="password" class="input_fields prPass2 '.esc_attr($this->field['css']).' piereg_validate[equals['.esc_attr($this->id).']]" placeholder="'.esc_attr($this->field['placeholder2']).'" value="" name="confirm_password" autocomplete="off">';
 					$data .= '<span class="show-hide-password-innerbtn confirm-pass-eye-reg eye"></span>';
@@ -134,7 +134,7 @@ class Edit_form_template extends Edit_form
 			{
 				$label = $this->field['label'] === 'Password' ? 'New Password' : $this->field['label'] ;
 				$data .= '<li class="fields pageFields_'.esc_attr($this->pages).' '.esc_attr($topclass).'">';
-					$data .='<div class="fieldset">'.'<label for="'.esc_attr($this->id).'">'. esc_html(__($label,"pie-register")).'</label>';
+					$data .='<div class="fieldset">'.'<label for="'.esc_attr($this->id).'">'. esc_html($label).'</label>';
 						$data .= '<input id="'.esc_attr($this->id).'" name="password" data-field_id="piereg_field_'.esc_attr($this->no).'" class="'.esc_attr($this->addClass("input_fields",array($pass_strength))).'" placeholder="'.esc_attr($this->field['placeholder']).'" type="password" value="" autocomplete="off" >';
 						$data .= '<span class="show-hide-password-innerbtn pass-eye-update eye"></span>';
 					$data .= '</div>';
@@ -143,7 +143,7 @@ class Edit_form_template extends Edit_form
 				$data .= '<li class="fields pageFields_'.esc_attr($this->pages).' '.esc_attr($topclass).'"><div class="fieldset">';
 				if( !isset( $this->field['hide_confirm_password'] ) )
 				{
-					if(!empty($this->field['label2'])) $data .= '<label>'.esc_html(__($this->field['label2'],"pie-register")).'</label>';
+					if(!empty($this->field['label2'])) $data .= '<label>'.esc_html($this->field['label2']).'</label>';
 					$data .= '<div '.esc_attr($fclass).'><input id="confirm_password_'.esc_attr($this->id).'" type="password" class="input_fields '.esc_attr($this->field['css']).' piereg_validate[equals['.esc_attr($this->id).']]" placeholder="'.esc_attr($this->field['placeholder2']).'" value="" name="confirm_password" autocomplete="off">';
 					$data .= '<span class="show-hide-password-innerbtn confirm-pass-eye-reg eye"></span>';
 					$data .= wp_kses_post($this->addDesc());
@@ -248,7 +248,7 @@ class Edit_form_template extends Edit_form
 			$val = implode(',', $val);	
 		}
 		$data .= '<div class="fieldset">';
-		if(!empty($this->field['label'])) $data .= '<label>'.esc_html(__($this->field['label'],"pie-register")).'</label>';
+		if(!empty($this->field['label'])) $data .= '<label>'.esc_html($this->field['label']).'</label>';
 		$data .= '<input '.esc_attr($this->read_only).' id="'.esc_attr($this->id).'_firstname" data-field_id="piereg_field_'.esc_attr($this->no).'" value="'.esc_attr($val) .'" placeholder="'.esc_attr($this->field['placeholder']).'" name="first_name" class="'.esc_attr($this->addClass()).' input_fields piereg_name_input_field" '.$this->addValidation().' type="text"  />';
 		$val = get_user_meta($this->user->data->ID , "last_name", true); #get_usermeta deprecated
 		if(is_array($val)){
@@ -261,7 +261,7 @@ class Edit_form_template extends Edit_form
 		if( !isset( $this->field['hide_last_name'] ) )
 		{
 			$data .= '<div class="fieldset">';
-			if(!empty($this->field['label2'])) $data .= '<label>'.esc_html(__($this->field['label2'],"pie-register")).'</label>';
+			if(!empty($this->field['label2'])) $data .= '<label>'.esc_html($this->field['label2']).'</label>';
 			$data .= '<input '.esc_attr($this->read_only).' id="'.esc_attr($this->id).'_lastname" value="'.esc_attr($val) .'" placeholder="'.esc_attr($this->field['placeholder2']).'" name="last_name" class="'.esc_attr($this->addClass()).' input_fields piereg_name_input_field" '.$this->addValidation().' type="text"  />';
 			$data .= wp_kses_post($this->addDesc());
 			$data .= '</div>';
@@ -540,7 +540,7 @@ class Edit_form_template extends Edit_form
 			if($this->pageBreak_prev_type == "text")
 			{
 				//$data .= '<input class="pie_prev" name="pie_prev" id="'.esc_attr($cl).'pie_prev_'.esc_attr($this->pages).'" type="button" value="'.__($this->field['prev_button_text'],"pie-register").'" />';
-				$data .= '<input class="pie_prev" name="pie_prev" id="'.esc_attr($cl).'pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(__($this->pageBreak_prev_label,"pie-register")).'" />';	
+				$data .= '<input class="pie_prev" name="pie_prev" id="'.esc_attr($cl).'pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr($this->pageBreak_prev_label).'" />';	
 			}
 			else if($this->pageBreak_prev_type == "url")
 			{
@@ -561,7 +561,7 @@ class Edit_form_template extends Edit_form
 		$data .= '<input id="'.esc_attr($cl).'pie_next_'.esc_attr($this->pages).'_curr" name="page_no" type="hidden" value="'.($this->pages+1).'" />';	
 		if($this->field['next_button']=="text")
 		{
-			$data .= '<input class="'.esc_attr($cl).'pie_next" name="pie_next" id="'.esc_attr($cl).'pie_next_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(__($this->field['next_button_text'],"pie-register")).'" />';
+			$data .= '<input class="'.esc_attr($cl).'pie_next" name="pie_next" id="'.esc_attr($cl).'pie_next_'.esc_attr($this->pages).'" type="button" value="'.esc_attr($this->field['next_button_text']).'" />';
 		}
 		else if($this->field['next_button']=="url")
 		{
@@ -922,7 +922,7 @@ class Edit_form_template extends Edit_form
 					  for($a=1;$a<=12;$a++){
 					  	$data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'"';
 						$data .= (isset($val['date']['mm']) && $val['date']['mm'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						$data .= '>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					  $data .= '
 					</select>
@@ -935,7 +935,7 @@ class Edit_form_template extends Edit_form
 					  for($a=1;$a<=31;$a++){
 					  	$data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'"';
 						$data .= (isset($val['date']['dd']) && $val['date']['dd'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						$data .= '>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					$data .= '
 					</select>
@@ -944,10 +944,10 @@ class Edit_form_template extends Edit_form
 				  <div class="time_fields">
 					<select '.esc_attr($this->read_only).' id="yy_'.esc_attr($this->id).'" name="'.esc_attr($this->name).'[date][yy]" class="'.esc_attr($this->addClass("")).'" '.$this->addValidation().' data-type="date">
 					  <option value="">'.esc_html(__("Year","pie-register")).'</option>';
-					  for($a=((int)date("Y") + 10);$a>=(((int)date("Y"))-100);$a--){
+					  for($a=((int)gmdate("Y") + 10);$a>=(((int)gmdate("Y"))-100);$a--){
 					  	$data .= '<option value="'.esc_attr($a).'"';
 						$data .= (isset($val['date']['yy']) && $val['date']['yy'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.esc_html(__($a,"pie-register")).'</option>';
+						$data .= '>'.esc_html($a).'</option>';
 					  }
 					  $data .= '
 					</select>
@@ -960,10 +960,10 @@ class Edit_form_template extends Edit_form
 					 <div class="time_fields">
 					<select '.esc_attr($this->read_only).' id="yy_'.esc_attr($this->id).'" name="'.esc_attr($this->name).'[date][yy]" class="'.esc_attr($this->addClass("")).'"  data-type="date">
 					  <option value="">'.esc_html(__("Year","pie-register")).'</option>';
-					  for($a=((int)date("Y") + 10);$a>=(((int)date("Y"))-100);$a--){
+					  for($a=((int)gmdate("Y") + 10);$a>=(((int)gmdate("Y"))-100);$a--){
 					  	$data .= '<option value="'.esc_attr($a).'"';
 						$data .= (isset($val['date']) && $val['date']['yy'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.esc_html(__($a,"pie-register")).'</option>';
+						$data .= '>'.esc_html($a).'</option>';
 					  }
 					$data .= '
 					</select>
@@ -975,7 +975,7 @@ class Edit_form_template extends Edit_form
 					  for($a=1;$a<=12;$a++){
 					  	$data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'"';
 						$data .= (isset($val['date']) && $val['date']['mm'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						$data .= '>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					  $data .= '
 					</select>
@@ -987,7 +987,7 @@ class Edit_form_template extends Edit_form
 					  for($a=1;$a<=31;$a++){
 					  	$data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'"';
 						$data .= (isset($val['date']) && $val['date']['dd'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						$data .= '>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					$data .= '
 					</select>
@@ -1006,7 +1006,7 @@ class Edit_form_template extends Edit_form
 					  for($a=1;$a<=31;$a++){
 					  	$data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'"';
 						$data .= (isset($val['date']['dd']) && $val['date']['dd'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						$data .= '>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 					$data .= '
 					</select>
@@ -1019,7 +1019,7 @@ class Edit_form_template extends Edit_form
 					  for($a=1;$a<=12;$a++){
 					  	$data .= '<option value="'.str_pad($a, 2, "0", STR_PAD_LEFT).'"';
 						$data .= (isset($val['date']['mm']) && $val['date']['mm'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.str_pad(__($a,"pie-register"), 2, "0", STR_PAD_LEFT).'</option>';
+						$data .= '>'.str_pad(esc_html($a), 2, "0", STR_PAD_LEFT).'</option>';
 					  }
 						
 					  $data .= '
@@ -1029,10 +1029,10 @@ class Edit_form_template extends Edit_form
 				  <div class="time_fields">
 					<select  '.esc_attr($this->read_only).' id="yy_'.esc_attr($this->id).'" name="'.esc_attr($this->name).'[date][yy]" class="'.esc_attr($this->addClass("")).'" data-type="date">
 					  <option value="">'.esc_html(__("Year","pie-register")).'</option>';
-					  for($a=((int)date("Y") + 10);$a>=(((int)date("Y"))-100);$a--){
+					  for($a=((int)gmdate("Y") + 10);$a>=(((int)gmdate("Y"))-100);$a--){
 					  	$data .= '<option value="'.esc_attr($a).'"';
 						$data .= (isset($val['date']['yy']) && $val['date']['yy'] == $a)? 'selected="selected"' : "";
-						$data .= '>'.esc_html(__($a,"pie-register")).'</option>';
+						$data .= '>'.esc_html($a).'</option>';
 					  }
 					  
 					  $data .= '
@@ -1078,7 +1078,7 @@ class Edit_form_template extends Edit_form
 			}
 		}
 		
-		return '<label for="'.esc_attr($this->id).'">'. esc_html(__($this->field['label'],"pie-register")).wp_kses_post($field_required).'</label>';		
+		return '<label for="'.esc_attr($this->id).'">'. esc_html($this->field['label']).wp_kses_post($field_required).'</label>';		
 	}
 	function addClass($default = "input_fields",$val = array())
 	{
@@ -1174,7 +1174,7 @@ class Edit_form_template extends Edit_form
 				if($this->pageBreak_prev_label == '')
 					$this->pageBreak_prev_label = "Previous";
 					
-				$data .= '<input class="pie_prev" name="pie_prev" id="pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr(__($this->pageBreak_prev_label,"pie-register")).'" />';
+				$data .= '<input class="pie_prev" name="pie_prev" id="pie_prev_'.esc_attr($this->pages).'" type="button" value="'.esc_attr($this->pageBreak_prev_label).'" />';
 			}			
 			$data .= '<input id="pie_prev_'.esc_attr($this->pages).'_curr" name="page_no" type="hidden" value="'.esc_attr(($this->pages-1)).'" />';						
 		}

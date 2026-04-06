@@ -147,7 +147,7 @@
               </strong>:
               <?php esc_html_e("Only json and CSV formats are supported. Importing data in other formats may break your existing invitation codes.","pie-register"); ?>
               </span>             
-              <span class="quotation"><?php echo sprintf( __( 'You may want to see', 'pie-register').' <a target="_blank" download href="%s"> '.__('this example of the CSV file.', 'pie-register').'</a>.' , esc_url(plugin_dir_url(__FILE__).'examples/example-invitaion-codes.csv')); ?></span>
+              <span class="quotation"><?php echo wp_kses( sprintf( __( 'You may want to see', 'pie-register' ) . ' <a target="_blank" download href="%s"> ' . __( 'this example of the CSV file.', 'pie-register' ) . '</a>.', esc_url( plugin_dir_url( __FILE__ ) . 'examples/example-invitaion-codes.csv' ) ), array( 'a' => array( 'target' => array(), 'download' => array(), 'href' => array() ) ) ); ?></span>
             </div>
           </form>
         </div>
@@ -167,10 +167,10 @@
         <?php
 			if(isset( $this->pie_post_array['successfull_import_all_users_data'] ) && !empty( $this->pie_post_array['successfull_import_all_users_data'] ))
       // translators: %d is the number of users successfully imported
-				echo '<p class="success">' . sprintf( __("(%d) user(s) successfully imported","pie-register"), intval($this->pie_post_array['successfull_import_all_users_data']) ) . "</p>";
+ 				echo '<p class="success">' . esc_html( sprintf( __( "(%d) user(s) successfully imported", "pie-register" ), intval( $this->pie_post_array['successfull_import_all_users_data'] ) ) ) . "</p>";
 			if(isset( $this->pie_post_array['unsuccessfull_import_all_users_data'] ) && !empty( $this->pie_post_array['unsuccessfull_import_all_users_data'] ))
       // translators: %d is the number of users already exist
-				echo '<p class="error">' . sprintf( __("(%d) user(s) are already exist(s)","pie-register"), intval($this->pie_post_array['unsuccessfull_import_all_users_data']) ) . "</p>";
+ 				echo '<p class="error">' . esc_html( sprintf( __( "(%d) user(s) are already exist(s)", "pie-register" ), intval( $this->pie_post_array['unsuccessfull_import_all_users_data'] ) ) ) . "</p>";
 			?>
         <div class="fields">
           <form method="post" action="">
@@ -197,7 +197,7 @@
               <span class="quotation width-63"><strong>
               <?php esc_html_e("Warning","pie-register"); ?>
               </strong>:
-              <?php _e ( wp_kses("Only json format is supported <em>(for backup purpose)</em>", array('em' => array())),"pie-register"); ?>
+              <?php wp_kses("Only json format is supported <em>(for backup purpose)</em>", array('em' => array())); ?>
               </span></div>
           </form>
         </div>
@@ -365,7 +365,7 @@
               </div>
             </li>
             <li>
-              <div class="fields"> <span style="float:left"><?php echo sprintf( __( 'You may want to see', 'pie-register').' <a target="_blank" download href="%s"> '.__('this example of the CSV file.', 'pie-register').'</a>.' , esc_url(plugin_dir_url(__FILE__).'examples/example.csv')); ?></span>
+              <div class="fields"> <span style="float:left"><?php echo wp_kses( sprintf( __( 'You may want to see', 'pie-register' ) . ' <a target="_blank" download href="%s"> ' . __( 'this example of the CSV file.', 'pie-register' ) . '</a>.', esc_url( plugin_dir_url( __FILE__ ) . 'examples/example.csv' ) ), array( 'a' => array( 'target' => array(), 'download' => array(), 'href' => array() ) ) ); ?></span>
                 <div class="piereg_clear"></div>
               </div>
             </li>

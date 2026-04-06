@@ -1,13 +1,13 @@
-﻿=== Pie Register – User Registration, Profiles & Content Restriction ===
+=== Pie Register – User Registration, Profiles & Content Restriction ===
 
 Contributors: pieregister, genetech, genetechproducts
 Tags: login form, user profile, User Registration, registration form, membership form
 Requires at least: 4.0
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 3.8.4.8
-License: GNU Version 2 or Any Later Version
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Stable tag: 3.8.4.9
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 *Create customized registration forms, Invite through email, Email Notification, User Roles assignment, and more.*
 
@@ -230,6 +230,16 @@ To make your forms more interactive, you can simply add custom CSS in the styles
 Remove the password field from your forms and send an automated email on registrations by adding the auto-generated password in the email body using the replacement key.
 
 == CHANGELOG ==
+
+### 3.8.4.9
+
+*Released Date 30th March 2026*
+
+* Security: Fixed unauthorized access vulnerability affecting registration form status (CVE-2026-3571).
+* General: Fixed non-literal translation strings, added translator comments.
+* Plugin Repo: Added plugin license information and aligned codebase with WordPress.org repository guidelines.
+* Security: Strengthened output escaping and restricted direct file access across the plugin.
+* Performance: Improved script and style loading with explicit version parameters.
 
 ### 3.8.4.8
 

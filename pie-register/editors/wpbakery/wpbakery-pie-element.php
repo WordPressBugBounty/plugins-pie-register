@@ -1,4 +1,8 @@
 <?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 class PieReg_WPBakery extends WPBakeryShortCode {
     function __construct(){
@@ -15,7 +19,7 @@ class PieReg_WPBakery extends WPBakeryShortCode {
 
         foreach ( $param['value'] as $val => $text_val ) {
 
-                $text_val = __($text_val, "pie-register");
+                $text_val = esc_html($text_val);
                 $selected = '';
 
                 if(!is_array($value)) {

@@ -1,3 +1,9 @@
+<?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+?>
 <form method="post" action="">
   <?php if( function_exists( 'wp_nonce_field' )) wp_nonce_field( 'piereg_wp_invitation_code_nonce','piereg_invitation_code_nonce'); ?>
   <ul class="bg-white clearfix invite-form">

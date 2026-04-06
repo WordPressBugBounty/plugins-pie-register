@@ -1,4 +1,9 @@
 <?php
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 include("base_variables.php");
 if( !class_exists('PieReg_Base') ){
 	class PieReg_Base extends PieRegisterBaseVariables
@@ -695,9 +700,7 @@ if( !class_exists('PieReg_Base') ){
 			$prefix=$wpdb->prefix."pieregister_";
 			$codetable=$prefix."code";
 			
-			$invitation_code_sql = "CREATE TABLE IF NOT EXISTS ".$codetable."(`id` INT( 5 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,`created` DATE NOT NULL ,`modified` DATE NOT NULL ,`name` TEXT NOT NULL ,`count` INT( 5 ) NOT NULL ,`status` INT( 2 ) NOT NULL ,`code_usage` INT( 5 ) NOT NULL, `expiry_date` DATE NOT NULL,`code_description` VARCHAR(255) NULL) ENGINE = MYISAM ;"; 
-			
-			if(!$wpdb->query($invitation_code_sql))
+			if(!$wpdb->query("CREATE TABLE IF NOT EXISTS `{$codetable}` (`id` INT( 5 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , `created` DATE NOT NULL , `modified` DATE NOT NULL , `name` TEXT NOT NULL , `count` INT( 5 ) NOT NULL , `status` INT( 2 ) NOT NULL , `code_usage` INT( 5 ) NOT NULL, `expiry_date` DATE NOT NULL, `code_description` VARCHAR(255) NULL) ENGINE = MYISAM ;"))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
@@ -736,39 +739,40 @@ if( !class_exists('PieReg_Base') ){
 			
 			if($check === 2)
 			{
-				if(!$wpdb->query("ALTER TABLE ".$codetable." CHANGE `usage` `code_usage` int(11) NULL")){
-					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
+				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` CHANGE `usage` `code_usage` int(11) NULL", array() ) ) ) {
+					$this->pr_error_log( $wpdb->last_error . ( $this->get_error_log_info( __FUNCTION__, __LINE__, __FILE__ ) ) );
 				}				
 			}
 			
 			if($check === 0)
 			{
-				if(!$wpdb->query("alter table ".$codetable." add column `code_usage` int(11) NULL")){
-					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
+				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_usage` int(11) NULL", array() ) ) ) {
+					$this->pr_error_log( $wpdb->last_error . ( $this->get_error_log_info( __FUNCTION__, __LINE__, __FILE__ ) ) );
 				}
 			}
 
 			if( $check_expiry === 0 && PIEREG_DB_VERSION > "3.0" )
 			{
-				if(!$wpdb->query("ALTER TABLE ".$codetable." ADD COLUMN `expiry_date` DATE NOT NULL")){
-					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
+				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `expiry_date` DATE NOT NULL", array() ) ) ) {
+					$this->pr_error_log( $wpdb->last_error . ( $this->get_error_log_info( __FUNCTION__, __LINE__, __FILE__ ) ) );
 				}
 			}
 			if( $add_desc_columns )
 			{
-				if(!$wpdb->query("alter table ".$codetable." add column `code_description` varchar(255) NULL")){
+				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_description` varchar(255) NULL", array() ) ) ) {
 					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 				}	
 			}
 
 			if( $add_role_columns )
 			{
-				if(!$wpdb->query("alter table ".$codetable." add column `code_user_role` varchar(255) NULL")){
+				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_user_role` varchar(255) NULL", array() ) ) ) {
 					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 				}	
 			}
 			$redirect_settings_table_name = $wpdb->prefix."pieregister_redirect_settings";
-			$redirect_table_sql = "CREATE TABLE IF NOT EXISTS `".$redirect_settings_table_name."` (
+			
+			if ( ! $wpdb->query( $wpdb->prepare( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_redirect_settings` (
 									  `id` int(11) NOT NULL AUTO_INCREMENT,
 									  `user_role` varchar(100) NOT NULL,
 									  `logged_in_url` text NOT NULL,
@@ -778,41 +782,38 @@ if( !class_exists('PieReg_Base') ){
 									  `status` bit(1) NOT NULL DEFAULT b'1',
 									  PRIMARY KEY (`user_role`),
 									  UNIQUE KEY `id` (`id`)
-									) ENGINE=MYISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;";
-			
-			if(!$wpdb->query($redirect_table_sql))
+									) ENGINE=MYISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;", array() ) ) )
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
 
 			// email count
 			$invite_code_emails_table_name = $wpdb->prefix."pieregister_invite_code_emails";
-			$invite_code_emails_table_sql  = "CREATE TABLE IF NOT EXISTS $invite_code_emails_table_name (
+			
+			if(!$wpdb->query($wpdb->prepare("CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_invite_code_emails` (
 											`id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 											`code_id` int NOT NULL,
 											`email_address` varchar(150) NOT NULL,
-											FOREIGN KEY (`code_id`) REFERENCES $codetable(`id`)
-											) ENGINE=MYISAM;";
-			
-			if(!$wpdb->query($invite_code_emails_table_sql))
+											FOREIGN KEY (`code_id`) REFERENCES `{$wpdb->prefix}pieregister_code`(`id`)
+											) ENGINE=MYISAM;", array() )))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
 			// ver 3.5.4
 			$custom_role_table_name = $wpdb->prefix."pieregister_custom_user_roles";
-			$custom_role_table_sql  = "CREATE TABLE IF NOT EXISTS $custom_role_table_name (
+			
+			if(!$wpdb->query("CREATE TABLE IF NOT EXISTS `{$custom_role_table_name}` (
 											`id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 											`role_key` varchar(150) NOT NULL UNIQUE,
 											`role_name` varchar(150) NOT NULL,
 											`wp_role_name` varchar(150) NOT NULL
-											) ENGINE=MYISAM;";
-			
-			if(!$wpdb->query($custom_role_table_sql))
+											) ENGINE=MYISAM;"))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
 			$lockdowns_table_name = $wpdb->prefix."pieregister_lockdowns";
-			$lockdowns_table_sql = "CREATE TABLE IF NOT EXISTS `".$lockdowns_table_name."` (
+			
+			if(!$wpdb->query($wpdb->prepare("CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_lockdowns` (
 									  `id` int(11) NOT NULL AUTO_INCREMENT,
 									  `user_id` int(11) NOT NULL,
 									  `login_attempt` int(11) NOT NULL,
@@ -823,18 +824,14 @@ if( !class_exists('PieReg_Base') ){
 									  `user_ip` varchar(30) NOT NULL,
 									  PRIMARY KEY (`id`)
 									) ENGINE=MYISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-			";
-			
-			if(!$wpdb->query($lockdowns_table_sql))
+			", array() )))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
 			
-			$lockdowns_all_columns = "SHOW COLUMNS FROM ".$lockdowns_table_name . " LIKE 'attempt_from'";
-			$lockdowns_get_columns = $wpdb->get_results($lockdowns_all_columns);
+			$lockdowns_get_columns = $wpdb->get_results($wpdb->prepare("SHOW COLUMNS FROM `{$wpdb->prefix}pieregister_lockdowns` LIKE %s", 'attempt_from'));
 			if(empty($lockdowns_get_columns)){	
-				$lockdowns_add_column = "ALTER TABLE `".$lockdowns_table_name."` ADD attempt_from varchar(56) NOT NULL AFTER login_attempt";
-				$wpdb->query($lockdowns_add_column);
+				$wpdb->query($wpdb->prepare("ALTER TABLE `{$wpdb->prefix}pieregister_lockdowns` ADD attempt_from varchar(56) NOT NULL AFTER login_attempt", array()));
 			}
 		
 			/*
@@ -890,18 +887,20 @@ if( !class_exists('PieReg_Base') ){
 				wp_mkdir_p($secure_log_dir);
 			}
 
+			$wp_filesystem = $this->pie_get_filesystem();
+
 			// Create .htaccess file to block access
 			$htaccess_file = $secure_log_dir . '/.htaccess';
-			if (!file_exists($htaccess_file)) {
+			if (!$wp_filesystem->exists($htaccess_file)) {
 				$htaccess_content = "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n";
 				$htaccess_content .= "<IfModule !mod_authz_core.c>\nOrder allow,deny\nDeny from all\n</IfModule>\n";
-				file_put_contents($htaccess_file, $htaccess_content);
+				$wp_filesystem->put_contents($htaccess_file, $htaccess_content);
 			}
 
 			// Add an index.php file for extra security
 			$index_file = $secure_log_dir . '/index.php';
-			if (!file_exists($index_file)) {
-				file_put_contents($index_file, "<?php\n// Silence is golden.");
+			if (!$wp_filesystem->exists($index_file)) {
+				$wp_filesystem->put_contents($index_file, "<?php\n// Silence is golden.");
 			}
 			
 		}
@@ -1381,10 +1380,9 @@ if( !class_exists('PieReg_Base') ){
 				$invitation_code_table_name = $wpdb->prefix."pieregister_code";
 				$invite_codes = "";
 
-				if($wpdb->get_var("SHOW TABLES LIKE '$invitation_code_table_name'") == $invitation_code_table_name) {
-					$sql = "SELECT * FROM {$invitation_code_table_name} ORDER BY `id` ASC";
-					$result_invitaion_code = $wpdb->get_results( $sql );
-					$today = date('Y-m-d');
+				if($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $invitation_code_table_name)) == $invitation_code_table_name) {
+					$result_invitaion_code = $wpdb->get_results( "SELECT * FROM `{$invitation_code_table_name}` ORDER BY `id` ASC" );
+					$today = gmdate('Y-m-d');
 					foreach($result_invitaion_code as $object){
 						if( 
 							( $object->expiry_date == "0000-00-00" || strtotime($object->expiry_date) > strtotime($today) )
@@ -1846,8 +1844,7 @@ if( !class_exists('PieReg_Base') ){
 			if(!is_object($user))
 			{
 				global $wpdb;
-				$user_table = $wpdb->prefix."users";
-				$user = $wpdb->get_results( $wpdb->prepare("SELECT `ID`, `user_login`, `user_nicename`, `user_email`, `user_registered` FROM `".$user_table."` WHERE `user_email` = %s", stripslashes(( $user ) )) );
+				$user = $wpdb->get_results( $wpdb->prepare("SELECT `ID`, `user_login`, `user_nicename`, `user_email`, `user_registered` FROM `{$wpdb->users}` WHERE `user_email` = %s", stripslashes( $user ) ) );
 				if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 				}
@@ -1898,7 +1895,7 @@ if( !class_exists('PieReg_Base') ){
 						if($options[$a]==$sel)
 							$selected = 'selected="selected"';
 					}
-					$html .= '<option '.$selected.' value="'.esc_attr($options[$a]).'">'.esc_html(__($options[$a],"pie-register")).'</option>';	
+					$html .= '<option ' . $selected . ' value="' . esc_attr( $options[$a] ) . '">' . esc_html( $options[$a] ) . '</option>';
 				}
 			}
 			return $html;
@@ -2078,9 +2075,7 @@ if( !class_exists('PieReg_Base') ){
 			global $wpdb;
 			global $PR_Bot_List;
 			$redirect_settings_table_name = $wpdb->prefix."pieregister_redirect_settings";
-			$redirect_settings_sql = "TRUNCATE TABLE `".$redirect_settings_table_name."` ";
-			
-			if(!$wpdb->query($redirect_settings_sql))
+			if(!$wpdb->query($wpdb->prepare("TRUNCATE TABLE `{$wpdb->prefix}pieregister_redirect_settings`", array())))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
@@ -2509,9 +2504,10 @@ if( !class_exists('PieReg_Base') ){
 					$upload_dir = wp_upload_dir();
 					$temp_dir = realpath($upload_dir['basedir'])."/piereg_users_files/".$user_id;
 					wp_mkdir_p($temp_dir);
-					$temp_file_name = sanitize_file_name("profile_pic_".abs( crc32( wp_generate_password( rand(7,12) ) ."_".time() ) )."_".$form_id.".".$extension);
+					$temp_file_name = sanitize_file_name("profile_pic_".abs( crc32( wp_generate_password( wp_rand(7,12) ) ."_".time() ) )."_".$form_id.".".$extension);
 					$temp_file_url = $upload_dir['baseurl']."/piereg_users_files/".$user_id."/".$temp_file_name;
-					if(!move_uploaded_file($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
+					$wp_filesystem = $this->pie_get_filesystem();
+					if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
 						$errors->add( $field_slug , '<strong>'.esc_html(ucwords(__('error','pie-register'))).'</strong>: '.apply_filters("piereg_fail_to_upload_profile picture",__('Failed to upload the profile picture.','pie-register' )));
 					}else{
 						/*Upload Index.html file on User dir*/
@@ -2521,8 +2517,8 @@ if( !class_exists('PieReg_Base') ){
 						
 						$old_picture = get_user_meta($user_id,"pie_".$field_slug, true);
 						if( !empty($old_picture) ){
-							if( file_exists($temp_dir."/".basename( $old_picture )) ){
-								unlink( $temp_dir."/".basename( $old_picture ) );
+							if( $wp_filesystem->exists($temp_dir."/".basename( $old_picture )) ){
+								$wp_filesystem->delete( $temp_dir."/".basename( $old_picture ) );
 							}
 						}
 						update_user_meta($user_id,"pie_".$field_slug, $temp_file_url);
@@ -2539,10 +2535,10 @@ if( !class_exists('PieReg_Base') ){
 	
 		}
 		function upload_forbidden_html_file($dir_name){
-			if( !empty($dir_name) && !file_exists($dir_name."/index.html") ){
-				$myfile = @fopen($dir_name."/index.html", "w");
-				@fwrite( $myfile, "<html><head><title>Forbidden</title></head><body><h1>Forbidden</h1><p>You Don't have permission to access on this server</p></body></html>" );
-				@fclose( $myfile );
+			$wp_filesystem = $this->pie_get_filesystem();
+			if( !empty($dir_name) && !$wp_filesystem->exists($dir_name."/index.html") ){
+				$content = "<html><head><title>Forbidden</title></head><body><h1>Forbidden</h1><p>You Don't have permission to access on this server</p></body></html>";
+				$wp_filesystem->put_contents($dir_name."/index.html", $content, 0644);
 			}
 		}
 		function pie_remove_upload($user_id,$field,$field_slug) {
@@ -2554,9 +2550,10 @@ if( !class_exists('PieReg_Base') ){
 				$file = $file[0];
 			}
 			if( !empty($file ) ){
-				if( file_exists($temp_dir."/".basename( $file  )) ){
-					unlink( $temp_dir."/".basename( $file  ) );
-				} else if ( file_exists($temp_dir."/".'pie_'.$field_slug."/".basename( $file  )) ) {
+				$wp_filesystem = $this->pie_get_filesystem();
+				if( $wp_filesystem->exists($temp_dir."/".basename( $file  )) ){
+					$wp_filesystem->delete( $temp_dir."/".basename( $file  ) );
+				} else if ( $wp_filesystem->exists($temp_dir."/".'pie_'.$field_slug."/".basename( $file  )) ) {
 					$this->delete_directory( realpath($temp_dir."/".'pie_'.$field_slug));
 				}
 			}
@@ -2581,7 +2578,7 @@ if( !class_exists('PieReg_Base') ){
 						$upload_dir = wp_upload_dir();
 						$temp_dir = realpath($upload_dir['basedir'])."/piereg_users_files/".$user_id."/"."pie_".$field_slug."";
 						wp_mkdir_p($temp_dir);
-						$temp_file_name = sanitize_file_name("file_".abs( crc32( wp_generate_password( rand(7,12) ) ."_".time() ) )."_".$form_id.".".$extension);
+						$temp_file_name = sanitize_file_name("file_".abs( crc32( wp_generate_password( wp_rand(7,12) ) ."_".time() ) )."_".$form_id.".".$extension);
 						$temp_file_url 	= $upload_dir['baseurl']."/piereg_users_files/".$user_id."/"."pie_".$field_slug."/".$temp_file_name;
 
 						// Allowed Mime Types in WordPress
@@ -2593,7 +2590,8 @@ if( !class_exists('PieReg_Base') ){
 						
 						if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 						{
-							if(!move_uploaded_file($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
+							$wp_filesystem = $this->pie_get_filesystem();
+							if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
 								$errors->add( $field_slug , '<strong>'.__('Error','pie-register').'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 							}else{
 								/*Upload Index.html file on User dir*/
@@ -2604,8 +2602,8 @@ if( !class_exists('PieReg_Base') ){
 								$old_file = get_user_meta($user_id,"pie_".$field_slug, true);
 								if( !empty($old_file) ){
 									$old_file = !is_array($old_file) ? $old_file : $old_file[0];
-									if( file_exists($temp_dir."/".basename( $old_file )) ){
-										unlink( $temp_dir."/".basename( $old_file ) );
+									if( $wp_filesystem->exists($temp_dir."/".basename( $old_file )) ){
+										$wp_filesystem->delete( $temp_dir."/".basename( $old_file ) );
 									}
 								}
 								update_user_meta($user_id,"pie_".$field_slug, $temp_file_url);
@@ -2626,7 +2624,7 @@ if( !class_exists('PieReg_Base') ){
 					$upload_dir = wp_upload_dir();
 					$temp_dir = realpath($upload_dir['basedir'])."/piereg_users_files/".$user_id."/"."pie_".$field_slug."";
 					wp_mkdir_p($temp_dir);
-					$temp_file_name = sanitize_file_name("file_".abs( crc32( wp_generate_password( rand(7,12) ) ."_".time() ) )."_".$form_id.".".$extension);
+					$temp_file_name = sanitize_file_name("file_".abs( crc32( wp_generate_password( wp_rand(7,12) ) ."_".time() ) )."_".$form_id.".".$extension);
 					$temp_file_url 	= $upload_dir['baseurl']."/piereg_users_files/".$user_id."/"."pie_".$field_slug."/".$temp_file_name;
 					
 					// Allowed Mime Types in WordPress
@@ -2638,7 +2636,8 @@ if( !class_exists('PieReg_Base') ){
 					
 					if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 					{
-						if(!move_uploaded_file($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
+						$wp_filesystem = $this->pie_get_filesystem();
+						if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
 							$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 						}else{
 							/*Upload Index.html file on User dir*/
@@ -2649,8 +2648,8 @@ if( !class_exists('PieReg_Base') ){
 							$old_file = get_user_meta($user_id,"pie_".$field_slug, true);
 							if( !empty($old_file) ){
 								$old_file = !is_array($old_file) ? $old_file : $old_file[0];
-								if( file_exists($temp_dir."/".basename( $old_file )) ){
-									unlink( $temp_dir."/".basename( $old_file ) );
+								if( $wp_filesystem->exists($temp_dir."/".basename( $old_file )) ){
+									$wp_filesystem->delete( $temp_dir."/".basename( $old_file ) );
 								}
 							}
 							update_user_meta($user_id,"pie_".$field_slug, $temp_file_url);
@@ -2667,26 +2666,20 @@ if( !class_exists('PieReg_Base') ){
 			}
 		}
 		function delete_directory($dirname) {
-			$dir_handle = '';
-
-			if (is_dir($dirname))
-			  $dir_handle = opendir($dirname);
-
-			if (!$dir_handle)
-			 return false;
-
-			while($file = readdir($dir_handle)) {
-			  if ($file != "." && $file != "..") {
-				   if (!is_dir($dirname."/".$file))
-						unlink($dirname."/".$file);
-				   else
-						$this->delete_directory($dirname.'/'.$file);
-			  }
+			$wp_filesystem = $this->pie_get_filesystem();
+			if ($wp_filesystem->is_dir($dirname)) {
+				return $wp_filesystem->rmdir($dirname, true);
 			}
-			closedir($dir_handle);
-			rmdir($dirname);
-			return true;
-   		}
+			return false;
+		}
+		private function pie_get_filesystem() {
+			global $wp_filesystem;
+			if ( empty( $wp_filesystem ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+				WP_Filesystem();
+			}
+			return $wp_filesystem;
+		}
 		/*
 			*	Check SSL enable or not. And return true/false
 		*/
@@ -2984,22 +2977,9 @@ if( !class_exists('PieReg_Base') ){
 				$this->pie_post_array['error'] = __("File does not exist.","pie-register");
 				return false;
 			}
-			//To read the file
-			$FileData = "";
-			if(function_exists("file_get_contents") && ini_get('allow_url_fopen')){
-				$FileData = file_get_contents($file_dir,false);
-			}
-			//Get Log File by `fopen`
-			elseif(function_exists("fopen")){
-				$fh = fopen($file_dir, 'r');
-				$FileData = fread($fh, filesize($file_dir));
-				fclose($fh);
-			}
-			//Get Log File by `Command`
-			else{
-				$FileData = `cat $file_dir`;
-			}
-			return $FileData;
+			
+			$wp_filesystem = $this->pie_get_filesystem();
+			return $wp_filesystem->get_contents($file_dir);
 		}
 		function read_file_from_url($url){
 			$FileData = "";
@@ -4453,7 +4433,7 @@ if( !class_exists('PieReg_Base') ){
 			{
 				if ( isset( $current_screen->id ) && in_array( $current_screen->id, $pie_pages ) ) {
 					?>            	
-						<p>If you like Pie Register please leave us a <a href="https://wordpress.org/support/plugin/pie-register/reviews/?filter=5" target="_blank" class="pie-admin-rating-link" data-nonce="<?php esc_attr_e(wp_create_nonce('pie_rated_nonce'), 'pie-register' ); ?>" data-rated="<?php esc_attr_e( 'Thanks :)', 'pie-register' ) ?>"> &#9733;&#9733;&#9733;&#9733;&#9733;</a> rating. A huge thanks in advance!</p>
+					<p>If you like Pie Register please leave us a <a href="https://wordpress.org/support/plugin/pie-register/reviews/" target="_blank" class="pie-admin-rating-link" data-nonce="<?php echo esc_attr( wp_create_nonce( 'pie_rated_nonce' ) ); ?>" data-rated="<?php esc_attr_e( 'Thanks :)', 'pie-register' ); ?>"> &#9733;&#9733;&#9733;&#9733;&#9733;</a> rating. A huge thanks in advance!</p>
 						
 						<script type="text/javascript">
 							jQuery( 'a.pie-admin-rating-link' ).click(function() {

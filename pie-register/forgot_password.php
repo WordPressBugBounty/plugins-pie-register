@@ -139,7 +139,7 @@ function pieResetFormOutput($piereg_widget = false){
 						
 						$message_temp = "";
 						if($option['user_formate_email_forgot_password_notification'] == "0"){
-							$message_temp	= nl2br(strip_tags($option['user_message_email_forgot_password_notification']));
+							$message_temp	= nl2br(wp_strip_all_tags($option['user_message_email_forgot_password_notification']));
 						}else{
 							$message_temp	= $option['user_message_email_forgot_password_notification'];
 						}
@@ -207,7 +207,7 @@ function pieResetFormOutput($piereg_widget = false){
 
 	$reset_form = new Reset_pass_form_template($option);
 
-	$forgot_pass_form = apply_filters( 'pie_register_forgot_pass_output_before', __($forgot_pass_form,"pie-register") );
+	$forgot_pass_form = apply_filters( 'pie_register_forgot_pass_output_before', $forgot_pass_form );
 	$forgot_pass_form .= '<ul id="pie_register">';
 	$forgot_pass_form .= '<form method="post" action="'.esc_url_raw(htmlentities($_SERVER['REQUEST_URI'])).'" id="piereg_lostpasswordform">';
 	$forgot_pass_form .= '<li class="fields">';	
@@ -267,7 +267,7 @@ function pieResetFormOutput($piereg_widget = false){
 		<input type="hidden" name="reset_pass" value="1" />
 		<input type="hidden" name="user-cookie" value="1" />
 	  </form>';
-	  $forgot_pass_form = apply_filters( 'pie_register_forgot_pass_output_after', __($forgot_pass_form,"pie-register") );
+	  $forgot_pass_form = apply_filters( 'pie_register_forgot_pass_output_after', $forgot_pass_form );
 	  $forgot_pass_form .= '
 	</div>
 	</div>
@@ -349,9 +349,8 @@ function piereg_delete_authentication(){
 	global $wpdb;
 	$pie_register_base = new PieReg_Base();
 
-	$table_name = $wpdb->prefix . "pieregister_lockdowns";
-	$user_ip = esc_sql($_SERVER['REMOTE_ADDR']);
-	$wpdb->query($wpdb->prepare("DELETE FROM `".$table_name."` WHERE `user_ip` = %s AND `attempt_from` = 'is_forgot'",$user_ip));
+	$user_ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+	$wpdb->query($wpdb->prepare("DELETE FROM `{$wpdb->prefix}pieregister_lockdowns` WHERE `user_ip` = %s AND `attempt_from` = 'is_forgot'", array($user_ip)));
 	if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 		$pie_register_base->pr_error_log($wpdb->last_error.($pie_register_base->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 	}

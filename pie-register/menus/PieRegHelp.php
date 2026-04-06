@@ -82,7 +82,7 @@
                             <li><a href="https://pieregister.com/documentation/community-vs-pro-version/" target="_blank_pieHelp_6"><?php esc_html_e("Free v/s Premium version","pie-register"); ?></a>
                             </li>
                             <li><a href="https://pieregister.com/features/" target="_blank_pieHelp_8"><?php esc_html_e("Pie Register Features","pie-register"); ?></a></li>
-                            <li><a href="https://wordpress.org/support/plugin/pie-register/reviews/?filter=5" target="_blank_pieHelp_9"><?php esc_html_e("Like Pie Register? Give us a review.","pie-register"); ?>!</a></li>
+                            <li><a href="https://wordpress.org/support/plugin/pie-register/reviews/" target="_blank_pieHelp_9"><?php esc_html_e("Like Pie Register? Give us a review.","pie-register"); ?>!</a></li>
                         </ul>
                     </div>
                 <?php }elseif($action == "shortcodes"){ ?>
@@ -204,11 +204,11 @@
                         <label><?php esc_html_e("PHP Version",'pie-register') ?></label>
                         <?php if(version_compare(phpversion(),  "5.0") == 1)
                         {
-                            echo '<span class="installation_status">'.phpversion().'</span>';
+                            echo '<span class="installation_status">'.esc_html(phpversion()).'</span>';
                         }
                         else
                         {
-                            echo '<span class="installation_status_faild">'.phpversion().'</span>';
+                            echo '<span class="installation_status_faild">'.esc_html(phpversion()).'</span>';
                             echo '<span class="quotation">'.esc_html__("Pie Register requires PHP version 5.0 or newer. ","pie-register").'</span>';
                         }
                         ?>
@@ -300,13 +300,13 @@
                                 <div class="fields">
                                     <label><?php esc_html_e("PHP Post Max Size",'pie-register') ?></label>
                                     <?php
-                                    echo '<span class="installation_status installation_status_no_bg">'.(ini_get('post_max_size')).'</span>';
+                                    echo '<span class="installation_status installation_status_no_bg">'.esc_html(ini_get('post_max_size')).'</span>';
                                 ?>
                                 </div>
                                 <div class="fields">
                                     <label><?php esc_html_e("PHP Time Limit",'pie-register') ?></label>
                                     <?php
-                                    echo '<span class="installation_status installation_status_no_bg">'.(ini_get('max_execution_time')).'</span>';
+                                    echo '<span class="installation_status installation_status_no_bg">'.esc_html(ini_get('max_execution_time')).'</span>';
                                 ?>
                                 </div>
                                 
@@ -321,7 +321,7 @@
                         <div class="fields">
                         <label><?php esc_html_e("WP Memory Limit",'pie-register') ?></label>
                         <?php
-                        echo '<span class="installation_status installation_status_no_bg">'.WP_MEMORY_LIMIT.'</span>';
+                        echo '<span class="installation_status installation_status_no_bg">'.esc_html(WP_MEMORY_LIMIT).'</span>';
                         ?>
                         </div>
                         <div class="fields">
@@ -333,13 +333,13 @@
                         <div class="fields">
                         <label><?php esc_html_e("WP Language",'pie-register') ?></label>
                         <?php
-                        echo '<span class="installation_status installation_status_no_bg">' . get_locale() . '</span>';
+                        echo '<span class="installation_status installation_status_no_bg">' . esc_html(get_locale()) . '</span>';
                         ?>
                         </div>
                         <div class="fields">
                         <label><?php esc_html_e("WP Max Upload Size",'pie-register') ?></label>
                         <?php
-                        echo '<span class="installation_status installation_status_no_bg">' . size_format( wp_max_upload_size() ) . '</span>';
+                        echo '<span class="installation_status installation_status_no_bg">' . esc_html(size_format( wp_max_upload_size() )) . '</span>';
                         ?>
                         </div>
                 <?php }elseif($action == "version" && $subaction == "plugins-themes"){ ?>

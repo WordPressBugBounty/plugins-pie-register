@@ -18,22 +18,19 @@ class PieRedirectSettings extends WP_List_Table
     public function get_sql_results($fields = "")
     {
         global $wpdb;
-		$prefix=$wpdb->prefix."pieregister_";
-		$codetable=$prefix."redirect_settings";
-		if(empty($fields))
-			$fields = "`id`, `user_role`, `logged_in_url`, `logged_in_page_id`, `log_out_url`, `log_out_page_id`, `status`";		
-		
-		$order_by	 = sanitize_sql_orderby("`$this->orderby` $this->order");	// Ensures a string is a valid SQL order by clause.
-		if( $order_by === false )
-		{
-			$order_by = "`id` ASC";
+		$allowed_orderby = array('id', 'user_role', 'status');
+		$orderby = 'id';
+		if (in_array((string)$this->orderby, $allowed_orderby)) {
+			$orderby = $this->orderby;
 		}
 		
-		$sql_results = $wpdb->get_results("SELECT {$fields}
-                FROM `$codetable`
-                ORDER BY $order_by");
+		$order = (strtoupper((string)$this->order) === 'DESC') ? 'DESC' : 'ASC';
 		
-        return $sql_results;
+		if ($fields === "`user_role`") {
+			return $wpdb->get_results("SELECT `user_role` FROM `{$wpdb->prefix}pieregister_redirect_settings` ORDER BY `$orderby` $order");
+		}
+
+		return $wpdb->get_results("SELECT `id`, `user_role`, `logged_in_url`, `logged_in_page_id`, `log_out_url`, `log_out_page_id`, `status` FROM `{$wpdb->prefix}pieregister_redirect_settings` ORDER BY `$orderby` $order");
     }
     public function set_order()
     {
@@ -113,31 +110,31 @@ class PieRedirectSettings extends WP_List_Table
         foreach ( $posts_array as $key => $post )
         {
 			global $wp_roles;
-			$user_role_value = $wp_roles->roles[$post->user_role]['name'];
+			$user_role_value = (isset($wp_roles->roles[$post->user_role]['name'])) ? $wp_roles->roles[$post->user_role]['name'] : $post->user_role;
 			//User Role
-			$posts[ $key ]->user_role = '<span><a herf="javascript:;" >'.esc_html($user_role_value).'</a></span>';
+			$posts[ $key ]->user_role = '<span><a href="javascript:;" >'.esc_html($user_role_value).'</a></span>';
 			//Logged In URL
-			$posts[ $key ]->logged_in_url = '<span>'.urldecode($posts[ $key ]->logged_in_url).'</span>';
+			$posts[ $key ]->logged_in_url = '<span>'.esc_url(urldecode($posts[ $key ]->logged_in_url)).'</span>';
 			
-			//Log In Page Tiitle
+			//Log In Page Title
 			if( $posts[ $key ]->logged_in_page_id == 0 ) {
-				$posts[ $key ]->logged_in_page_id = '<span>'.urldecode($posts[ $key ]->logged_in_url).'</span>';
+				$posts[ $key ]->logged_in_page_id = '<span>'.esc_url(urldecode($posts[ $key ]->logged_in_url)).'</span>';
 			} else {
 				$posts[ $key ]->logged_in_page_id = '<span>'.esc_html(get_the_title($posts[ $key ]->logged_in_page_id)).'</span>';
 			}
 			//Log Out URL
-			$posts[ $key ]->log_out_url = '<span>'.urldecode($posts[ $key ]->log_out_url).'</span>';
+			$posts[ $key ]->log_out_url = '<span>'.esc_url(urldecode($posts[ $key ]->log_out_url)).'</span>';
 			//Log Out Page Title
 			if( $posts[ $key ]->log_out_page_id == 0 ) {
-				$posts[ $key ]->log_out_page_id = '<span>'.urldecode($posts[ $key ]->log_out_url).'</span>';
+				$posts[ $key ]->log_out_page_id = '<span>'.esc_url(urldecode($posts[ $key ]->log_out_url)).'</span>';
 			} else {
 				$posts[ $key ]->log_out_page_id = '<span>'.esc_html(get_the_title($posts[ $key ]->log_out_page_id)).'</span>';
 			}
 			
 			$class = (isset($post->status) && intval($post->status) == 1) ? "active"  : "inactive";
 			//Status
-			$posts[ $key ]->status = '<a herf="javascript:;" class="'.esc_attr($class).'"></a>';
-            $posts[ $key ]->status = '<a class="delete" href="javascript:;" ></a>';
+			$posts[ $key ]->status = '<a href="javascript:;" class="'.esc_attr($class).'"></a>';
+            $posts[ $key ]->status .= '<a class="delete" href="javascript:;" ></a>';
             
             $posts[$key]->id = $id;
             			

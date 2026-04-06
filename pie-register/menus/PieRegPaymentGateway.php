@@ -31,7 +31,7 @@ if($piereg['paypal_sandbox'] == "no"){
                 <ul class="tabLayer1">
                     <li><a href="#piereg_general_settings_payment_gateway"><?php esc_html_e("General Settings","pie-register") ?></a></li><!--Add General Settings Menu-->
                     <?php $paypal_tab = esc_html__("PayPal Standard","pie-register"); ?>
-                    <li><a href="#piereg_paypal_payment_gateway"><?php echo apply_filters('pie_register_paypal_tab_label',$paypal_tab); ?></a></li><!--Add Paypal-->
+                    <li><a href="#piereg_paypal_payment_gateway"><?php echo esc_html( apply_filters('pie_register_paypal_tab_label',$paypal_tab) ); ?></a></li><!--Add Paypal-->
                     <?php //pie_register_Authorize_Net_paymentgateways_menus
                         do_action('pie_register_payment_setting_menus'); //<!--for Authorize.Net-->
                     ?>
@@ -116,7 +116,7 @@ if($piereg['paypal_sandbox'] == "no"){
                     </strong></p>
                     <ol>
                     <li><?php esc_html_e("Login to your","pie-register"); ?> <a target="_blank" href="https://www.paypal.com/"><?php esc_html_e("Paypal account","pie-register"); ?></a>.</li>
-                    <li><?php esc_html_e("Go to PayPal Buttons and Click on","pie-register"); ?> <?php esc_html_e("Buy Now","pie-register"); ?> <?php echo apply_filters('pie_register_paypal_recurring_instructions',esc_html__("button","pie-register")); ?>.</li>
+                    <li><?php esc_html_e("Go to PayPal Buttons and Click on","pie-register"); ?> <?php esc_html_e("Buy Now","pie-register"); ?> <?php echo esc_html( apply_filters('pie_register_paypal_recurring_instructions',esc_html__("button","pie-register")) ); ?>.</li>
                     <li><?php esc_html_e("Give your Button a name. i.e: Website Access fee and set the price.","pie-register"); ?></li>
                     <li><?php esc_html_e('Click on Step3: Customize advance features (optional) Tab, select "Add advanced variables" checkbox and add the following snippet',"pie-register"); ?>:
 
@@ -129,12 +129,12 @@ if($piereg['paypal_sandbox'] == "no"){
                     </li>
                     <li><?php esc_html_e("Click Create button, On the next page, you will see the generated button code snippet like the following","pie-register"); ?>:
                         <xmp style="cursor:text;width:100%;white-space:pre-line; margin:0;">
-                            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                            <input type="hidden" name="cmd" value="_s-xclick">
-                            <input type="hidden" name="hosted_button_id" value="XXXXXXXXXX">
-                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                            </form>
+                             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                             <input type="hidden" name="cmd" value="_s-xclick">
+                             <input type="hidden" name="hosted_button_id" value="XXXXXXXXXX">
+                             <input type="image" src="<?php echo esc_url(PIEREG_PLUGIN_URL . 'assets/images/paypal_btn_buynowCC_LG.gif');?>" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                             <img alt="" border="0" src="<?php echo esc_url(PIEREG_PLUGIN_URL . 'assets/images/pixel.gif');?>" width="1" height="1">
+                             </form>
                         </xmp>
                     </li>
                     <li><?php esc_html_e("Copy the snippet into any text editor, extract and put the hosted_button_id value (XXXXXXXXXX) into the Above Field.","pie-register"); ?></li>
@@ -162,22 +162,22 @@ if($piereg['paypal_sandbox'] == "no"){
                             <!--	Payment success Message	-->
                             <div class="fields">
                                 <label for="payment_success_msg"><?php esc_html_e('Payment Success', 'pie-register');?></label>
-                                <input type="text" class="input_fields" name="payment_success_msg" id="payment_success_msg" value="<?php echo ((isset($piereg['payment_success_msg']) && !empty($piereg['payment_success_msg']))?esc_attr($piereg['payment_success_msg']):__("Payment was successful.","pie-register"));?>" />
+                                <input type="text" class="input_fields" name="payment_success_msg" id="payment_success_msg" value="<?php echo esc_attr((isset($piereg['payment_success_msg']) && !empty($piereg['payment_success_msg'])) ? $piereg['payment_success_msg'] : __("Payment was successful.","pie-register"));?>" />
                             </div>
                             <!--	Payment Failed Message	-->
                             <div class="fields">
                                 <label for="payment_faild_msg"><?php esc_html_e('Payment Failed', 'pie-register');?></label>
-                                <input type="text" class="input_fields" name="payment_faild_msg" id="payment_faild_msg" value="<?php echo ((isset($piereg['payment_faild_msg']) && !empty($piereg['payment_faild_msg']))?esc_attr($piereg['payment_faild_msg']):__("Payment failed.","pie-register"));?>" />
+                                <input type="text" class="input_fields" name="payment_faild_msg" id="payment_faild_msg" value="<?php echo esc_attr((isset($piereg['payment_faild_msg']) && !empty($piereg['payment_faild_msg'])) ? $piereg['payment_faild_msg'] : __("Payment failed.","pie-register"));?>" />
                             </div>
                             <!--	Renew Account Message	-->
                             <div class="fields">
                                 <label for="payment_renew_msg"><?php esc_html_e('Reactivate Account', 'pie-register');?></label>
-                                <input type="text" class="input_fields" name="payment_renew_msg" id="payment_renew_msg" value="<?php echo ((isset($piereg['payment_renew_msg']) && !empty($piereg['payment_renew_msg']))?esc_attr($piereg['payment_renew_msg']):__("Account needs to be activated.","pie-register"));?>" />
+                                <input type="text" class="input_fields" name="payment_renew_msg" id="payment_renew_msg" value="<?php echo esc_attr((isset($piereg['payment_renew_msg']) && !empty($piereg['payment_renew_msg'])) ? $piereg['payment_renew_msg'] : __("Account needs to be activated.","pie-register"));?>" />
                             </div>
                             <!--	Alreact Activate Message	-->
                             <div class="fields">
                                 <label for="payment_already_activate_msg"><?php esc_html_e('Already Active', 'pie-register');?></label>
-                                <input type="text" class="input_fields" name="payment_already_activate_msg" id="payment_already_activate_msg" value="<?php echo ((isset($piereg['payment_already_activate_msg']) && !empty($piereg['payment_already_activate_msg']))?esc_attr($piereg['payment_already_activate_msg']):__("Account is already active.","pie-register"));?>" />
+                                <input type="text" class="input_fields" name="payment_already_activate_msg" id="payment_already_activate_msg" value="<?php echo esc_attr((isset($piereg['payment_already_activate_msg']) && !empty($piereg['payment_already_activate_msg'])) ? $piereg['payment_already_activate_msg'] : __("Account is already active.","pie-register"));?>" />
                             </div>
                             
 			                <input name="action" value="pie_reg_update" type="hidden" />
@@ -340,7 +340,7 @@ if($piereg['paypal_sandbox'] == "no"){
                 <div class="pie-save-settings-bar pie-payment-logs-cta-bar">
                     <div class="fields" style="width:99.9%;">
                 
-                        <form action="#piereg_payment_log" method="post" onsubmit="return confirm('<?php _e("Are you sure you want to clear the payment log?","pie-register"); ?>');" >
+                        <form action="#piereg_payment_log" method="post" onsubmit="return confirm('<?php esc_attr_e("Are you sure you want to clear the payment log?","pie-register"); ?>');" >
                             <?php if( function_exists( 'wp_nonce_field' )) wp_nonce_field( 'piereg_wp_payment_log','piereg_payment_log'); ?>
                             <input name="piereg_delete_payment_log_file" style="margin:0;" class="submit_btn" value="<?php esc_attr_e('Clear All','pie-register');?>" type="submit" />
                         </form>

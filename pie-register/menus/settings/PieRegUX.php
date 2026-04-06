@@ -38,7 +38,7 @@
                 for($x = 1;$x <= 9; $x++){ ?>
                     <?php $theme_name = $theme_name_array[$x]; ?>
                     <option value="<?php echo esc_attr($x) ?>" <?php selected(isset($piereg['pr_theme']) && $piereg['pr_theme'] == $x, true) ?>>
-                        <?php esc_html_e($theme_name,"pie-register"); ?>
+                        <?php echo esc_html($theme_name); ?>
                     </option>
                 <?php } ?>
             </select>
