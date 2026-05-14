@@ -4,7 +4,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.9
+Version: 3.8.4.10
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -2610,7 +2610,7 @@ if (!class_exists('PieRegister')) {
 
 					if ($register_type == "admin_email_verify"  && !$this->InvCodeExpired($user_id)) {
 						update_user_meta($user_id, 'active', 0);
-						$hash = md5(time());
+						$hash = wp_generate_password(32, false);
 						update_user_meta($user_id, 'hash', $hash);
 						update_user_meta($user_id, 'register_type', "email_verify");
 
@@ -3969,7 +3969,7 @@ if (!class_exists('PieRegister')) {
 				} else if ($option_user_verification == 1) //Admin Verification
 				{
 					update_user_meta($user_id, 'active', 0);
-					$admin_hash = md5(time());
+					$admin_hash = wp_generate_password(32, false);
 					update_user_meta($user_id, 'admin_hash', $admin_hash);
 					update_user_meta($user_id, 'register_type', "admin_verify");
 
@@ -4009,7 +4009,7 @@ if (!class_exists('PieRegister')) {
 				} else if ($option_user_verification == 2) //E-Mail Link Verification
 				{
 					update_user_meta($user_id, 'active', 0);
-					$hash = md5(time());
+					$hash = wp_generate_password(32, false);
 					update_user_meta($user_id, 'hash', $hash);
 					update_user_meta($user_id, 'register_type', "email_verify");
 
@@ -4292,7 +4292,7 @@ if (!class_exists('PieRegister')) {
 			$option 	= get_option(OPTION_PIE_REGISTER);
 
 			update_user_meta($user_id, 'active', 0);
-			$hash = md5(time());
+			$hash = wp_generate_password(32, false);
 			update_user_meta($user_id, 'hash', $hash);
 
 			$subject 		= html_entity_decode($option['user_subject_email_pending_payment'], ENT_COMPAT, "UTF-8");
@@ -4453,7 +4453,7 @@ if (!class_exists('PieRegister')) {
 										$user_email 	= $user->user_email;
 
 										update_user_meta($user_id, 'active', 0);
-										$hash = md5(time());
+										$hash = wp_generate_password(32, false);
 										update_user_meta($user_id, 'hash', $hash);
 										update_user_meta($user_id, 'admin_hash', "");
 										update_user_meta($user_id, 'register_type', "email_verify");
@@ -4609,7 +4609,7 @@ if (!class_exists('PieRegister')) {
 							}
 							$sent++;
 							update_user_meta($user_id, 'active', 0);
-							$hash = md5(time());
+							$hash = wp_generate_password(32, false);
 							update_user_meta($user_id, 'hash', $hash);
 
 
@@ -4671,7 +4671,7 @@ if (!class_exists('PieRegister')) {
 							}
 							$sent++;
 							update_user_meta($user_id, 'active', 0);
-							$hash = md5(time());
+							$hash = wp_generate_password(32, false);
 							update_user_meta($user_id, 'hash', $hash);
 
 							$user 			= new WP_User($user_id);
@@ -7782,7 +7782,7 @@ if (!class_exists('PieRegister')) {
 
 						if ($email_verify_orignal_key == $email_verify_key) {
 							$new_email_address = get_user_meta($user_data_temp->data->ID, "new_email_address", true);
-							$email_key = md5(uniqid("piereg_") . time());
+							$email_key = wp_generate_password(32, false);
 							$keys_array = array("reset_email_key" => $email_key);
 
 							/*

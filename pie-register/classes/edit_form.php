@@ -162,7 +162,7 @@ class Edit_form extends PieReg_Base
 						/*
 							*	Generate Key
 						*/
-						$email_key = md5((uniqid("piereg_").time()));
+						$email_key = wp_generate_password(32, false);
 						/*
 							*	Email Key add in array for email template
 						*/
@@ -559,6 +559,5 @@ if( file_exists( get_stylesheet_directory().'/pie-register/pie_register_template
 	require_once( get_stylesheet_directory().'/pie-register/pie_register_template/profile_edit/edit_form_template.php' );
 }
 else{
-	require_once(PIEREG_DIR_NAME.'/pie_register_template/profile_edit/edit_form_template.php');
-	
+	require_once(PIEREG_DIR_NAME.'/pie_register_template/profile_edit/edit_form_template.php');	
 }

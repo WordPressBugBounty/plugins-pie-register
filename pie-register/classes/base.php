@@ -1718,7 +1718,7 @@ if( !class_exists('PieReg_Base') ){
 			$pending_payment_url = "";
 			$register_type = get_user_meta($user->ID, 'register_type', true);
 			if($register_type == "payment_verify"){
-				$hash = md5( time() );
+				$hash = wp_generate_password(32, false);
 				update_user_meta( $user->ID, 'hash', $hash );
 
 				$user_registered_form_id = get_user_meta($user->ID, "user_registered_form_id" , true);
@@ -3912,7 +3912,7 @@ if( !class_exists('PieReg_Base') ){
 			$piereg = get_option(OPTION_PIE_REGISTER);
 			
 			$date_time 			= date_i18n("d-m-Y H:i:s");
-			$key 				= md5( time() );
+			$key 				= wp_generate_password(32, false);
 			$data 				= get_option("piereg_payment_log_option");
 			$duplicate_enty 	= false;
 			
