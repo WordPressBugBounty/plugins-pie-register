@@ -1,10 +1,9 @@
 <?php
-
 /* 
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.10
+Version: 3.8.4.11
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -974,6 +973,24 @@ if (!class_exists('PieRegister')) {
 		function getVauleOrEmpty($string = false)
 		{
 			return (isset($string) && !empty($string)) ? $string : '';
+		}
+		function pieregister_maybe_utf8_encode( $string ) {
+			if ( ! is_string( $string ) || '' === $string ) {
+				return $string;
+			}
+
+			if ( function_exists( 'mb_convert_encoding' ) ) {
+				return mb_convert_encoding( $string, 'UTF-8', 'ISO-8859-1' );
+			}
+
+			if ( function_exists( 'iconv' ) ) {
+				$converted = iconv( 'ISO-8859-1', 'UTF-8//IGNORE', $string );
+				if ( false !== $converted ) {
+					return $converted;
+				}
+			}
+
+			return $string;
 		}
 		function print_multi_lang_script_vars()
 		{
@@ -5492,7 +5509,7 @@ if (!class_exists('PieRegister')) {
 									case 'User Registered':
 									case 'Display name':
 										if (mb_detect_encoding($user_data) !== "UTF-8"):
-											$user_default_data[$table_fields[$head_key]] 	= utf8_encode($user_data);
+											$user_default_data[$table_fields[$head_key]] 	= pieregister_maybe_utf8_encode( $user_data );
 										else:
 											$user_default_data[$table_fields[$head_key]] 	= $user_data;
 										endif;
@@ -5502,7 +5519,7 @@ if (!class_exists('PieRegister')) {
 									case 'Biographical Info':
 									case 'Role':
 										if (mb_detect_encoding($user_data) !== "UTF-8"):
-											$user_meta_key[$table_fields[$head_key]] 		= utf8_encode($user_data);
+											$user_meta_key[$table_fields[$head_key]] 		= pieregister_maybe_utf8_encode( $user_data );
 										else:
 											$user_meta_key[$table_fields[$head_key]] 		= $user_data;
 										endif;
@@ -5530,8 +5547,8 @@ if (!class_exists('PieRegister')) {
 											}
 										}
 										if ($user_data !== "Null") {
-											if (mb_detect_encoding($user_data) !== "UTF-8"):
-												$user_meta_key[$table_fields[$head_key]] 		= utf8_encode($user_data);
+										if (mb_detect_encoding($user_data) !== "UTF-8"):
+												$user_meta_key[$table_fields[$head_key]] 		= pieregister_maybe_utf8_encode( $user_data );
 											else:
 												$user_meta_key[$table_fields[$head_key]] 		= $user_data;
 											endif;

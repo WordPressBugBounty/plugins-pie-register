@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 /** \WP_Upgrader_Skin class */
 require_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php');
 

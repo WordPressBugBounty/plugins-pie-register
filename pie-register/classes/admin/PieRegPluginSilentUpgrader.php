@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 /** \WP_Upgrader class */
 require_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
 
@@ -91,12 +93,15 @@ class PieRegPluginSilentUpgrader extends Plugin_Upgrader {
 		 */
 		$options = apply_filters( 'upgrader_package_options', $options );
 
+		$uploads     = wp_upload_dir();
+		$content_dir = trailingslashit( dirname( $uploads['basedir'] ) );
+
 		if ( ! $options['is_multi'] ) { // call $this->header separately if running multiple times
 			$this->skin->header();
 		}
 
 		// Connect to the Filesystem first.
-		$res = $this->fs_connect( array( WP_CONTENT_DIR, $options['destination'] ) );
+		$res = $this->fs_connect( array( $content_dir, $options['destination'] ) );
 		// Mainly for non-connected filesystem.
 		if ( ! $res ) {
 			if ( ! $options['is_multi'] ) {
@@ -308,7 +313,12 @@ class PieRegPluginSilentUpgrader extends Plugin_Upgrader {
 
 		//$this->skin->feedback( 'unpack_package' );
 
-		$upgrade_folder = $wp_filesystem->wp_content_dir() . 'upgrade/';
+		$uploads        = wp_upload_dir();
+		$upgrade_folder = trailingslashit( $uploads['basedir'] ) . 'pie-register-upgrade/';
+
+		if ( ! wp_mkdir_p( $upgrade_folder ) ) {
+			return new WP_Error( 'mkdir_failed_upgradefolder', $this->strings['mkdir_failed'], $upgrade_folder );
+		}
 
 		//Clean up contents of upgrade directory beforehand.
 		$upgrade_files = $wp_filesystem->dirlist( $upgrade_folder );
@@ -457,7 +467,9 @@ class PieRegPluginSilentUpgrader extends Plugin_Upgrader {
 		 * to copy the directory into the directory, whilst they pass the source
 		 * as the actual files to copy.
 		 */
-		$protected_directories = array( ABSPATH, WP_CONTENT_DIR, WP_PLUGIN_DIR, WP_CONTENT_DIR . '/themes' );
+		$uploads              = wp_upload_dir();
+		$content_dir          = trailingslashit( dirname( $uploads['basedir'] ) );
+		$protected_directories = array( ABSPATH, $content_dir, WP_PLUGIN_DIR, $content_dir . 'themes' );
 
 		if ( is_array( $wp_theme_directories ) ) {
 			$protected_directories = array_merge( $protected_directories, $wp_theme_directories );

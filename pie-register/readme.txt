@@ -2,10 +2,10 @@
 
 Contributors: pieregister, genetech, genetechproducts
 Tags: login form, user profile, User Registration, registration form, membership form
-Requires at least: 4.0
-Tested up to: 6.9
+Requires at least: 6.0
+Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 3.8.4.10
+Stable tag: 3.8.4.11
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -230,6 +230,15 @@ To make your forms more interactive, you can simply add custom CSS in the styles
 Remove the password field from your forms and send an automated email on registrations by adding the auto-generated password in the email body using the replacement key.
 
 == CHANGELOG ==
+
+### 3.8.4.11
+
+*Released Date 4th June 2026*
+
+* Plugin Repo: Removed bundled CKEditor library already included in WordPress core.
+* Plugin Repo: Updated "Tested up to" header to 7.0.
+* Security: Added direct file access protection to admin class files.
+* General: Fixed plugin updater to use uploads directory instead of plugin folder for temporary files.
 
 ### 3.8.4.10
 
