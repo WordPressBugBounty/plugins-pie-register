@@ -35,7 +35,7 @@
                     <div class="addon-image-link">
                         <div class="addon-pr-image">
                             <a href="https://pieregister.com/documentation/how-to-create-your-first-registration-form/?utm_source=plugindashboard&utm_medium=abouttab&utm_campaign=documentlink" target="_blank">
-                                <img src="<?php echo esc_url($images_url . '7.jpg' ); ?>" alt="Create a Form">    
+                                <img src="<?php echo esc_url($images_url . '7.png' ); ?>" alt="Create a Form">
                             </a>
                         </div>
 

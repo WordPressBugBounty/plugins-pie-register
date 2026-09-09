@@ -1016,9 +1016,9 @@ div.warning{border:0px;border-left:4px solid #FFBA00;background:#fff;box-shadow:
 .pieregister-admin .invitation .fields .input_fields2{width:262px;border-radius:3px;border:1px solid #ababab;height:32px;padding:0px 5px 0px 5px;margin-top:7px;}
 .pieregister-admin .invitation table{/*font-family:arial;*/font-size:12px;width:100%;text-align:left;border-color:#d0d0d0;border:none; margin-top: -25px;}
 .pieregister-admin .invitation table.striped.pieregistercustomroles .action.column-action a.delete{right: inherit; transform: translate(-50%, -50%); left: 50%;}
-.pieregister-admin .invitation.settings table.widefat th{border:none;color:#fff;height:34px;}
-.pieregister-admin .invitation.settings table.widefat th a{color:#fff;outline:none !important;}
-.pieregister-admin .invitation.settings table.widefat th a:focus{box-shadow:0 0 0 #000;outline:none !important;}
+.pieregister-admin .invitation.settings table.widefat thead th,.pieregister-admin .invitation.settings table.widefat tfoot th{border:none;color:#fff;height:34px;}
+.pieregister-admin .invitation.settings table.widefat thead th a,.pieregister-admin .invitation.settings table.widefat tfoot th a{color:#fff;outline:none !important;}
+.pieregister-admin .invitation.settings table.widefat thead th a:focus,.pieregister-admin .invitation.settings table.widefat tfoot th a:focus{box-shadow:0 0 0 #000;outline:none !important;}
 .pieregister-admin .invitation table tfoot{display:none;}
 .pieregister-admin .invitation table th:first-child{padding-left:3px;}
 .pieregister-admin .invitation table tbody td{border:none;color:#646464;height:34px;line-height:34px;}

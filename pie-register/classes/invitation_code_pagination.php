@@ -169,27 +169,27 @@ class Pie_Invitation_Table extends WP_List_Table
         # <<<< Pagination
         // Prepare the data
         $id = 1;
-        foreach ($posts_array as $key => $post) {
+        foreach ($posts_array as $key => &$post) {
             $link     = "#";
             $no_title = esc_html__('No title set', "pie-register");
             $title    = ! $post->name ? "<em>{$no_title}</em>" : $post->name;
             $post_name = $post->name;
             $post_description = !empty($post->code_description) ? $post->code_description : 'None';
-            $posts[$key]->cb = '<input type="checkbox" value="' . esc_attr($posts[$key]->id) . '" class="invitaion_fields_class" id="invitaion_fields[id_' . esc_attr($id) . ']" />';
+            $post->cb = '<input type="checkbox" value="' . esc_attr($post->id) . '" class="invitaion_fields_class" id="invitaion_fields[id_' . esc_attr($id) . ']" />';
 
             /*code name*/
             $e_title = esc_html__('Click here to edit', "pie-register");
-            $posts[$key]->name = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'field_id_' . esc_js($id) . '\');" id="field_id_1_' . esc_attr($id) . '">' . $posts[$key]->name . '</span><input type="text" id="field_id_' . esc_attr($id) . '" value="' . esc_attr($posts[$key]->name) . '" style="display:none;" onblur="hide_field(this,\'field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($posts[$key]->id) . '" data-type-invitationcode="name" />';
+            $post->name = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'field_id_' . esc_js($id) . '\');" id="field_id_1_' . esc_attr($id) . '">' . $post->name . '</span><input type="text" id="field_id_' . esc_attr($id) . '" value="' . esc_attr($post->name) . '" style="display:none;" onblur="hide_field(this,\'field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($post->id) . '" data-type-invitationcode="name" />';
             /*code description */
-            $posts[$key]->code_description = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'code_description_field_id_' . esc_js($id) . '\');" class="code_description"  id="code_description_field_id_1_' . esc_attr($id) . '">' . $post_description . '</span><input type="text" id="code_description_field_id_' . esc_attr($id) . '" value="' . $posts[$key]->code_description . '" style="display:none; width:100px;"" onblur="hide_field(this,\'code_description_field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . $posts[$key]->id . '" data-type-invitationcode="code_description" />';
+            $post->code_description = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'code_description_field_id_' . esc_js($id) . '\');" class="code_description"  id="code_description_field_id_1_' . esc_attr($id) . '">' . $post_description . '</span><input type="text" id="code_description_field_id_' . esc_attr($id) . '" value="' . $post->code_description . '" style="display:none; width:100px;"" onblur="hide_field(this,\'code_description_field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . $post->id . '" data-type-invitationcode="code_description" />';
             /*code usage*/
-            $posts[$key]->code_usage = '<span>' . esc_attr($posts[$key]->count) . '/</span><span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'usage_field_id_' . esc_js($id) . '\');" id="usage_field_id_1_' . esc_attr($id) . '">' . esc_html($posts[$key]->code_usage)  . '</span><input autocomplete="off" type="text" class="code_usage" id="usage_field_id_' . esc_attr($id) . '" value="' . esc_attr($posts[$key]->code_usage) . '" style="display:none;" onblur="hide_field(this,\'usage_field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($posts[$key]->id) . '" data-type-invitationcode="code_usage" />';
+            $post->code_usage = '<span>' . esc_attr($post->count) . '/</span><span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'usage_field_id_' . esc_js($id) . '\');" id="usage_field_id_1_' . esc_attr($id) . '">' . esc_html($post->code_usage)  . '</span><input autocomplete="off" type="text" class="code_usage" id="usage_field_id_' . esc_attr($id) . '" value="' . esc_attr($post->code_usage) . '" style="display:none;" onblur="hide_field(this,\'usage_field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($post->id) . '" data-type-invitationcode="code_usage" />';
 
             /*expiry date*/
-            $posts[$key]->expiry_date = '';
+            $post->expiry_date = '';
 
             /*user role*/
-            $posts[$key]->code_user_role = '';
+            $post->code_user_role = '';
 
             /*email count*/
             global $wpdb;
@@ -201,21 +201,21 @@ class Pie_Invitation_Table extends WP_List_Table
             $code_name = $wpdb->get_results(
                 $wpdb->prepare(
                     "SELECT `name` FROM `{$wpdb->prefix}pieregister_code` WHERE id = %d",
-                    array($posts[$key]->id)
+                    array($post->id)
                 )
             );
             $results = $wpdb->get_results(
                 $wpdb->prepare(
                     "SELECT * FROM `{$wpdb->prefix}pieregister_invite_code_emails` WHERE code_id = %d",
-                    array($posts[$key]->id)
+                    array($post->id)
                 )
             );
             $total_emails_sent = $wpdb->num_rows;
 
-            $posts[$key]->email_invite  = '<span onclick="email_popup(' . esc_js($id) . ');" id="emailcount_field_id_1_' . esc_attr($id) . '">' . esc_html($total_emails_sent) . '</span>';
-            $posts[$key]->email_invite .= '<div title="' . esc_attr($code_name[0]->name) . '" id="dialog-message_' . esc_attr($id) . '" style="display:none;">';
-            $posts[$key]->email_invite .= '<div>';
-            $posts[$key]->email_invite .= '<p class="pop-head">Already Sent :</p>';
+            $post->email_invite  = '<span onclick="email_popup(' . esc_js($id) . ');" id="emailcount_field_id_1_' . esc_attr($id) . '">' . esc_html($total_emails_sent) . '</span>';
+            $post->email_invite .= '<div title="' . esc_attr($code_name[0]->name) . '" id="dialog-message_' . esc_attr($id) . '" style="display:none;">';
+            $post->email_invite .= '<div>';
+            $post->email_invite .= '<p class="pop-head">Already Sent :</p>';
 
             if ($total_emails_sent > 0) {
                 foreach ($results as $result) {
@@ -227,7 +227,7 @@ class Pie_Invitation_Table extends WP_List_Table
                     );
 
                     if ($wpdb->num_rows == 0) {
-                        $posts[$key]->email_invite .= '<p class="email-content">' . esc_html($result->email_address) . '</p>';
+                        $post->email_invite .= '<p class="email-content">' . esc_html($result->email_address) . '</p>';
                         $not_used_codes++;
                     } else {
                         $registered_users[] =  $result->email_address;
@@ -235,29 +235,29 @@ class Pie_Invitation_Table extends WP_List_Table
                 }
             }
             if ($not_used_codes == 0) {
-                $posts[$key]->email_invite .= '<p class="email-content"> None </p>';
+                $post->email_invite .= '<p class="email-content"> None </p>';
             }
-            $posts[$key]->email_invite .= '</div>';
-            $posts[$key]->email_invite .= '<hr>';
-            $posts[$key]->email_invite .= '<div class="heading-popup">';
+            $post->email_invite .= '</div>';
+            $post->email_invite .= '<hr>';
+            $post->email_invite .= '<div class="heading-popup">';
 
-            $posts[$key]->email_invite .= '<p class="pop-head"> Registered Email Addresses :</p>';
+            $post->email_invite .= '<p class="pop-head"> Registered Email Addresses :</p>';
 
             if (count($registered_users) > 0) {
                 foreach ($registered_users as $emails) {
-                    $posts[$key]->email_invite .= '<p class="email-content">' . esc_html($emails) . '</p>';
+                    $post->email_invite .= '<p class="email-content">' . esc_html($emails) . '</p>';
                 }
             } else {
-                $posts[$key]->email_invite .= '<p class="email-content"> None </p>';
+                $post->email_invite .= '<p class="email-content"> None </p>';
             }
 
-            $posts[$key]->email_invite .= '</div>';
-            $posts[$key]->email_invite .= '</div>';
+            $post->email_invite .= '</div>';
+            $post->email_invite .= '</div>';
 
             $class = ($post->status == 1) ? "active"  : "inactive";
             $title = ($class == "active") ? "Deactivate" : "Activate";
 
-            $posts[$key]->action = '<a onclick="changeStatusCode(\'' . esc_js($post->id) . '\',\'' . esc_js($post_name) . '\',\'' . esc_js($title) . '\');" href="javascript:;" title="' . esc_attr($title) . '" class="' . esc_attr($class) . '"></a> <a class="delete" href="javascript:;" onclick="confirmDelInviteCode(\'' . esc_js($post->id) . '\',\'' . esc_js($post_name) . '\');" title="' . esc_attr__("Delete", "pie-register") . '"></a>';
+            $post->action = '<a onclick="changeStatusCode(\'' . esc_js($post->id) . '\',\'' . esc_js($post_name) . '\',\'' . esc_js($title) . '\');" href="javascript:;" title="' . esc_attr($title) . '" class="' . esc_attr($class) . '"></a> <a class="delete" href="javascript:;" onclick="confirmDelInviteCode(\'' . esc_js($post->id) . '\',\'' . esc_js($post_name) . '\');" title="' . esc_attr__("Delete", "pie-register") . '"></a>';
             $id++;
         }
         $this->items = $posts_array;
