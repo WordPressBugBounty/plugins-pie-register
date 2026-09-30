@@ -38,7 +38,6 @@
                                 <img src="<?php echo esc_url($images_url . '7.png' ); ?>" alt="Create a Form">
                             </a>
                         </div>
-
                     </div>
                 </div>
             </div>

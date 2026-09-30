@@ -5,7 +5,7 @@ Tags: login form, user profile, User Registration, registration form, membership
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 3.8.4.13
+Stable tag: 3.8.4.14
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -236,6 +236,12 @@ To make your forms more interactive, you can simply add custom CSS in the styles
 Remove the password field from your forms and send an automated email on registrations by adding the auto-generated password in the email body using the replacement key.
 
 == CHANGELOG ==
+
+### 3.8.4.14
+
+*Released Date 30th September 2026*
+
+* Security: Fixed unauthenticated user email disclosure vulnerability via invitation code lookup page. Added authorization checks to prevent unauthorized access to user data.
 
 ### 3.8.4.13
 

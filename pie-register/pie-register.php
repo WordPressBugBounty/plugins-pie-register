@@ -3,7 +3,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.13
+Version: 3.8.4.14
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -306,7 +306,7 @@ if (!class_exists('PieRegister')) {
 			if (isset($_GET['action']))
 				$theaction = sanitize_text_field($_GET['action']);
 
-			if ((isset($_GET['show_dash_widget']) && $_GET['show_dash_widget'] == 1) and (isset($_GET['invitaion_code']) && $_GET['invitaion_code'] != "")) {
+			if ((isset($_GET['show_dash_widget']) && $_GET['show_dash_widget'] == 1) and (isset($_GET['invitaion_code']) && $_GET['invitaion_code'] != "") and is_user_logged_in() and current_user_can('piereg_manage_cap')) {
 				$this->show_invitaion_code_user();
 			}
 
@@ -2390,6 +2390,9 @@ if (!class_exists('PieRegister')) {
 
 		private function show_invitaion_code_user()
 		{
+			if ( !is_user_logged_in() || !current_user_can('piereg_manage_cap') ) {
+				exit;
+			}
 			global $errors, $wpdb;
 			$prefix = $wpdb->prefix . "pieregister_";
 			$inv_code = sanitize_text_field(base64_decode($_GET['invitaion_code']));
