@@ -3,7 +3,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.14
+Version: 3.8.4.15
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -2153,7 +2153,7 @@ if (!class_exists('PieRegister')) {
 					$plugin		 = 'vc-addons-by-bit14/bit14-vc-addons.php';
 					$all_plugins = get_plugins();
 					$plugin_data = array(
-						'icon'  => $images_url . 'pb-logo.png',
+						'icon'  => $images_url . 'pb-logo.svg',
 						'name'  => esc_html__('PB Add-ons for WP Bakery', 'pie-register'),
 						'desc'  => esc_html__('Build your website with premium quality All-in-One Web elements for WPBakery Page Builder.', 'pie-register'),
 						'wporg' => 'https://wordpress.org/plugins/vc-addons-by-bit14/',

@@ -4,8 +4,8 @@ Contributors: pieregister, genetech, genetechproducts
 Tags: login form, user profile, User Registration, registration form, membership form
 Requires at least: 6.0
 Tested up to: 7.1
-Requires PHP: 5.6
-Stable tag: 3.8.4.14
+Requires PHP: 8.2
+Stable tag: 3.8.4.15
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -236,6 +236,14 @@ To make your forms more interactive, you can simply add custom CSS in the styles
 Remove the password field from your forms and send an automated email on registrations by adding the auto-generated password in the email body using the replacement key.
 
 == CHANGELOG ==
+
+### 3.8.4.15
+
+*Released Date 23rd October 2026*
+
+* Update: New Pie Register logo (SVG) on the admin header, Welcome screen and About Us page.
+* Fix: Pie Register header and promo notice no longer appear on Pie Forms pages.
+* Update: Minimum required PHP version is now 8.2.
 
 ### 3.8.4.14
 

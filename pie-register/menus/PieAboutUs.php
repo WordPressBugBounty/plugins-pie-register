@@ -43,7 +43,7 @@
 <div id="container"  class="pieregister-admin aboutus-page-admin">
     <div class="aboutus-page">
         <div class="aboutus-header">
-            <img src="<?php echo esc_url(plugins_url("assets/images/about-us/pie-register-logo.png", dirname(__FILE__) )); ?>" alt="Pie Register Logo">
+            <img src="<?php echo esc_url(plugins_url("assets/images/about-us/pie-register-logo.svg", dirname(__FILE__) )); ?>" alt="Pie Register Logo">
         </div>
     </div>
         
@@ -143,4 +143,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>

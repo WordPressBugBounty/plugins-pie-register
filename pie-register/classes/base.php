@@ -4469,7 +4469,12 @@ if( !class_exists('PieReg_Base') ){
 			if ( empty( $_REQUEST['page'] ) || ( (strpos( $_REQUEST['page'], 'pie' ) === false) && (strpos( $_REQUEST['page'], 'pr_' ) === false) )) {
 				return false;
 			}
-		
+
+			// Pie Forms pages (pie-forms-for-wp, pie-addnew, pieforms-getting-started) also contain "pie"; they have their own header.
+			if ( strpos( $_REQUEST['page'], 'pie-forms' ) === 0 || strpos( $_REQUEST['page'], 'pieforms' ) === 0 || 'pie-addnew' === $_REQUEST['page'] ) {
+				return false;
+			}
+
 			do_action( 'piereg_admin_header_before' );
 			?>
 			<div id="piereg-header-temp"></div>

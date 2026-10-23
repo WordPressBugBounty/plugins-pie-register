@@ -124,7 +124,7 @@ class PieRegister_Welcome extends PieReg_Base {
 			<div class="container">
 				<div class="intro">
 					<div class="pie-register-logo">
-						<img src="<?php echo esc_url( plugins_url("assets/images/pie-register-logo.png",dirname(__FILE__)) ); ?>" alt="<?php esc_attr_e( 'Pie Register Logo', 'pie-register' ); ?>">
+						<img src="<?php echo esc_url( plugins_url("assets/images/pie-register-logo.svg",dirname(__FILE__)) ); ?>" alt="<?php esc_attr_e( 'Pie Register Logo', 'pie-register' ); ?>">
 					</div>
 					<div class="block">
 						<h6 class="welcome-msg"><?php esc_html_e( 'How to create and use your first registration form', 'pie-register' ); ?></h6>
