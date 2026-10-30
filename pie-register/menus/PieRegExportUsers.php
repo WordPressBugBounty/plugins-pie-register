@@ -6,15 +6,17 @@
 <div id="exportusers_tabs" class="hideBorder">
 	<div class="settings">
     	<h2 class="headingwidth"><?php esc_html_e("Marketing",'pie-register') ?></h2>
-        <?php 
-			if(isset($_POST['notice']) && $_POST['notice'] ){
-				echo '<div id="message" class="updated fade msg_belowheading"><p>' . wp_kses_post($_POST['notice']) . '</p></div>';
-			}elseif(isset($_POST['error']) && $_POST['error'] ){
-				echo '<div id="error" class="error fade msg_belowheading"><p>' . wp_kses_post($_POST['error']) . '</p></div>';
+        <?php
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- display only: $_POST notice/error/warning are plain-text messages set by add-on save handlers (after their own nonce check); printed as text with esc_html, never stored.
+			if( ! empty( $_POST['notice'] ) ){
+				echo '<div id="message" class="updated fade msg_belowheading"><p>' . esc_html( sanitize_text_field( wp_unslash( $_POST['notice'] ) ) ) . '</p></div>';
+			}elseif( ! empty( $_POST['error'] ) ){
+				echo '<div id="error" class="error fade msg_belowheading"><p>' . esc_html( sanitize_text_field( wp_unslash( $_POST['error'] ) ) ) . '</p></div>';
 			}
-			if(isset($_POST['warning']) && $_POST['warning'] ){
-				echo '<div id="warning" class="warning fade msg_belowheading"><p>' . wp_kses_post($_POST['warning']) . '</p></div>';
+			if( ! empty( $_POST['warning'] ) ){
+				echo '<div id="warning" class="warning fade msg_belowheading"><p>' . esc_html( sanitize_text_field( wp_unslash( $_POST['warning'] ) ) ) . '</p></div>';
 			}
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
 		?>
 				<?php do_action("piereg_email_services"); ?>
                 <?php 

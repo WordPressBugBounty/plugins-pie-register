@@ -30,7 +30,7 @@ if( !class_exists('PieRegisterWidget') ){
 				
 			global $wpdb;
 
-			$users = $wpdb->get_results( $wpdb->prepare("SELECT COUNT(user_id) as total_users,`meta_value` FROM $wpdb->usermeta WHERE meta_key=%s GROUP BY BINARY `meta_value`", 'invite_code') );
+			$users = $wpdb->get_results( $wpdb->prepare("SELECT COUNT(user_id) as total_users,`meta_value` FROM $wpdb->usermeta WHERE meta_key=%s GROUP BY BINARY `meta_value`", 'invite_code') ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- per-code COUNT/GROUP BY aggregate on usermeta has no WP API equivalent; admin dashboard widget, fully prepared
 			
 			$count = 0;
 			echo '<div class="pieregister_dash_widget_style">

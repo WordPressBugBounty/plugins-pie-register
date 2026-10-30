@@ -2,7 +2,7 @@
 <?php $piereg = $this->get_pr_global_options();
 
 	$_disable 			= true;
-if( !isset($_GET['act']) || !isset($_GET['pie_id']) || !isset($_GET['option']) )
+if( !isset($_GET['act']) || !isset($_GET['pie_id']) || !isset($_GET['option']) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only presence check choosing which settings view to render
 {
 	?>
     <form name="frm_settings_security_advanced" action="" method="post">

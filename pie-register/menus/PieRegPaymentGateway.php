@@ -20,8 +20,8 @@ if($piereg['paypal_sandbox'] == "no"){
         <?php 
 		if(isset($this->pie_post_array['notice']) && $this->pie_post_array['notice'] ){
 			echo '<div id="message" class="updated fade msg_belowheading"><p><strong>' . wp_kses_post($this->pie_post_array['notice']) . '.</strong></p></div>';
-        }else if( (isset($_POST['notice']) && $_POST['notice']) ){
-			echo '<div id="message" class="updated fade msg_belowheading"><p><strong>' . wp_kses_post($_POST['notice']) . '</strong></p></div>';
+        }else if( ! empty( $_POST['notice'] ) ){ // phpcs:ignore WordPress.Security.NonceVerification.Missing -- display only: plain-text "Settings Saved" set by payment add-on save handlers; printed with esc_html, never stored
+			echo '<div id="message" class="updated fade msg_belowheading"><p><strong>' . esc_html( sanitize_text_field( wp_unslash( $_POST['notice'] ) ) ) . '</strong></p></div>'; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- display only: add-on "Settings Saved" message printed as plain text via esc_html
 		}else if( isset($this->pie_post_array['error']) && !empty($this->pie_post_array['error']) ){
 			echo '<div id="error" class="error fade msg_belowheading"><p><strong>' . wp_kses_post($this->pie_post_array['error']) . '</strong></p></div>';
 		}
@@ -316,7 +316,7 @@ if($piereg['paypal_sandbox'] == "no"){
 									<td><?php echo esc_html($v_data['date']); ?></td>
 								</tr>
 								<tr style="display:none;" class="piereg-payment-log-desc piereg-id-<?php echo esc_attr(md5( $v_data['date']." | " . $v_data['email'] )); ?>" >
-									<td colspan="4"><pre><?php print_r( $v_data['responce'] ); ?></pre></td>
+									<td colspan="4"><pre><?php echo esc_html( wp_json_encode( $v_data['responce'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) ); ?></pre></td>
 								</tr>
 							<?php 
 							$x++;

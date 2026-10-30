@@ -2,15 +2,15 @@
 <?php 
 	$action =	"";
     $active	= 'class="selected"';
-	if(isset($_GET['tab']))
-        $action	= sanitize_key($_GET['tab']);
+	if(isset($_GET['tab'])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab slug used for menu routing
+        $action	= sanitize_key(wp_unslash($_GET['tab'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab slug used for menu routing
 
     $images_url = PIEREG_PLUGIN_URL . 'assets/images/pro/';
 	?>
 
 <div id="container"  class="pieregister-admin addons-page-admin">
     <div class="pane">
-        <?php if( sanitize_key($_GET['page']) == 'pie-social-login' ) { ?> 
+        <?php if( isset($_GET['page']) && sanitize_key(wp_unslash($_GET['page'])) == 'pie-social-login' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only admin page slug used for routing ?> 
             <div id="tab2" class="tab-content">
             <div class="addons-container-section">
                 <div class="content-row">

@@ -134,7 +134,7 @@ if( !class_exists('PieRegisterBaseVariables') ){
 		// Deprecated Dynamic Properties - Fixed
 		var	$admin_path ;
 		var	$slug ;
-		var	$read_only  ;
+		var	$read_only = "";
 		var	$not_visible  ;
 		var	$readibility   ;
 		var	$default_fields;

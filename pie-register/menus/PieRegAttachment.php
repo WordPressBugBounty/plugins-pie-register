@@ -4,9 +4,9 @@ global $wpdb;
 global $piereg_dir_path;
 	
 $piereg    = get_option(OPTION_PIE_REGISTER);
-if( isset($_GET['form_id']) )
+if( isset($_GET['form_id']) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id used to pre-select the form dropdown
 {
-    $form_id    = intval($_GET['form_id']);
+    $form_id    = intval($_GET['form_id']); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id (intval) used to pre-select the form dropdown
 }
 else 
 {

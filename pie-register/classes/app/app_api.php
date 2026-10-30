@@ -29,101 +29,137 @@ class Pie_api extends PieReg_Base {
         register_rest_route("pie/v1","/unverify",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_unverify_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         )); 
 
         register_rest_route("pie/v1","/user-data",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_user_data_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         )); 
 
         register_rest_route("pie/v1","/act-verify",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_act_verify_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         )); 
 
         register_rest_route("pie/v1","/invitation",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_invitation_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         )); 
 
         register_rest_route("pie/v1","/act-invitation",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_act_invitation_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         )); 
 
         register_rest_route("pie/v1","/generate-invitation-manual",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_gene_invitation_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         )); 
 
         register_rest_route("pie/v1","/generate-invitation-auto",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_auto_gene_invitation_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
 
         register_rest_route("pie/v1","/invitation-email-template-get",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_invitation_email_template_get_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
 
         register_rest_route("pie/v1","/invitation-email-template-set",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_invitation_email_template_set_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
         
         register_rest_route("pie/v1","/registration-page-list",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_registration_page_list_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
         
         register_rest_route("pie/v1","/invite-user-email",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_invite_user_email_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
         
         register_rest_route("pie/v1","/enable-email",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_enable_email_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
 
         register_rest_route("pie/v1","/is-pro-user",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_is_pro_user_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
 
         register_rest_route("pie/v1","/edit-invitation",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_edit_invitation_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
 
         register_rest_route("pie/v1","/token-key",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_token_key_callback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
 
         register_rest_route("pie/v1","/feedback",array(
           "methods"   => "POST",
           "callback"  => array($this, "pie_feedback"),
-          'permission_callback' => '__return_true'
+          'permission_callback' => array($this, 'pie_api_permission_callback')
         ));
 
     }
 
+
+    /*
+      Permission check for every app route except /login:
+      the auth_key must belong to exactly one user who can still manage Pie Register.
+    */
+    function pie_api_permission_callback( $request )
+    {
+      $auth_key = $this->pie_api_request_auth_key( $request );
+
+      if ( '' === $auth_key ) {
+        return new WP_Error( 'piereg_rest_forbidden', __( 'Authentication Error', 'pie-register' ), array( 'status' => 401 ) );
+      }
+
+      $owners = $this->authKey( $auth_key );
+
+      if ( 1 !== count( $owners ) || ! user_can( (int) $owners[0]->user_id, 'piereg_manage_cap' ) ) {
+        return new WP_Error( 'piereg_rest_forbidden', __( 'Authentication Error', 'pie-register' ), array( 'status' => 403 ) );
+      }
+
+      return true;
+    }
+
+    /*
+      Read the auth_key header sent by the app
+    */
+    function pie_api_request_auth_key( $request )
+    {
+      $auth_key = $request->get_header( 'auth_key' );
+
+      if ( empty( $auth_key ) && function_exists( 'apache_request_headers' ) ) {
+        $headers  = apache_request_headers();
+        $auth_key = isset( $headers['auth_key'] ) ? $headers['auth_key'] : '';
+      }
+
+      return is_string( $auth_key ) ? sanitize_text_field( $auth_key ) : '';
+    }
 
     /*
       ======== ************************ ========
@@ -150,12 +186,12 @@ class Pie_api extends PieReg_Base {
       if ($status_code) {
           $req_data             = $request_data->get_json_params();
 
-          $from_name  = $req_data['username'];
-          $from_email = $req_data['email'];
+          $from_name  = isset( $req_data['username'] ) ? sanitize_text_field( $req_data['username'] ) : '';
+          $from_email = isset( $req_data['email'] ) ? sanitize_email( $req_data['email'] ) : '';
 
           $email      = "pieregister@genetechsolutions.com";
           $subject    = "Feedback - Pie Register APP";
-          $emailbody  = $req_data['message'];
+          $emailbody  = isset( $req_data['message'] ) ? sanitize_textarea_field( $req_data['message'] ) : '';
 
           $headers    = "From: ".$from_name." <".$from_email."> \r\n";
 
@@ -195,8 +231,9 @@ class Pie_api extends PieReg_Base {
 
       if($status_code){
         $req_data             = $request_data->get_json_params();
-        $id                   = $req_data['id'];
-        $api_key              = $req_data['auth_api_key'];
+        // The push token can only be stored for the user who owns the auth_key.
+        $id                   = (int) $auth_key_nonce[0]->user_id;
+        $api_key              = isset( $req_data['auth_api_key'] ) ? sanitize_text_field( $req_data['auth_api_key'] ) : '';
 
         if(!empty($id) && !empty($api_key)){
           update_user_meta($id, 'auth_api_key', $api_key);
@@ -270,8 +307,9 @@ class Pie_api extends PieReg_Base {
         global $piereg_api_manager;
         $req_data             = $request_data->get_params();
         $action               = $req_data['action'];
-        $_POST['vusers']      = $req_data['vusers'];
-        $req_verify_users     = (is_array($_POST['vusers'])) ? array_map( 'sanitize_key', $_POST['vusers'] ) : sanitize_key($_POST['vusers']);
+        $req_vusers           = isset($req_data['vusers']) ? $req_data['vusers'] : '';
+        $_POST['vusers']      = $req_vusers;
+        $req_verify_users     = (is_array($req_vusers)) ? array_map( 'sanitize_key', $req_vusers ) : sanitize_key($req_vusers);
         
         $_verify_users        = ( !empty($req_verify_users) && count($auth_key_nonce) > 0 && !empty($action));
         if($_verify_users){
@@ -384,6 +422,7 @@ class Pie_api extends PieReg_Base {
             }
   
               
+              // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; needs $wpdb->num_rows; id bound with prepare()
               $results    = $wpdb->get_results($wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_invite_code_emails` WHERE code_id=%d", array($value->id)));
               $email_sent = array();
               
@@ -525,8 +564,8 @@ class Pie_api extends PieReg_Base {
       if($status_code){
         $req_data             = $request_data->get_json_params();
         $data_array           = array();
-        $code_prefix          = $req_data['code_prefix'];
-        $no_code              = $req_data['no_code'];
+        $code_prefix          = isset( $req_data['code_prefix'] ) ? sanitize_text_field( $req_data['code_prefix'] ) : '';
+        $no_code              = isset( $req_data['no_code'] ) ? min( 1000, absint( $req_data['no_code'] ) ) : 0;
         $usage                = $req_data['usage_count'];
         $expiry               = "";
         
@@ -696,6 +735,7 @@ class Pie_api extends PieReg_Base {
           $paged = ($_paged) ? $_paged : 1; //current number of page
           $offset = ($paged - 1) * $number; //page offset
 
+          // phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value, WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- token-gated admin listing of users pending verification (active = 0), paged 5 at a time
           $get_unverify_users   = get_users(array(
                                   'meta_key'    => 'active',
                                   'meta_value'  => 0,
@@ -713,6 +753,7 @@ class Pie_api extends PieReg_Base {
                                     )
                                   )
                                 ));
+          // phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value, WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 
           foreach($get_unverify_users as $key => $user){
 
@@ -798,10 +839,10 @@ class Pie_api extends PieReg_Base {
       
       if($status_code){
         $req_data             = $request_data->get_json_params();
-        $from                 = $req_data['from'];
-        $from_email           = $req_data['from_email'];
-        $subject              = $req_data['subject'];
-        $email_body           = $req_data['email_body'];
+        $from                 = isset( $req_data['from'] ) ? sanitize_text_field( $req_data['from'] ) : '';
+        $from_email           = isset( $req_data['from_email'] ) ? sanitize_email( $req_data['from_email'] ) : '';
+        $subject              = isset( $req_data['subject'] ) ? sanitize_text_field( $req_data['subject'] ) : '';
+        $email_body           = isset( $req_data['email_body'] ) ? wp_kses_post( $req_data['email_body'] ) : '';
         
         $piereg 	            = get_option(OPTION_PIE_REGISTER);
         
@@ -995,9 +1036,11 @@ class Pie_api extends PieReg_Base {
               global $wpdb;
               $prefix = $wpdb->prefix."pieregister_";
               $invite_code_emails_table_name = $prefix."invite_code_emails";
+              // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; value bound with prepare()
               $code_id = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}pieregister_code` WHERE name=%s", array(htmlentities($invite_code)) ) );
               $code_id = (int)$code_id[0]->id;
-  
+
+              // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; values bound with prepare()
               $add_address = $wpdb->query($wpdb->prepare("INSERT INTO `{$wpdb->prefix}pieregister_invite_code_emails` (`code_id`,`email_address`) VALUES (%d,%s)", array($code_id, $email)));
   
                $data['message'][] = $email;							
@@ -1141,7 +1184,8 @@ class Pie_api extends PieReg_Base {
      {
        global $wpdb;
 
-       $results = $wpdb->get_results( 
+       // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- lookup of the app auth token's owner by exact meta value (uncached on purpose: auth check); value bound with prepare()
+       $results = $wpdb->get_results(
           $wpdb->prepare("
 
                     SELECT user_id from {$wpdb->prefix}usermeta where meta_key = 'auth_key_nonce' AND meta_value = %s  
@@ -1198,6 +1242,7 @@ class Pie_api extends PieReg_Base {
         $items_per_page = 5;
         $page = isset( $_paged ) ? abs( (int) $_paged ) : 1;
         $offset = ( $page * $items_per_page ) - $items_per_page;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; LIMIT values bound with prepare()
         $latestposts = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}pieregister_code` ORDER BY `id` DESC LIMIT %d, %d", array($offset, $items_per_page) ) );
         
         return $latestposts;
@@ -1213,20 +1258,25 @@ class Pie_api extends PieReg_Base {
         
         $prefix               = $wpdb->prefix."pieregister_";
         $codetable            = $prefix."code";
+        $code_id              = absint( $code_id );
+        $code_name            = sanitize_text_field( $code_name );
+        $code_usage           = absint( $code_usage );
+        $expiry_date          = sanitize_text_field( $expiry_date );
         $name_lower           = htmlentities( strtolower($code_name) );
         $name_upper           = htmlentities( strtoupper($code_name) );
         
         $data     = [ 'name' => $code_name, 'code_usage' => $code_usage, 'expiry_date' => $expiry_date  ]; 
         $where    = [ 'id' => $code_id ];
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; values bound with prepare()
         $codes    = $wpdb->get_results( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_code` WHERE id != %s AND (BINARY `name`=%s OR `name`=%s)", array($code_id, $name_lower, $name_upper)) );
 
         $counts   = count($codes);
-        
+
         if($counts > 0){
           return false;
         }else{
-            $wpdb->update( $codetable, $data, $where );
+            $wpdb->update( $codetable, $data, $where ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API
         }
       
         return true;
@@ -1242,11 +1292,14 @@ class Pie_api extends PieReg_Base {
       $prefix               = $wpdb->prefix . "pieregister_";
       $codetable            = $prefix."code";
       $date                 = date_i18n("Y-m-d");
-      
-      $expiry               = isset($expiry) && $expiry != '' ? $expiry : "0000-00-00";
+      $insert_codes         = sanitize_text_field( $insert_codes );
+      $usage                = absint( $usage );
+
+      $expiry               = isset($expiry) && $expiry != '' ? sanitize_text_field( $expiry ) : "0000-00-00";
       $name_lower           = htmlentities( strtolower($insert_codes) );
       $name_upper           = htmlentities( strtoupper($insert_codes) );
 
+      // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; values bound with prepare()
       $codes = $wpdb->get_results( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_code` WHERE BINARY `name`=%s OR `name`=%s" , array($name_lower, $name_upper)) );
       $counts = count($codes);
 
@@ -1256,7 +1309,7 @@ class Pie_api extends PieReg_Base {
       if($counts > 0){
         return false;
       }else{
-        $wpdb->insert($codetable,$data,$format);
+        $wpdb->insert($codetable,$data,$format); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- custom plugin table, no WP API
       }
       return true;
 
@@ -1274,7 +1327,8 @@ class Pie_api extends PieReg_Base {
         
         $response                 = "";
 
-        $regIds = $wpdb->get_results( 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- collects every stored app push token (meta_key only, no input); no WP API returns meta values across users
+        $regIds = $wpdb->get_results(
           "SELECT meta_value FROM {$wpdb->prefix}usermeta where meta_key = 'auth_api_key'" 
         );
 

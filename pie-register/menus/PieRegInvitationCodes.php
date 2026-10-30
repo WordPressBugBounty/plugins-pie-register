@@ -84,6 +84,7 @@ $piereg = get_option(OPTION_PIE_REGISTER);
 
         <div class="invite-tabs clearfix">
           <ul>
+            <?php // phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only tab flags (autogenerate/inviteemail/allowuserinvitation/usertracker) used for tab highlighting and template routing ?>
             <li <?php if (!isset($_GET['autogenerate']) && !isset($_GET['inviteemail']) && !isset($_GET['allowuserinvitation']) && !isset($_GET['usertracker'])) {
                   echo 'class="invite-active"';
                 } ?>><a href="admin.php?page=pie-invitation-codes&rawcode">Raw Codes</a></li>
@@ -117,7 +118,10 @@ $piereg = get_option(OPTION_PIE_REGISTER);
         ?>
 
       </div><!-- invite-tab-content -->
-      <?php if (!isset($_GET['inviteemail']) && !isset($_GET['allowuserinvitation']) && !isset($_GET['usertracker'])) { ?>
+      <?php
+      // phpcs:enable WordPress.Security.NonceVerification.Recommended
+      if (!isset($_GET['inviteemail']) && !isset($_GET['allowuserinvitation']) && !isset($_GET['usertracker'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab flags deciding whether to show the bulk-action form
+      ?>
         <div style="float:left;" class="invitaion_code_bulk_action_form_div">
           <form method="post" onsubmit="return get_selected_box_ids();">
             <?php if (function_exists('wp_nonce_field')) wp_nonce_field('piereg_wp_invitaion_code_bulk_option_nonce', 'piereg_invitaion_code_bulk_option_nonce'); ?>

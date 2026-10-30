@@ -59,7 +59,7 @@ class Registration_form_template extends Registration_form
 		if( !isset($this->data['form']['desc']) ) 		$this->data['form']['desc'] 	= "";
 		
 		$data = "";
-		$data .= '<div class="fieldset '.$this->data['form']['css'].'">';
+		$data .= '<div class="fieldset '.esc_attr($this->data['form']['css']).'">';
 		if($title == "true"){
 			if( isset($this->data['form']['display_form_name']) && intval($this->data['form']['display_form_name']) )
 			{
@@ -165,7 +165,7 @@ class Registration_form_template extends Registration_form
 					break;
 
 				case 'user_ip_address':
-					$user_ip_add = sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
+					$user_ip_add = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
 					$default_value  = str_replace( '{' . $key . '}', $user_ip_add, $default_value );
 					break;
 				case 'user_id':
@@ -194,7 +194,7 @@ class Registration_form_template extends Registration_form
 					break;
 
 				case 'referrer_url':
-					$referer = ! empty( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw($_SERVER['HTTP_REFERER']) : '';
+					$referer = ! empty( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw(wp_unslash($_SERVER['HTTP_REFERER'])) : '';
 					$default_value = str_replace( '{' . $key . '}', $referer, $default_value );
 					break;
 
@@ -753,7 +753,7 @@ class Registration_form_template extends Registration_form
 				$dymanic_class = $this->field['type']."_".$this->field['id'];
 
 				$data .= '<div class="radio_container">';
-				$data .= '<input '.wp_kses_post($this->read_only).' '.$checked.' value="'.esc_attr($this->field['value'][$a]).'" data-field_id="'.esc_attr($this->get_pr_widget_prefix()).'piereg_field_'.esc_attr($this->no).'" type="'.esc_attr($this->field['type']).'" name="'.esc_attr($this->name).'[]" class="'.esc_attr($this->addClass("input_fields")).' radio_fields" '.$this->addValidation().' data-map-field-by-class="'.esc_attr($dymanic_class).'" >';
+				$data .= '<input '.wp_kses_post((string) $this->read_only).' '.$checked.' value="'.esc_attr($this->field['value'][$a]).'" data-field_id="'.esc_attr($this->get_pr_widget_prefix()).'piereg_field_'.esc_attr($this->no).'" type="'.esc_attr($this->field['type']).'" name="'.esc_attr($this->name).'[]" class="'.esc_attr($this->addClass("input_fields")).' radio_fields" '.$this->addValidation().' data-map-field-by-class="'.esc_attr($dymanic_class).'" >';
 				$data .= "<label>";
 					$data .= $this->field['display'][$a];
 				$data .= "</label>";
@@ -1281,7 +1281,7 @@ class Registration_form_template extends Registration_form
 			$data .= wp_kses_post($this->addLabel());
 			$data .= '<div class="input_fields piereg_recaptcha_reg_div piereg_validate[required]" data-form-id="reg_form_'.esc_attr($id).'"  id="piereg_form_'.esc_attr($id).'_'.esc_attr($cap_id).'" data-type="recaptcha" >';
 				// When Form is added through Gutenberg/WPBakery - Captcha is not rendered on the backend
-				if( (isset($_GET['context']) && $_GET['context'] == 'edit') || (isset($_GET['vc_editable']) && $_GET['vc_editable'] == 'true'))
+				if( (isset($_GET['context']) && $_GET['context'] == 'edit') || (isset($_GET['vc_editable']) && $_GET['vc_editable'] == 'true')) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only editor-preview flags, only swap the captcha widget for a placeholder text (captcha is still verified server-side on submit)
 					$data .= esc_html__("Actual captcha will be displayed on the front-end","pie-register").'.';
 			$data .= '</div>';
 		}
@@ -1501,7 +1501,7 @@ class Registration_form_template extends Registration_form
 				}	
 				
 				if($this->field['type'] == "form"){
-					$pie_reg_fields .= '<input type="hidden" value="'.$id.'" name="form_id" />';
+					$pie_reg_fields .= '<input type="hidden" value="'.esc_attr($id).'" name="form_id" />';
 					continue;
 				}
 	

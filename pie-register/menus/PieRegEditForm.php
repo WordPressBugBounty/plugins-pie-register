@@ -9,7 +9,7 @@ if(!is_array($data) || sizeof($data) == 0) {
 $button = get_option(OPTION_PIE_REGISTER);
 $meta   = $this->getDefaultMeta();
 
-if( !isset($_GET['form_id']) )
+if( !isset($_GET['form_id']) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id selecting which form to load in the editor
 {
 	die("You don't have permission to access this page.");
 }
@@ -19,7 +19,7 @@ if( !isset($_GET['form_id']) )
   <div class="right_section">
     <div class="pie_wrap">
       <?php 
-      if ( !isset($_GET['form_id']) || ( isset( $_GET['form_id'] ) && ('reg_form_'.$_GET['form_id'] ==  $this->pie_pr_dec_vars_array['prRegFormsIds'][0] )) )
+      if ( !isset($_GET['form_id']) || ( isset( $_GET['form_id'] ) && ('reg_form_'.sanitize_text_field(wp_unslash($_GET['form_id'])) ==  $this->pie_pr_dec_vars_array['prRegFormsIds'][0] )) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id selecting which form to load in the editor
       {
       ?>
       <h2>
@@ -36,17 +36,20 @@ if( !isset($_GET['form_id']) )
       <form method="post" id="formeditor">
         <?php if( function_exists( 'wp_nonce_field' )) wp_nonce_field( 'piereg_wp_reg_form_nonce','piereg_reg_form_nonce'); ?>
         <?php
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only form id (cast to int) echoed back into the nonce-protected editor form
         if(isset($_GET['form_id']) and ((int)$_GET['form_id']) != 0){
 			echo '	<input type="hidden" name="form_id" value="'.esc_attr(base64_encode(((int)$_GET['form_id']))).'">
       				<input type="hidden" name="page" value="edit">';
-		}?>
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		?>
         <input type="hidden" name="field[form][type]" value="form">
         <input type="hidden" name="field[form][meta]" value="0">
         <div class="piereg-manage-forms-top-btns-div" style="clear: both;float: none;">
           <input type="submit" style="padding:0px 20px;" class="button button-primary button-large" name="pie_form"  value="<?php esc_attr_e("Save Settings",'pie-register');?>">
           <?php
-        if(isset($_GET['form_id']) and ((int)$_GET['form_id']) != 0){
-			$form_id = isset($_GET['form_id'])?(int)$_GET['form_id']:0;
+        if(isset($_GET['form_id']) and ((int)$_GET['form_id']) != 0){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id (cast to int) used to build the preview link
+			$form_id = isset($_GET['form_id'])?(int)$_GET['form_id']:0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id (cast to int) used to build the preview link
 			$form_name = str_replace(" ","_",$data['form']['label']);
 			$preview_url = add_query_arg(array('pr_preview'=>1,'form_id'=>$form_id,'prFormId'=>$form_id,'form_name'=>$form_name), get_permalink($button['alternate_register']));
 		?>
@@ -75,7 +78,7 @@ if( !isset($_GET['form_id']) )
               } 
               else if ( isset($data['form']['label']) && !empty($data['form']['label']) ) 
               {
-                if (!isset($_GET['form_id']))
+                if (!isset($_GET['form_id'])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only presence check for the form id
                 {
                   $check_display_form_name = true;
                 }
@@ -129,10 +132,10 @@ if( !isset($_GET['form_id']) )
                   <select id="set_user_role_" name="set_user_role_" >
                     <?php
 						if(
-						   isset($_GET['form_id']) and intval($_GET['form_id']) != 0 
+						   isset($_GET['form_id']) and intval($_GET['form_id']) != 0 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id (intval) used to look up the form's saved role
 						   ) // and $_GET['form_name']!= ""
 						{
-							$user_role = $button['pie_regis_set_user_role_'.intval($_GET['form_id'])];
+							$user_role = $button['pie_regis_set_user_role_'.intval($_GET['form_id'])]; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form id (intval) used to look up the form's saved role
 							$user_role = ( $user_role != "") ? $user_role : 'subscriber';
 						}
 						else

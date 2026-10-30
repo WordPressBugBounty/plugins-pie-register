@@ -2,8 +2,8 @@
 <?php 
 	$action =	"";
     $active	= 'class="selected"';
-	if(isset($_GET['tab']))
-        $action	= sanitize_key($_GET['tab']);
+	if(isset($_GET['tab'])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab slug used for menu routing
+        $action	= sanitize_key(wp_unslash($_GET['tab'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab slug used for menu routing
     
     $can_install_plugins = true;
     if ( ! current_user_can( 'install_plugins' ) ) {
@@ -53,7 +53,7 @@
             </li>
         </ul>
         <div class="pane">
-        	<?php if( sanitize_key($_GET['page']) == 'pie-about-us' ) { ?> 
+        	<?php if( isset($_GET['page']) && sanitize_key(wp_unslash($_GET['page'])) == 'pie-about-us' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only admin page slug used for routing ?> 
             	<div id="tab2" class="tab-content">
                 <div class="addons-container-section">
                     <div class="content-row">
@@ -143,4 +143,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>

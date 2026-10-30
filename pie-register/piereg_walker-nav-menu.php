@@ -57,7 +57,8 @@ class Piereg_Menu_Items_Visibility_Control {
 
 	function piereg_update_option( $menu_id, $menu_item_id, $args ) {
 		$meta_value 		= get_post_meta( $menu_item_id, '_menu_item_visibility', true );
-		$create_meta_value 	= (isset($_POST['piereg-menu-item-visibility'][$menu_item_id])) ? sanitize_key($_POST['piereg-menu-item-visibility'][$menu_item_id]) : "default";
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- runs on 'wp_update_nav_menu_item', fired from nav-menus.php after check_admin_referer( 'update-nav_menu' ) and the edit_theme_options check (hook is only registered in admin)
+		$create_meta_value 	= (isset($_POST['piereg-menu-item-visibility'][$menu_item_id])) ? sanitize_key(wp_unslash($_POST['piereg-menu-item-visibility'][$menu_item_id])) : "default";
 		$new_meta_value 	= stripcslashes( $create_meta_value );
 
 		if( $new_meta_value == '') {
@@ -146,7 +147,7 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 		$classes = array(
 			'menu-item menu-item-depth-' . $depth,
 			'menu-item-' . esc_attr( $item->object ),
-			'menu-item-edit-' . ( ( isset( $_GET['edit-menu-item'] ) && $item_id == sanitize_text_field($_GET['edit-menu-item']) ) ? 'active' : 'inactive'),
+			'menu-item-edit-' . ( ( isset( $_GET['edit-menu-item'] ) && $item_id == sanitize_text_field(wp_unslash($_GET['edit-menu-item'])) ) ? 'active' : 'inactive'), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only edit-menu-item id, only picks the active/inactive CSS class (mirrors core Walker_Nav_Menu_Edit)
 		);
 
 		$title = $item->title;
@@ -165,7 +166,8 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 					<span class="item-title">'.esc_html( $title ).'</span>
 					<span class="item-controls">
 						<span class="item-type">'.esc_html( $item->type_label ).'</span>';
-						$output .= '<a class="item-edit" id="edit-'.esc_attr($item_id).'" title="'.esc_attr__('Edit Menu Item', "pie-register" ).'" href="'.(( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . $item_id ) ) ) ).'">'.esc_html__( 'Edit Menu Item', "pie-register" ).'</a>
+						// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only edit-menu-item id, only picks the edit link target (mirrors core Walker_Nav_Menu_Edit)
+						$output .= '<a class="item-edit" id="edit-'.esc_attr($item_id).'" title="'.esc_attr__('Edit Menu Item', "pie-register" ).'" href="'.esc_url(( isset( $_GET['edit-menu-item'] ) && $item_id == sanitize_text_field(wp_unslash($_GET['edit-menu-item'])) ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . $item_id ) ) ) ).'">'.esc_html__( 'Edit Menu Item', "pie-register" ).'</a>
 					</span>
 				</dt>
 			</dl>';
@@ -231,7 +233,7 @@ class piereg_Walker_Nav_Menu_Edit_delete extends Walker_Nav_Menu {
 							remove_query_arg($removed_args, admin_url( 'nav-menus.php' ) )
 						),
 						'delete-menu_item_' . $item_id
-					).'">'.esc_html__('Remove', "pie-register" ).'</a> <span class="meta-sep"> | </span> <a class="item-cancel submitcancel" id="cancel-'.esc_attr($item_id).'" href="'.add_query_arg( array('edit-menu-item' => $item_id, 'cancel' => time()), remove_query_arg( $removed_args, admin_url( 'nav-menus.php' ) ) ).'#menu-item-settings-'.esc_attr($item_id).'">'.esc_html__('Cancel', "pie-register" ).'</a>
+					).'">'.esc_html__('Remove', "pie-register" ).'</a> <span class="meta-sep"> | </span> <a class="item-cancel submitcancel" id="cancel-'.esc_attr($item_id).'" href="'.esc_url( add_query_arg( array('edit-menu-item' => $item_id, 'cancel' => time()), remove_query_arg( $removed_args, admin_url( 'nav-menus.php' ) ) ) ).'#menu-item-settings-'.esc_attr($item_id).'">'.esc_html__('Cancel', "pie-register" ).'</a>
 				</div>';
 
 				$output .= '

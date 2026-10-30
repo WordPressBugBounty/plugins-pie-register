@@ -1,8 +1,8 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 <?php 
 	$action =	""; $active	= "selected";
-	if(isset($_GET['tab']))
-        $action	= sanitize_key($_GET['tab']);
+	if(isset($_GET['tab'])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab slug used for menu routing
+        $action	= sanitize_key(wp_unslash($_GET['tab'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab slug used for menu routing
         $this->no_addon_activated = $this->anyAddonActivated();        
 	?>
 

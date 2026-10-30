@@ -32,12 +32,12 @@ global $wp_session,$errors;
 global $wpdb;
 $newpasspageLock = 0;
 
-			if(isset($_GET['payment']) && sanitize_key($_GET['payment']) == "success")
+			if(isset($_GET['payment']) && sanitize_key($_GET['payment']) == "success") // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only payment return flag, only selects which notice to display
 			{
 				$fields = maybe_unserialize(get_option("pie_fields"));
 				$login_success = apply_filters("piereg_success_message",esc_html( $option['payment_success_msg']));
 				unset($fields);
-			}elseif(isset($_GET['payment']) && sanitize_key($_GET['payment']) == "cancel"){
+			}elseif(isset($_GET['payment']) && sanitize_key($_GET['payment']) == "cancel"){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only payment return flag, only selects which notice to display
 				$login_error = apply_filters("piereg_cancled_message",__("You have cancelled the payment.","pie-register"));
 			}
 			if(isset($errors->errors['login-error'][0]) > 0)
@@ -51,7 +51,7 @@ $newpasspageLock = 0;
 				   ( !isset($_REQUEST['action']) || (isset($_REQUEST['action']) && $_REQUEST['action'] != 'pie_login_sms') ) 
 				   )
 			{
-				$pr_error_message = sanitize_text_field(base64_decode($_GET['pr_key']));
+				$pr_error_message = sanitize_text_field(base64_decode(sanitize_text_field(wp_unslash($_GET['pr_key'])))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only message passed on the post-registration redirect; displayed escaped, no state change
 				if(!empty($pr_error_message))
 					$login_error = apply_filters("piereg_login_after_registration_error",esc_html($pr_error_message));
 				else
@@ -73,7 +73,9 @@ $newpasspageLock = 0;
 
 			elseif ( 'activate' == $action )
 			{
-				$unverified = get_users(array('meta_key'=> 'hash','meta_value' => sanitize_key($_GET['activation_key'])));
+				$activation_key = isset($_GET['activation_key']) ? sanitize_key(wp_unslash($_GET['activation_key'])) : '';
+				// An empty key would match every user that has the meta key, so it is never accepted
+				$unverified = ('' !== $activation_key) ? get_users(array('meta_key'=> 'hash','meta_value' => $activation_key)) : array(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- lookup by unique, non-empty activation hash
 				if(sizeof($unverified )==1)
 				{
 					$user_id	= $unverified[0]->ID;
@@ -83,7 +85,8 @@ $newpasspageLock = 0;
 
 					$user_login = $unverified[0]->user_login;
 					$user_email = $unverified[0]->user_email;
-					if($user_login == $_GET['pie_id'])
+					// Users awaiting payment also hold a 'hash' (it is sent to PayPal and in the pending-payment e-mail), so it must not activate them without payment
+					if( isset($_GET['pie_id']) && $user_login === sanitize_user(wp_unslash($_GET['pie_id'])) && 'payment_verify' !== get_user_meta( $user_id, 'register_type', true ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- e-mail activation link; authorised by the secret activation hash matched above
 					{
 						$obj_PieRegister = new PieRegister();
 
@@ -140,14 +143,14 @@ $newpasspageLock = 0;
 							}
 							if ( !empty($invite_code) )
 							{
-								$codeDetails = 	$wpdb->get_results( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_code` where BINARY name = %s and status = %d", array($invite_code, 1)) );
+								$codeDetails = 	$wpdb->get_results( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_code` where BINARY name = %s and status = %d", array($invite_code, 1)) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; usage count must be read live
 					
 								$times_used = intval($codeDetails[0]->count);
 								$usage 		= intval($codeDetails[0]->code_usage);
 	
 								if( (($times_used < $usage) && ($usage != 0)) || $usage == 0)
 								{
-									$codes 		= $wpdb->query( $wpdb->prepare("update `{$wpdb->prefix}pieregister_code` set count = count + 1 where BINARY name = %s and status = %d", array($invite_code, 1)) );
+									$codes 		= $wpdb->query( $wpdb->prepare("update `{$wpdb->prefix}pieregister_code` set count = count + 1 where BINARY name = %s and status = %d", array($invite_code, 1)) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API
 								}		
 							}
 							do_action( "piereg_action_hook_after_user_activate", $user_id, $user_login, $user_email ); # newlyAddedHookFilter
@@ -163,7 +166,7 @@ $newpasspageLock = 0;
 
 					}	
 				}else{
-					$user_name = sanitize_text_field($_GET['pie_id']);
+					$user_name = isset($_GET['pie_id']) ? sanitize_text_field(wp_unslash($_GET['pie_id'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- e-mail activation link; read-only lookup to choose the notice shown
 					$user = get_user_by('login',$user_name);
 					if($user){
 						$user_meta = get_user_meta( $user->ID, 'active');
@@ -183,7 +186,8 @@ $newpasspageLock = 0;
 				}
 			}
 			elseif ( 'resetpass' == $action || 'rp' == $action ){
-				$user = check_password_reset_key(sanitize_text_field( $_GET['key'] ), sanitize_user($_GET['login']));
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- password reset e-mail link; authorised by check_password_reset_key()
+				$user = check_password_reset_key( isset($_GET['key']) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '', isset($_GET['login']) ? sanitize_user( wp_unslash( $_GET['login'] ) ) : '' );
 				if ( is_wp_error($user) ) {
 					if ( $user->get_error_code() === 'expired_key' )
 						$login_error = '<strong>'.esc_html(ucwords(__("error","pie-register"))).'</strong>: '.apply_filters("piereg_you_key_has_been_expired",__("This link has expired, please reset the password again.","pie-register").' <a href="'.esc_url(pie_lostpassword_url()).'" title="'.esc_attr__("Reset your password","pie-register").'">'.esc_html__("Lost your password?","pie-register").'</a>');
@@ -195,21 +199,26 @@ $newpasspageLock = 0;
 				}
 				
 				
-				if( isset($_POST['pass1'], $_POST['piereg_get_password_nonce']) && wp_verify_nonce( $_POST['piereg_get_password_nonce'], 'piereg_wp_get_password_nonce' ) && !is_wp_error($user)){
+				if( isset($_POST['pass1'], $_POST['piereg_get_password_nonce']) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['piereg_get_password_nonce'] ) ), 'piereg_wp_get_password_nonce' ) && !is_wp_error($user)){
+					/*
+					 * Passwords are deliberately neither sanitized nor unslashed: like wp-login.php ( reset_password( $user, $_POST['pass1'] ) )
+					 * and this plugin's login handler (wp_signon() with the raw 'pwd'), the value is kept exactly as received so the
+					 * stored password keeps matching what the login form sends.
+					 */
 					$errors = new WP_Error();
-					if(isset($_POST['pass1']) && trim($_POST['pass1']) == ""){
+					if(isset($_POST['pass1']) && trim($_POST['pass1']) == ""){ // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- password is not altered; only checked for emptiness
 						$login_error =  '<strong>'.esc_html(ucwords(__("error","pie-register"))).'</strong>: '.apply_filters("piereg_invalid_password",__( 'Invalid Password',"pie-register" ));
 						$errors->add( 'password_reset_mismatch',$login_error );
-					}elseif ( isset($_POST['pass1']) and strlen($_POST['pass1']) < 7  ){
+					}elseif ( isset($_POST['pass1']) and strlen($_POST['pass1']) < 7  ){ // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- password is not altered; only its length is checked
 						$login_error =  '<strong>'.esc_html(ucwords(__("error","pie-register"))).'</strong>: '.apply_filters("piereg_minimum_8_characters_required_in_password",__( 'The password must be at least 8 characters long',"pie-register" ));
 						$errors->add( 'password_reset_mismatch',$login_error );
-					}elseif ( isset($_POST['pass1']) && $_POST['pass1'] != $_POST['pass2'] ){
+					}elseif ( isset($_POST['pass1']) && ( ! isset($_POST['pass2']) || $_POST['pass1'] !== $_POST['pass2'] ) ){ // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- passwords are not altered; only compared with each other
 						$login_error =  '<strong>'.esc_html(ucwords(__("error","pie-register"))).'</strong>: '.apply_filters("piereg_the_passwords_do_not_match",__( 'The passwords do not match',"pie-register"));
 						$errors->add( 'password_reset_mismatch',$login_error );
 					}
 					do_action( 'validate_password_reset', $errors, $user );
 					if ( ( ! $errors->get_error_code() ) && isset( $_POST['pass1'] ) && !empty( $_POST['pass1'] ) ) {
-						reset_password($user, trim($_POST['pass1']));
+						reset_password($user, trim($_POST['pass1'])); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- password is not altered; passed to reset_password()/wp_set_password() as wp-login.php does
 						$newpasspageLock = 1;
 						$login_warning = '';
 						$login_error = '';
@@ -248,8 +257,10 @@ if ( isset($_GET['action']) && ('rp' == $action || 'resetpass' == $action) && ($
 		require_once(PIEREG_DIR_NAME."/pie_register_template/reset_password/reset_password_form_template.php");
 	}
 	$r_pass_form = new Reset_pass_form_template($option);
-	$this_user = sanitize_user($_GET['login']);
-	$the_key  = urlencode( sanitize_text_field( $_GET['key']) );
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- password reset e-mail link; key/login were validated by check_password_reset_key() above ($newpasspageLock is 0 only when valid)
+	$this_user = isset($_GET['login']) ? sanitize_user(wp_unslash($_GET['login'])) : '';
+	$the_key  = urlencode( isset($_GET['key']) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '' );
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	$the_user = urlencode( $this_user );
 	$form_data .= '
 	  <form name="resetpassform" class="piereg_resetpassform" action="'.esc_url(pie_modify_custom_url(pie_login_url(),'action=resetpass&key=' . $the_key . '&login=' . $the_user)).'" method="post" autocomplete="off">
@@ -288,7 +299,7 @@ else{
 		$form_data = apply_filters( 'pie_register_frontend_login_output_before', $form_data );
 
 		$form_data .= '
-		<form method="post" id="'.esc_attr($pr_loginform_id).'" class="piereg_loginform" name="loginform" action="'.esc_url(htmlentities($_SERVER['REQUEST_URI'])).'">';
+		<form method="post" id="'.esc_attr($pr_loginform_id).'" class="piereg_loginform" name="loginform" action="'.esc_url(htmlentities(isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '')).'">';
 
 			$form_data .= '<ul id="pie_register">';
 
@@ -303,9 +314,9 @@ else{
 			
 			$form_data .= '<li class="fields"><div class="fieldset">';
 			global $piereg_math_captcha_login,$piereg_math_captcha_login_widget,$wpdb;
-			$user_ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
-			
-			$get_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_lockdowns` WHERE `user_ip` = %s;", array($user_ip)));
+			$user_ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+
+			$get_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM `{$wpdb->prefix}pieregister_lockdowns` WHERE `user_ip` = %s;", array($user_ip))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; lockdown state must be read live
 			
 			if(isset($wpdb->last_error) && !empty($wpdb->last_error))
 			{
@@ -454,17 +465,23 @@ if(!function_exists("pie_login_form_captcha"))
 }
 
 function pie_update_user_meta_hash() {
-	$activation_key = isset($_GET['activation_key']) ? sanitize_key($_GET['activation_key']) : "";
-    $unverified = get_users(array('meta_key'=> 'hash','meta_value' => $activation_key));
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- e-mail activation link; authorised by the secret, non-empty activation hash
+	$activation_key = isset($_GET['activation_key']) ? sanitize_key(wp_unslash($_GET['activation_key'])) : "";
+	if ( '' === $activation_key ) {
+		return;
+	}
+    $unverified = get_users(array('meta_key'=> 'hash','meta_value' => $activation_key)); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- lookup by unique, non-empty activation hash
     if(sizeof($unverified )==1)
     {
         $user_id	= $unverified[0]->ID;
         $user_login = $unverified[0]->user_login;
-        if( isset($_GET['pie_id']) && $user_login == $_GET['pie_id'])
+        // Keep the hash of users awaiting payment: the PayPal IPN handler needs it, and it never activates them (see pieOutputLoginForm()).
+        if( isset($_GET['pie_id']) && $user_login === sanitize_user(wp_unslash($_GET['pie_id'])) && 'payment_verify' !== get_user_meta( $user_id, 'register_type', true ) )
         {
             $hash = "";
             update_user_meta( $user_id, 'hash', $hash );
         }
     }
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 }
 add_action('wp_footer','pie_update_user_meta_hash');

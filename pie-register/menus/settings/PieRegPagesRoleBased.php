@@ -155,10 +155,12 @@ $_available_in_pro 	= ' - <span style="color:red;">' . esc_html__("Available in 
 
 	<form method="post" action="" id="redirect_settings_del_form">
 		<input type="hidden" id="redirect_settings_del_id" name="redirect_settings_del_id" value="0" />
+		<?php wp_nonce_field( 'piereg_wp_redirect_settings_action', 'piereg_redirect_settings_nonce', false ); ?>
 		<input type="submit" style="display:none;" />
 	</form>
 	<form method="post" action="" id="redirect_settings_status_form">
 		<input type="hidden" id="redirect_settings_status_id" name="redirect_settings_status_id" value="0" />
+		<?php wp_nonce_field( 'piereg_wp_redirect_settings_action', 'piereg_redirect_settings_nonce', false ); ?>
 		<input type="submit" style="display:none;" />
 	</form>
 </div>

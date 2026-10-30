@@ -11,7 +11,7 @@ function pie_edit_userdata($form_id = "default"){
 	wp_get_current_user();
 	$form 		= new Edit_form_template($current_user,$form_id);
 	$profile_fields_data = "";
-	$query_url = remove_query_arg( array('pr_msg','type'), esc_url_raw($_SERVER['REQUEST_URI']) );
+	$query_url = remove_query_arg( array('pr_msg','type'), isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '' );
 	$profile_fields_data .= '<div class="pieregProfileWrapper pieregWrapper">
 	<form enctype="multipart/form-data" id="pie_regiser_form" method="post" action="'.esc_url(htmlentities($query_url)).'">';
 

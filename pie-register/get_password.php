@@ -8,16 +8,17 @@ $errors 	= new WP_Error();
 /*
  * Sanitizing post data
  */
-$this->pie_post_array	= $this->piereg_sanitize_post_data_escape( ( (isset($_POST) && !empty($_POST))?$_POST : array() ) );		
+// phpcs:ignore WordPress.Security.NonceVerification.Missing -- copies/sanitizes the submitted fields only; the password is changed only inside the piereg_get_password_nonce check below
+$this->pie_post_array	= $this->piereg_sanitize_post_data_escape( ( (isset($_POST) && !empty($_POST))?$_POST : array() ) );
 
-if ( ( isset($_POST['piereg_get_password_nonce']) && wp_verify_nonce($_POST['piereg_get_password_nonce'], 'piereg_wp_get_password_nonce') ) &&  isset($this->pie_post_array['pass1']) && $this->pie_post_array['pass1'] != $this->pie_post_array['pass2'] ) {	
+if ( ( isset($_POST['piereg_get_password_nonce']) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['piereg_get_password_nonce'] ) ), 'piereg_wp_get_password_nonce') ) &&  isset($this->pie_post_array['pass1']) && $this->pie_post_array['pass1'] != $this->pie_post_array['pass2'] ) {
 	$errors->add( 'password_reset_mismatch', 
 				apply_filters("piereg_reset_password_error",__('The passwords do not match.', 'pie-register')) # newlyAddedHookFilter
 			);
 	
 }
 
-if( isset($_POST['piereg_get_password_nonce']) && wp_verify_nonce($_POST['piereg_get_password_nonce'], 'piereg_wp_get_password_nonce') )
+if( isset($_POST['piereg_get_password_nonce']) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['piereg_get_password_nonce'] ) ), 'piereg_wp_get_password_nonce') )
 {
 	do_action( 'validate_password_reset', $errors, $user );
 	if ( ( ! $errors->get_error_code() ) && isset( $this->pie_post_array['pass1'] ) && !empty( $this->pie_post_array['pass1'] ) ) {
@@ -33,13 +34,15 @@ if( isset($_POST['piereg_get_password_nonce']) && wp_verify_nonce($_POST['piereg
     	<p class="piereg_message"> <?php echo esc_html($success)?> </p>
     <?php } else if (isset($errors->errors['password_reset_mismatch'][0]) && !empty($errors->errors['password_reset_mismatch'][0])  ) {  ?>
     	<p class="piereg_login_error">
-    		<?php  print_r($errors->errors['password_reset_mismatch'][0]); ?>
+    		<?php echo wp_kses_post($errors->errors['password_reset_mismatch'][0]); ?>
     	</p>
     <?php } else { ?>
     	<p class="piereg_warning"> <?php echo esc_html($warning)?> </p>
     <?php } 
-    $this_user = sanitize_user($_GET['login']);
-    $the_key  = urlencode(sanitize_text_field($_GET['key']));
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended -- password reset e-mail link; process_getpassword() already validated key/login with check_password_reset_key()
+    $this_user = isset($_GET['login']) ? sanitize_user(wp_unslash($_GET['login'])) : '';
+    $the_key  = urlencode(isset($_GET['key']) ? sanitize_text_field(wp_unslash($_GET['key'])) : '');
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
     $the_user = urlencode( $this_user ); 
     ?>
     <form name="resetpassform" id="piereg_resetpassform" action="<?php echo esc_url( site_url( 'wp-login.php?action=resetpass&key=' . $the_key . '&login=' . $the_user , 'login_post' ) ); ?>" method="post" autocomplete="off">
@@ -60,7 +63,7 @@ if( isset($_POST['piereg_get_password_nonce']) && wp_verify_nonce($_POST['piereg
         </p>
     <?php  
 		$form_links  	 = '<p id="nav"> <a href="'.esc_url(wp_login_url()).'">Log in</a> | <a href="'.esc_url(site_url("/wp-login.php?action=register")).'">Register</a> </p>';
-		$form_links 	.= '<p id="backtoblog"><a title="Are you lost?" href="'.esc_url(bloginfo("url")).'">← Back to Pie Register</a></p>';  		
+		$form_links 	.= '<p id="backtoblog"><a title="Are you lost?" href="'.esc_url(home_url()).'">← Back to Pie Register</a></p>';  		
 		$form_links      = apply_filters( 'pie_getpassword_form_links', $form_links );		
 		echo wp_kses_post($form_links);
 		?>

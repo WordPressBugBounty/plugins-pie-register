@@ -42,6 +42,7 @@ global $wp_session;
 			{
 				$message = $errors->errors['login-error'][0];						  	
 			}
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only notice selection from 'action'; the only state change ('activate') is authorised by the secret, non-empty activation hash
 			else if (! empty($_GET['action']) )
         	{
           
@@ -55,13 +56,16 @@ global $wp_session;
                 $success = __("Thank you for registering. Login credentials will be sent soon.","pie-register");		
 			elseif ( 'activate' == sanitize_key($_GET['action']) )
 			{
-				$unverified = get_users( array('meta_key'=> 'hash','meta_value' => sanitize_key($_GET['activation_key'])) );
-				
+				$activation_key = isset($_GET['activation_key']) ? sanitize_key(wp_unslash($_GET['activation_key'])) : '';
+				// An empty key would match every user that has the meta key, so it is never accepted
+				$unverified = ('' !== $activation_key) ? get_users( array('meta_key'=> 'hash','meta_value' => $activation_key) ) : array(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- lookup by unique, non-empty activation hash
+
 				if(sizeof($unverified )==1)
 				{
 					$user_id	= $unverified[0]->ID;
-					$user_login = $unverified[0]->user_login; 	
-					if($user_login == $_GET['pie_id'])
+					$user_login = $unverified[0]->user_login;
+					// Users awaiting payment also hold a 'hash' (sent to PayPal / in the pending-payment e-mail); it must not activate them without payment
+					if( isset($_GET['pie_id']) && $user_login === sanitize_user(wp_unslash($_GET['pie_id'])) && 'payment_verify' !== get_user_meta( $user_id, 'register_type', true ) )
 					{
 						update_user_meta( $user_id, 'active', 1);
 						$hash = "";
@@ -74,29 +78,30 @@ global $wp_session;
 					}
 				}		
 				
-				 
+
 			}
         }
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		if ( !empty($message) )
-			$pr_data .= '<p class="msg_div piereg_login_error"> ' . apply_filters('piereg_messages', $message) . "</p>";
+			$pr_data .= '<p class="msg_div piereg_login_error"> ' . wp_kses_post( apply_filters('piereg_messages', $message) ) . "</p>";
 		if ( !empty($success) )
-			$pr_data .= '<p class="msg_div piereg_message">' . apply_filters('piereg_messages', $success) . "</p>";
+			$pr_data .= '<p class="msg_div piereg_message">' . wp_kses_post( apply_filters('piereg_messages', $success) ) . "</p>";
 		if($this->pie_post_array['success'] != "")
-			$pr_data .= '<p class="msg_div piereg_message">'.apply_filters('piereg_messages', $this->pie_post_array['success']).'</p>';
+			$pr_data .= '<p class="msg_div piereg_message">'.wp_kses_post( apply_filters('piereg_messages', $this->pie_post_array['success']) ).'</p>';
 		elseif($this->pie_post_array['error'] != "")
-			$pr_data .= '<p class="msg_div piereg_login_error">'.apply_filters('piereg_messages', $this->pie_post_array['error']).'</p>';
+			$pr_data .= '<p class="msg_div piereg_login_error">'.wp_kses_post( apply_filters('piereg_messages', $this->pie_post_array['error']) ).'</p>';
 		elseif(isset($errors->errors['renew-account-error']) && $errors->errors['renew-account-error'] != ""){
 			$error_msg = "";
 			foreach($errors->errors['renew-account-error'] as $renew_error_val){
 				$error_msg = $renew_error_val."<br />";
 			}
-			$pr_data .= '<p class="msg_div piereg_login_error">'.apply_filters('piereg_messages_error', $error_msg).'</p>';
+			$pr_data .= '<p class="msg_div piereg_login_error">'.wp_kses_post( apply_filters('piereg_messages_error', $error_msg) ).'</p>';
 			unset($error_msg);
 		}
 		else{
 			if(isset($piereg['payment_renew_msg']) && !empty($piereg['payment_renew_msg']))
-				$pr_data .= '<p class="msg_div piereg_warning">'.apply_filters('piereg_messages_warning', $piereg['payment_renew_msg']).'</p>';
+				$pr_data .= '<p class="msg_div piereg_warning">'.wp_kses_post( apply_filters('piereg_messages_warning', $piereg['payment_renew_msg']) ).'</p>';
 		}
 	
 	$pr_data .= '<div id="show_pie_register_error_js"></div>';
@@ -107,7 +112,7 @@ global $wp_session;
     $pr_data .= '<div id="piereg_login">';
       $pr_data .= '<form method="post" action="" id="piereg_loginform" class="piereg_renew_account_form" name="loginform">
 	  <input type="hidden" name="e_mail" value="'.esc_attr($user_array['email']).'" >
-	  <input type="hidden" name="username" value="'.($user_array['username']).'" >
+	  <input type="hidden" name="username" value="'.esc_attr($user_array['username']).'" >
       	<ul id="pie_register">';
 			if(!empty($user_array) && $is_renew)
 			{
@@ -128,7 +133,8 @@ global $wp_session;
 				$pr_data .= '<li class="fields">
 					<div class="fieldset">
 						<label for="x_card_num">'.(esc_html__("User Name","pie-register")).'</label>
-						<input type="text" class="input_fields piereg_validate[required]" id="user_name" name="user_name" autocomplete="off" value="'.((isset($_POST['user_name']))?sanitize_user($_POST['user_name']):"").'" aria-required="true" aria-invalid="false">
+						<input type="text" class="input_fields piereg_validate[required]" id="user_name" name="user_name" autocomplete="off" value="'.((isset($_POST['user_name']))?esc_attr(sanitize_user(wp_unslash($_POST['user_name']))):"").'"' // phpcs:ignore WordPress.Security.NonceVerification.Missing -- only re-fills the field after a failed submit; the submit itself is nonce-checked
+						. ' aria-required="true" aria-invalid="false">
 						<span class="required">*</span>
 					</div>
 				</li>';

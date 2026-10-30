@@ -50,7 +50,7 @@ $_disable       = true;
               <?php
               global $wpdb;
               $codetable    = $wpdb->prefix . "pieregister_code";
-              $inviteCodes  = $wpdb->get_results("SELECT * FROM $codetable WHERE `status` = 1");
+              $inviteCodes  = $wpdb->get_results("SELECT * FROM $codetable WHERE `status` = 1"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- table name from $wpdb->prefix, no user input; custom plugin table, no WP API
               $today        = gmdate("Y-m-d");
               foreach ($inviteCodes as $key => $val) {
                 $expiryTime = gmdate("Y-m-d", strtotime($inviteCodes[$key]->expiry_date));

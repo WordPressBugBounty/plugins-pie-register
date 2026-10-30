@@ -47,7 +47,8 @@ class PieRegElementor {
 			'pieregister-elementor',
 			PIEREG_PLUGIN_URL . "assets/js/elementor-integration.js",
 			[ 'elementor-frontend', 'jquery', 'wp-util' ],
-			PIEREGISTER_VERSION
+			PIEREGISTER_VERSION,
+			false
 		);
 	}
 
@@ -56,18 +57,23 @@ class PieRegElementor {
 	 */
 	public function editor_assets() {
 
-		if ( empty( $_GET['action'] ) || $_GET['action'] !== 'elementor' ) {
+		if ( empty( $_GET['action'] ) || $_GET['action'] !== 'elementor' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only routing check, only decides whether to enqueue editor CSS
 			return;
 		}
 
 		wp_enqueue_style(
 			'pieregister-integrations',
-			PIEREG_PLUGIN_URL . "assets/css/elementor-integration.css"
+			PIEREG_PLUGIN_URL . "assets/css/elementor-integration.css",
+			array(),
+			PIEREGISTER_VERSION
 		);
 
 		wp_enqueue_script(
 			'pieregister-elementor',
-			PIEREG_PLUGIN_URL . "assets/js/elementor-integration.js"
+			PIEREG_PLUGIN_URL . "assets/js/elementor-integration.js",
+			array(),
+			PIEREGISTER_VERSION,
+			false
 		);
 	}
 

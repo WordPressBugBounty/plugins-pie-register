@@ -140,7 +140,7 @@ class PieReg_WPBakery extends WPBakeryShortCode {
     }
 
     function is_wpb_editor(){
-        return ! empty( $_REQUEST['vc_editable'] ) && 'true' === $_REQUEST['vc_editable'];
+        return ! empty( $_REQUEST['vc_editable'] ) && 'true' === $_REQUEST['vc_editable']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only WPBakery frontend-editor flag, only switches to preview markup
     }
 }
 // Load WPB code only if WPB is activated.

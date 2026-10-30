@@ -160,7 +160,7 @@
     </label>
     <select name="capthca_in_forgot_pass" id="piereg_capthca_in_forgot_pass">
       <option value="3" <?php selected((isset($piereg['capthca_in_forgot_pass']) && $piereg['capthca_in_forgot_pass'] == 3), true ) ?>>
-      <?php esc_html_e("No Catpcha ReCaptcha",'pie-register') ?>
+      <?php esc_html_e("No Captcha ReCaptcha",'pie-register') ?>
       </option>
       <!--
       <option value="1" <?php //echo ((isset($piereg['capthca_in_forgot_pass']) && $piereg['capthca_in_forgot_pass'] == 1 )?'selected="selected"':'') ?>>

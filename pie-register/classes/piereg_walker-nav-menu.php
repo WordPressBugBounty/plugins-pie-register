@@ -46,7 +46,7 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 		$classes = array(
 			'menu-item menu-item-depth-' . $depth,
 			'menu-item-' . esc_attr( $item->object ),
-			'menu-item-edit-' . ( ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? 'active' : 'inactive'),
+			'menu-item-edit-' . ( ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? 'active' : 'inactive'), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only: compared to the menu item id to pick a CSS class (mirrors core Walker_Nav_Menu_Edit)
 		);
 
 		$title = $item->title;
@@ -102,6 +102,7 @@ class piereg_Walker_Nav_Menu_Edit extends Walker_Nav_Menu {
 							?>" class="item-move-down" aria-label="<?php esc_attr_e( 'Move down', "pie-register" ) ?>">&#8595;</a>
 						</span>
 						<a class="item-edit" id="edit-<?php echo esc_attr($item_id); ?>" href="<?php
+							// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only: compared to the menu item id to build the edit link (mirrors core Walker_Nav_Menu_Edit)
 							echo esc_url( ( isset( $_GET['edit-menu-item'] ) && $item_id == $_GET['edit-menu-item'] ) ? admin_url( 'nav-menus.php' ) : add_query_arg( 'edit-menu-item', $item_id, remove_query_arg( $removed_args, admin_url( 'nav-menus.php#menu-item-settings-' . intval($item_id) ) ) ) );
 						?>" aria-label="<?php esc_attr_e( 'Edit menu item', "pie-register" ); ?>"><span class="screen-reader-text"><?php esc_html_e( 'Edit', "pie-register" ); ?></span></a>
 					</span>

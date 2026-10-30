@@ -69,8 +69,9 @@ class Edit_form extends PieReg_Base
 	}
 	function validateRegistration($errors)
 	{
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- only called from PieRegister::showProfile() after wp_verify_nonce( piereg_edit_profile_nonce, 'piereg_wp_edit_profile_nonce' ) for the logged-in user
 		global $wpdb;
-		
+
 		$global_options = $this->get_pr_global_options();
 		
 		/*
@@ -247,8 +248,8 @@ class Edit_form extends PieReg_Base
 			$required 			= (isset($field['required']))?$field['required']:"";
 			if($field['type']=="upload"){
 				
-				$field_name = sanitize_text_field($_FILES[$slug]['name']);
-				if($_FILES[$slug]['name'] != '' and $field['file_types'] != ""){
+				$field_name = isset($_FILES[$slug]['name']) ? sanitize_text_field($_FILES[$slug]['name']) : '';
+				if(isset($_FILES[$slug]['name']) && $_FILES[$slug]['name'] != '' and $field['file_types'] != ""){
 					$filter_array = stripcslashes($field['file_types']);
 					$filter_array = explode(",",$filter_array);
 					$result = $this->piereg_validate_files(sanitize_file_name($_FILES[$slug]['name']),$filter_array);
@@ -260,8 +261,8 @@ class Edit_form extends PieReg_Base
 			}
 			elseif($field['type']=="profile_pic")
 			{
-				$field_name = sanitize_text_field($_FILES[$slug]['name']);
-				if($_FILES[$slug]['name'] != ''){
+				$field_name = isset($_FILES[$slug]['name']) ? sanitize_text_field($_FILES[$slug]['name']) : '';
+				if(isset($_FILES[$slug]['name']) && $_FILES[$slug]['name'] != ''){
 					$result = $this->piereg_validate_files(sanitize_file_name($_FILES[$slug]['name']),array("gif","GIF","jpeg","JPEG","jpg","JPG","png","PNG","bmp","BMP"));
 					if(!$result){
 						$errors->add( $slug , '<strong>'.esc_html(ucwords(__('error','pie-register'))).'</strong>: '.apply_filters("piereg_Invalid_File_Type_In_Profile_Picture",__('Invalid file type used for profile picture.','pie-register' )));
@@ -275,7 +276,8 @@ class Edit_form extends PieReg_Base
 				$field_name = $code = $this->pie_post_array[$slug];
 				if($required != "" || $this->pie_post_array[$slug] != "")
 				{
-					$codetable	= $this->codeTable();				
+					$codetable	= $this->codeTable();
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- custom plugin table, no WP API; table name from codeTable() ($wpdb->prefix), code value bound with prepare()
 					$codes = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $codetable where BINARY name = %s and status = %d", $code, 1) );
 					if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 						$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
@@ -339,7 +341,7 @@ class Edit_form extends PieReg_Base
 					
 				} elseif($field['type']=="upload" && (isset($field['required']) && $field['required'] != "") )
 				{
-					if ( isset($this->pie_post_array['pie_'.$slug.'_removed']) && $this->pie_post_array['pie_'.$slug.'_removed'] && $_FILES[$slug]['name'] == '')
+					if ( isset($this->pie_post_array['pie_'.$slug.'_removed']) && $this->pie_post_array['pie_'.$slug.'_removed'] && ( ! isset($_FILES[$slug]['name']) || $_FILES[$slug]['name'] == '' ) )
 					{
 						$validation_message	= $field['label']." ".__("is required.","pie-register");
 						$errors->add( $slug , "<strong>". esc_html(ucwords(__("error","pie-register"))).":</strong> " .$validation_message );
@@ -395,11 +397,13 @@ class Edit_form extends PieReg_Base
 			}
 		 }	
 		 
-		$_POST	= $this->pie_post_array; 
+		$_POST	= $this->pie_post_array;
 		return $errors;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 	function UpdateUser()
 	{
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- only called from PieRegister::showProfile() after wp_verify_nonce( piereg_edit_profile_nonce, 'piereg_wp_edit_profile_nonce' ); updates the current user only
 		global $wpdb,$pie_success,$pie_error,$pie_error_msg,$pie_suucess_msg,$errors;
 		$errors = new WP_Error();
 
@@ -550,8 +554,9 @@ class Edit_form extends PieReg_Base
 			$this->pie_error_msg = __('Something went wrong while updating profile fields, please try again.','pie-register');
 		if($this->pie_success)
 			$this->pie_success_msg = __('Your Profile has been updated.','pie-register');
-			return($this->pie_success); 
-	}		
+			return($this->pie_success);
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+	}
 			
 }
 

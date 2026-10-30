@@ -65,7 +65,8 @@ class PieRegGutenbergBlock {
 			'pie-register-block-editor',
 			PIEREG_PLUGIN_URL . 'assets/js/gutenberg-block.js',
 			array( 'wp-blocks', 'wp-element', 'wp-i18n', 'wp-components' ),
-			PIEREGISTER_VERSION
+			PIEREGISTER_VERSION,
+			false
 		);
 
 		wp_enqueue_style(
@@ -116,7 +117,7 @@ class PieRegGutenbergBlock {
 
 		$title        = ! empty( $attr['displayTitle'] ) ? true : false;
 		$description  = ! empty( $attr['displayDescription'] ) ? true : false;
-		$gutenberg = defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST['context'] ) && 'edit' === $_REQUEST['context'];
+		$gutenberg = defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST['context'] ) && 'edit' === $_REQUEST['context']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only REST 'context' flag, only disables form fields in the block-editor preview
 		// Disable form fields if called from the Gutenberg editor.
 		if ( $gutenberg ) {
 			// Registration Form
@@ -254,7 +255,7 @@ class PieRegGutenbergBlock {
 	public function is_gb_editor() {
 
 		// TODO: Find a better way to check if is GB editor API call.
-		return defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST['context'] ) && 'edit' === $_REQUEST['context'];
+		return defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST['context'] ) && 'edit' === $_REQUEST['context']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only REST 'context' flag used to detect the block-editor preview
 	}
 
 }

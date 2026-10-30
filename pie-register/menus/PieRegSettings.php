@@ -4,10 +4,12 @@
 	$action = $subaction = "";
 	$active	= "active";
 	
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only tab/subtab slugs used for menu routing
 	if(isset($_GET['tab']))
-		$action	= sanitize_key($_GET['tab']);
+		$action	= sanitize_key(wp_unslash($_GET['tab']));
 	if(isset($_GET['subtab']))
-		$subaction	= sanitize_key($_GET['subtab']);
+		$subaction	= sanitize_key(wp_unslash($_GET['subtab']));
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	?>  
 <div id="container"  class="pieregister-admin">
   <div class="right_section">
@@ -20,6 +22,7 @@
         <form id="frm_default" method="post" onsubmit="return window.confirm('Are you sure? It will restore all the plugin settings to default.');">
           <input type="button" onclick="jQuery('#frm_default').submit();" class="submit_btn flt_none" value="<?php esc_attr_e("Reset to Default","pie-register");?>" />
           <input type="hidden" value="1" name="piereg_default_settings" />
+          <?php wp_nonce_field( 'piereg_wp_default_settings', 'piereg_default_settings_nonce' ); ?>
         </form>
       </div>
       <?php 
@@ -27,7 +30,7 @@
 			echo '<div id="message" class="updated fade msg_belowheading"><p><strong>' . wp_kses_post($this->pie_post_array['notice']) . '</strong></p></div>';
 			
 			# Role Based Pages On Edit Section
-			if(	!isset($_GET['action']) && !isset($_GET['pie_id']) ) {
+			if(	!isset($_GET['action']) && !isset($_GET['pie_id']) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only presence check to clear the role-based-page form when not editing an entry
 				$_POST['piereg_user_role'] = $_POST['logged_in_url'] = $_POST['log_in_page'] = $_POST['log_out_url'] = $_POST['log_out_page'] = "";
 			}
 		}

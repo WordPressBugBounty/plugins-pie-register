@@ -7,7 +7,8 @@ if(!$this->piereg_pro_is_activate)  {
 }
 if ( !current_user_can('piereg_manage_cap') )
 {
-  wp_redirect(esc_url_raw("admin.php?page=pie-invitation-codes"));
+  wp_safe_redirect(admin_url('admin.php?page=pie-invitation-codes'));
+  exit;
 }
 ?>
 <fieldset class="piereg_fieldset_area-nobg pr-user-tracker pr-allow-user-invitation-menu" <?php disabled($_disable, true, true); ?>>

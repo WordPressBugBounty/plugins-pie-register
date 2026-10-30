@@ -53,7 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                   {
                     $roles[] = $role['name'];
                   }
-                  $selected_role = (isset($_POST['invitation_code_user_role'])) ? sanitize_text_field($_POST['invitation_code_user_role']) : "";
+                  $selected_role = (isset($_POST['invitation_code_user_role'])) ? sanitize_text_field(wp_unslash($_POST['invitation_code_user_role'])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- display only: re-selects the submitted role in the dropdown; the save itself verifies piereg_wp_invitation_code_nonce in pie-register.php
                   echo wp_kses($this->createDropdown($roles, $selected_role), array(
                       'option' => array(
                           'value'    => array(),

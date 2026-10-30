@@ -4,10 +4,12 @@
 	$action = $subaction = "";
 	$active	= "active";
 	
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only tab/subtab slugs used for menu routing
 	if(isset($_GET['tab']))
-		$action	= sanitize_key($_GET['tab']);
+		$action	= sanitize_key(wp_unslash($_GET['tab']));
 	if(isset($_GET['subtab']))
-		$subaction	= sanitize_key($_GET['subtab']);	
+		$subaction	= sanitize_key(wp_unslash($_GET['subtab']));
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		
 	global $errors;
 	$license_key_errors = "";

@@ -55,6 +55,7 @@ class Profile_front extends PieReg_Base
 
 				$pie_pricing = get_user_meta($this->user_id,'pie_pricing',true);
 
+				// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only view_payments flag only switches between the profile and payments views
 				if ( ($pie_pricing == 'PaypalStandard') && is_plugin_active('pie-register-paypal-recurring/pie-register-paypal-recurring.php') )
 				{
 					if ( ( $this->checkAddonActivated( 'PayPal_Recurring' ) == true ) && !isset($_GET['view_payments']) )
@@ -80,6 +81,7 @@ class Profile_front extends PieReg_Base
 			}
 			if ( !isset($_GET['view_payments']) )
 			{
+				// phpcs:enable WordPress.Security.NonceVerification.Recommended
 				$data .= '<table border="0" cellpadding="0" cellspacing="0" class="pie_profile" id="pie_register">';
 				
 				if(is_array($this->data)){

@@ -3,9 +3,9 @@
 Contributors: pieregister, genetech, genetechproducts
 Tags: login form, user profile, User Registration, registration form, membership form
 Requires at least: 6.0
-Tested up to: 7.1
+Tested up to: 7.1.4
 Requires PHP: 8.2
-Stable tag: 3.8.4.15
+Stable tag: 3.8.4.16
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -236,6 +236,17 @@ To make your forms more interactive, you can simply add custom CSS in the styles
 Remove the password field from your forms and send an automated email on registrations by adding the auto-generated password in the email body using the replacement key.
 
 == CHANGELOG ==
+
+### 3.8.4.16
+
+*Released Date 29th October 2026*
+
+* Security: Fixed missing authorization checks on settings reset and invitation code update.
+* Security: Added capability and nonce checks to admin settings, import/export, invitation code, user role and redirect setting handlers.
+* Security: Restricted the admin nonce to Pie Register's own admin screens.
+* Security: Hardened email activation, admin approval and email change verification links.
+* Security: Improved input sanitization and output escaping across admin screens and front-end forms.
+* Fix: Registration form activate/deactivate links on the Manage Forms screen work again.
 
 ### 3.8.4.15
 

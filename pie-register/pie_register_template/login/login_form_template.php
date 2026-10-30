@@ -16,7 +16,7 @@ if(!class_exists("Login_form_template"))
 			if(isset($this->pr_option['login_username_label']) && !empty($this->pr_option['login_username_label'])){
 					$form_data .= '<label for="user_login">'.esc_html((isset($this->pr_option['login_username_label']) && !empty($this->pr_option['login_username_label']))? esc_attr($this->pr_option['login_username_label']) : __("Username","pie-register")) .'</label>';
 			}
-			$user_name_val = ((isset($_POST['log']) && !empty($_POST['log']))? sanitize_user($_POST['log']):"");
+			$user_name_val = ((isset($_POST['log']) && !empty($_POST['log']))? sanitize_user(wp_unslash($_POST['log'])):""); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- only re-fills the username field (escaped) after a failed login; the login itself is nonce-checked in PieRegister::checkLogin()
 			$form_data .= '<input placeholder="'.((isset($this->pr_option['login_username_placeholder']) && !empty($this->pr_option['login_username_placeholder']))? esc_attr($this->pr_option['login_username_placeholder']) : "").'" type="text" value="'.esc_attr($user_name_val).'" class="input input_fields piereg_validate[required]" id="user_login" name="log">';
 			$form_data .= '</div>';
 			return $form_data;

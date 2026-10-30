@@ -63,9 +63,9 @@ $form_on_free	= get_option("piereg_form_free_id");
 		?>
       <tr>
         <td><?php if(trim($option['Status']) != "" and $option['Status'] == "enable"): ?>
-          <a href="<?php echo esc_url('admin.php?page=pie-register&prfrmid='. esc_attr($option['Id']).'&status=disenable') ?>"> <img title="Deactivate" alt="Deactivate" src="<?php echo esc_url(plugins_url("../assets/images/active1.png",__FILE__)); ?>"> </a>
+          <a href="<?php echo esc_url(wp_nonce_url('admin.php?page=pie-register&prfrmid='. absint($option['Id']).'&status=disenable', 'piereg_form_status_nonce')) ?>"> <img title="Deactivate" alt="Deactivate" src="<?php echo esc_url(plugins_url("../assets/images/active1.png",__FILE__)); ?>"> </a>
           <?php else:  ?>
-          <a href="<?php echo esc_url('admin.php?page=pie-register&prfrmid='. esc_attr($option['Id']) .'&status=enable') ?>"> <img title="Activate" alt="Activate" src="<?php echo esc_url(plugins_url("../assets/images/active0.png",__FILE__)); ?>"> </a>
+          <a href="<?php echo esc_url(wp_nonce_url('admin.php?page=pie-register&prfrmid='. absint($option['Id']) .'&status=enable', 'piereg_form_status_nonce')) ?>"> <img title="Activate" alt="Activate" src="<?php echo esc_url(plugins_url("../assets/images/active0.png",__FILE__)); ?>"> </a>
           <?php endif; ?></td>
         <td class="column-id"><?php echo esc_html($option['Id']); ?></td>
         <td class="column-title"><strong><?php echo esc_html($option['Title']); ?></strong>
@@ -74,7 +74,7 @@ $form_on_free	= get_option("piereg_form_free_id");
             <?php 
             $preview_url = add_query_arg(array('pr_preview'=>1,'form_id'=>$option['Id'],'prFormId'=>$option['Id']), get_permalink($piereg['alternate_register']));
             ?>
-            <span class="edit"><a onclick="javascript:('Are you sure you want to delete this form?','admin.php?page=pie-register&prfrmid=<?php echo esc_attr($option['Id']); ?>&action=delete');" title="Delete this form">Delete</a> | </span>
+            <span class="edit"><a onclick="javascript:('Are you sure you want to delete this form?','<?php echo esc_js(wp_nonce_url('admin.php?page=pie-register&prfrmid=' . absint($option['Id']) . '&action=delete', 'piereg_form_delete_nonce')); ?>');" title="Delete this form">Delete</a> | </span>
             <span class="edit"><a class="underlinenone" href="<?php echo esc_url($preview_url); ?>" target="_blank" title="Preview this form">Preview</a> </span>
           </div>
         </td>

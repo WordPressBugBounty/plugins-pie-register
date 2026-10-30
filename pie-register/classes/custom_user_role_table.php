@@ -22,6 +22,7 @@ class Pie_Custom_Role_Table extends WP_List_Table
     private function get_sql_results()
     {
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API; no request data in the query
         $sql_results = $wpdb->get_results( $wpdb->prepare("SELECT `id`, `role_key`, `role_name`, `wp_role_name`, %s as `action` FROM `{$wpdb->prefix}pieregister_custom_user_roles` ORDER BY `id` DESC", "action") );
         return $sql_results;
     }

@@ -26,24 +26,28 @@ class PieRedirectSettings extends WP_List_Table
 		
 		$order = (strtoupper((string)$this->order) === 'DESC') ? 'DESC' : 'ASC';
 		
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- custom plugin table, no WP API; table name from $wpdb->prefix, $orderby allowlisted above, $order is 'ASC'/'DESC'
 		if ($fields === "`user_role`") {
 			return $wpdb->get_results("SELECT `user_role` FROM `{$wpdb->prefix}pieregister_redirect_settings` ORDER BY `$orderby` $order");
 		}
 
 		return $wpdb->get_results("SELECT `id`, `user_role`, `logged_in_url`, `logged_in_page_id`, `log_out_url`, `log_out_page_id`, `status` FROM `{$wpdb->prefix}pieregister_redirect_settings` ORDER BY `$orderby` $order");
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
     }
     public function set_order()
     {
         $order = 'ASC';
-        if ( isset( $_GET['order'] ) && $_GET['order'] )
-            $order = sanitize_key($_GET['order']);
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort direction; get_sql_results() reduces it to 'ASC'/'DESC'
+        if ( ! empty( $_GET['order'] ) )
+            $order = sanitize_key( wp_unslash( $_GET['order'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort direction; get_sql_results() reduces it to 'ASC'/'DESC'
         $this->order = $order;	// Lowercase alphanumeric characters, dashes and underscores are allowed
     }
     public function set_orderby()
     {
         $orderby = 'id';
-        if ( isset( $_GET['orderby'] ) && $_GET['orderby'] )
-            $orderby = sanitize_key($_GET['orderby']);
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort column; get_sql_results() allowlists it
+        if ( ! empty( $_GET['orderby'] ) )
+            $orderby = sanitize_key( wp_unslash( $_GET['orderby'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort column; get_sql_results() allowlists it
         $this->orderby = $orderby ;	// Lowercase alphanumeric characters, dashes and underscores are allowed
     }
     public function ajax_user_can() 
@@ -86,8 +90,8 @@ class PieRedirectSettings extends WP_List_Table
         empty( $posts ) AND $posts = array();
         # >>>> Pagination
 		
-        $per_page_item = (isset($_POST['invitation_code_per_page_items']))? intval(sanitize_key($_POST['invitation_code_per_page_items'])) : 10;
-		$per_page     = $per_page_item;
+        $per_page_item = (isset($_POST['invitation_code_per_page_items']))? intval(sanitize_key($_POST['invitation_code_per_page_items'])) : 10; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- read-only page size (int) for the admin list table
+		$per_page     = ( $per_page_item > 0 ) ? $per_page_item : 10;
         $current_page = $this->get_pagenum();
         $total_items  = count( $posts );
         $this->set_pagination_args( array (

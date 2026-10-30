@@ -29,33 +29,40 @@ class Pie_Invitation_Table extends WP_List_Table
         $order   = (strtoupper($this->order) === 'ASC') ? 'ASC' : 'DESC';
 
         // Search
-        if (!empty($_GET['search'])) {
-            $search = sanitize_text_field(wp_unslash($_GET['search']));
+        if (!empty($_GET['search'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only search term for the admin list table
+            $search = sanitize_text_field(wp_unslash($_GET['search'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only search term for the admin list table
             $search_like = '%' . $wpdb->esc_like($search) . '%';
 
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- custom plugin table, no WP API; $orderby is allowlisted above
             return $wpdb->get_results(
                 $wpdb->prepare(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- table name from $wpdb->prefix; $orderby is allowlisted above, $order is 'ASC'/'DESC'
                     "SELECT `id`, `name`, `code_description`, `code_usage`, `expiry_date`, `code_user_role`, `count`, `status` FROM `{$wpdb->prefix}pieregister_code` WHERE `name` LIKE %s ORDER BY `$orderby` $order",
                     $search_like
                 )
             );
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- custom plugin table, no WP API; table name from $wpdb->prefix; $orderby is allowlisted above, $order is 'ASC'/'DESC'
         return $wpdb->get_results("SELECT `id`, `name`, `code_description`, `code_usage`, `expiry_date`, `code_user_role`, `count`, `status` FROM `{$wpdb->prefix}pieregister_code` ORDER BY `$orderby` $order");
     }
     public function set_order()
     {
-        $order = (isset($_GET['order']) && 'asc' === strtolower($_GET['order'])) ? 'ASC' : 'DESC';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort direction, reduced to 'ASC'/'DESC'
+        $order = (isset($_GET['order']) && 'asc' === strtolower(sanitize_text_field(wp_unslash($_GET['order'])))) ? 'ASC' : 'DESC';
         $this->order = $order;
     }
     public function set_orderby()
     {
         $allowed = array('id', 'name', 'code_description', 'code_usage', 'expiry_date', 'code_user_role', 'count', 'status');
-        $orderby = (isset($_GET['orderby']) && in_array($_GET['orderby'], $allowed, true)) ? $_GET['orderby'] : 'id';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort column, strictly allowlisted
+        $orderby = isset($_GET['orderby']) ? sanitize_text_field(wp_unslash($_GET['orderby'])) : '';
+        $orderby = in_array($orderby, $allowed, true) ? $orderby : 'id';
         $this->orderby = $orderby;
     }
     public function search_box($text, $input_id)
     {
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only list-table state (search/orderby/order/page) echoed back, escaped, into the GET search form
         if (empty($_REQUEST['search']) && !$this->has_items()) {
             return;
         }
@@ -66,20 +73,20 @@ class Pie_Invitation_Table extends WP_List_Table
             <?php
 
             if (!empty($_REQUEST['orderby']))
-                echo '<input type="hidden" name="orderby" value="' . esc_attr($_REQUEST['orderby']) . '" />';
+                echo '<input type="hidden" name="orderby" value="' . esc_attr(sanitize_text_field(wp_unslash($_REQUEST['orderby']))) . '" />';
             if (!empty($_REQUEST['order']))
-                echo '<input type="hidden" name="order" value="' . esc_attr($_REQUEST['order']) . '" />';
+                echo '<input type="hidden" name="order" value="' . esc_attr(sanitize_text_field(wp_unslash($_REQUEST['order']))) . '" />';
             if (!empty($_REQUEST['page']))
-                echo '<input type="hidden" name="page" value="' . esc_attr($_REQUEST['page']) . '" />';
+                echo '<input type="hidden" name="page" value="' . esc_attr(sanitize_text_field(wp_unslash($_REQUEST['page']))) . '" />';
             ?>
             <p class="search-box">
                 <label class="screen-reader-text" for="<?php echo esc_attr($input_id); ?>"><?php echo esc_html($text); ?>:</label>
-                <input type="search" id="<?php echo esc_attr($input_id); ?>" name="search" value="<?php echo isset($_REQUEST['search']) ? esc_attr(wp_unslash($_REQUEST['search'])) : ''; ?>" />
+                <input type="search" id="<?php echo esc_attr($input_id); ?>" name="search" value="<?php echo isset($_REQUEST['search']) ? esc_attr(sanitize_text_field(wp_unslash($_REQUEST['search']))) : ''; ?>" />
                 <?php submit_button($text, '', '', false, array('id' => 'search-submit')); ?>
             </p>
         </form>
     <?php
-
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
     }
     public function ajax_user_can()
     {
@@ -179,9 +186,9 @@ class Pie_Invitation_Table extends WP_List_Table
 
             /*code name*/
             $e_title = esc_html__('Click here to edit', "pie-register");
-            $post->name = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'field_id_' . esc_js($id) . '\');" id="field_id_1_' . esc_attr($id) . '">' . $post->name . '</span><input type="text" id="field_id_' . esc_attr($id) . '" value="' . esc_attr($post->name) . '" style="display:none;" onblur="hide_field(this,\'field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($post->id) . '" data-type-invitationcode="name" />';
+            $post->name = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'field_id_' . esc_js($id) . '\');" id="field_id_1_' . esc_attr($id) . '">' . esc_html($post->name) . '</span><input type="text" id="field_id_' . esc_attr($id) . '" value="' . esc_attr($post->name) . '" style="display:none;" onblur="hide_field(this,\'field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($post->id) . '" data-type-invitationcode="name" />';
             /*code description */
-            $post->code_description = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'code_description_field_id_' . esc_js($id) . '\');" class="code_description"  id="code_description_field_id_1_' . esc_attr($id) . '">' . $post_description . '</span><input type="text" id="code_description_field_id_' . esc_attr($id) . '" value="' . $post->code_description . '" style="display:none; width:100px;"" onblur="hide_field(this,\'code_description_field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . $post->id . '" data-type-invitationcode="code_description" />';
+            $post->code_description = '<span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'code_description_field_id_' . esc_js($id) . '\');" class="code_description"  id="code_description_field_id_1_' . esc_attr($id) . '">' . esc_html($post_description) . '</span><input type="text" id="code_description_field_id_' . esc_attr($id) . '" value="' . esc_attr($post->code_description) . '" style="display:none; width:100px;" onblur="hide_field(this,\'code_description_field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($post->id) . '" data-type-invitationcode="code_description" />';
             /*code usage*/
             $post->code_usage = '<span>' . esc_attr($post->count) . '/</span><span title="' . esc_attr($e_title) . '" onclick="show_field(this,\'usage_field_id_' . esc_js($id) . '\');" id="usage_field_id_1_' . esc_attr($id) . '">' . esc_html($post->code_usage)  . '</span><input autocomplete="off" type="text" class="code_usage" id="usage_field_id_' . esc_attr($id) . '" value="' . esc_attr($post->code_usage) . '" style="display:none;" onblur="hide_field(this,\'usage_field_id_1_' . esc_js($id) . '\');" data-id-invitationcode="' . esc_attr($post->id) . '" data-type-invitationcode="code_usage" />';
 
@@ -198,6 +205,7 @@ class Pie_Invitation_Table extends WP_List_Table
             $prefix           = $wpdb->prefix . "pieregister_";
             $emailtable       = $prefix . "invite_code_emails";
             $codetable        = $prefix . "code";
+            // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin tables (and an email lookup that needs $wpdb->num_rows); all values bound with prepare()
             $code_name = $wpdb->get_results(
                 $wpdb->prepare(
                     "SELECT `name` FROM `{$wpdb->prefix}pieregister_code` WHERE id = %d",
@@ -234,6 +242,7 @@ class Pie_Invitation_Table extends WP_List_Table
                     }
                 }
             }
+            // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             if ($not_used_codes == 0) {
                 $post->email_invite .= '<p class="email-content"> None </p>';
             }

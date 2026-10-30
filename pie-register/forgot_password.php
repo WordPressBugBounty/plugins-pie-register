@@ -11,6 +11,7 @@ function pieResetFormOutput($piereg_widget = false){
 		*	Sanitizing post data
 	*/
 	
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- copies/sanitizes the submitted fields only; every use that acts on them is inside the piereg_reset_password_nonce check below
 	$pie_register_base->pie_post_array	= $pie_register_base->piereg_sanitize_post_data_escape( ( (isset($_POST['is_forgot_form']) && !empty($_POST['is_forgot_form'])) ? $_POST : array() ) );
 	$option = get_option(OPTION_PIE_REGISTER);
 	$forgot_pass_form = '';
@@ -27,7 +28,7 @@ function pieResetFormOutput($piereg_widget = false){
 	$error		 = array();
 	$error_class = "piereg_login_error";
 	
-	if(isset($_POST['piereg_reset_password_nonce']) && wp_verify_nonce( $_POST['piereg_reset_password_nonce'], 'piereg_wp_reset_password_nonce' ))
+	if(isset($_POST['piereg_reset_password_nonce']) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['piereg_reset_password_nonce'] ) ), 'piereg_wp_reset_password_nonce' ))
 	{
 		if (isset($pie_register_base->pie_post_array['reset_pass']) && trim($pie_register_base->pie_post_array['user_login']) != "")
 		{
@@ -43,8 +44,9 @@ function pieResetFormOutput($piereg_widget = false){
 					$invalidcaptchaerror = '<strong>'.esc_html(ucwords(__("error","pie-register"))).'</strong>: '. apply_filters('piereg_forgot_invalid_captcha_error',__('Invalid Captcha','pie-register')); # newlyAddedHookFilter
 					if(isset($pie_register_base->pie_post_array['piereg_math_captcha_forgot_pass']))
 					{
-						$currentTabId =  intval($_COOKIE['currentTabId']);		
-						$piereg_cookie_array =  ( (isset( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_forgot_password'] ) && 0 < strpos( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_forgot_password'], '|' )) ? sanitize_text_field($_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_forgot_password']) : "");
+						$currentTabId =  isset($_COOKIE['currentTabId']) ? intval($_COOKIE['currentTabId']) : 0;
+						$piereg_cookie_value = isset( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_forgot_password'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_forgot_password'] ) ) : '';
+						$piereg_cookie_array =  ( 0 < strpos( $piereg_cookie_value, '|' ) ) ? $piereg_cookie_value : "";
 						$piereg_cookie_array = explode("|",$piereg_cookie_array);
 						$cookie_result1 = (intval(base64_decode($piereg_cookie_array[0])) - 12);
 						$cookie_result2 = (intval(base64_decode($piereg_cookie_array[1])) - 786);
@@ -58,8 +60,9 @@ function pieResetFormOutput($piereg_widget = false){
 					}
 					elseif(isset($pie_register_base->pie_post_array['piereg_math_captcha_forgot_pass_widget']))
 					{
-						$currentTabId =  intval($_COOKIE['currentTabId']);		
-						$piereg_cookie_array = ( (isset( $_COOKIE[ 'tab_'.$currentTabId.'_piereg_math_captcha_forgot_password_widget' ] ) && 0 < strpos( $_COOKIE[ 'tab_'.$currentTabId.'_piereg_math_captcha_forgot_password_widget' ], '|' )) ? sanitize_text_field($_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_forgot_password_widget']) : ""); 
+						$currentTabId =  isset($_COOKIE['currentTabId']) ? intval($_COOKIE['currentTabId']) : 0;
+						$piereg_cookie_value = isset( $_COOKIE[ 'tab_'.$currentTabId.'_piereg_math_captcha_forgot_password_widget' ] ) ? sanitize_text_field( wp_unslash( $_COOKIE[ 'tab_'.$currentTabId.'_piereg_math_captcha_forgot_password_widget' ] ) ) : '';
+						$piereg_cookie_array = ( 0 < strpos( $piereg_cookie_value, '|' ) ) ? $piereg_cookie_value : "";
 						$piereg_cookie_array = explode("|",$piereg_cookie_array);
 						$cookie_result1 = (intval(base64_decode($piereg_cookie_array[0])) - 12);
 						$cookie_result2 = (intval(base64_decode($piereg_cookie_array[1])) - 786);
@@ -79,14 +82,8 @@ function pieResetFormOutput($piereg_widget = false){
 				elseif($option['capthca_in_forgot_pass'] == 3){
 					
 					$settings  	=  get_option(OPTION_PIE_REGISTER);
-					if($settings['piereg_recaptcha_type'] == "v2"){
-						$privatekey		= $settings['captcha_private'];
-					}elseif($settings['piereg_recaptcha_type'] == "v3"){
-						$privatekey		= $settings['captcha_private_v3'];
-					}
-					$captcha	= (isset($_POST['g-recaptcha-response']) && ! empty( $_POST['g-recaptcha-response'] )) ? sanitize_text_field($_POST['g-recaptcha-response']) : "";
-					$response = $pie_register_base->read_file_from_url("https://www.google.com/recaptcha/api/siteverify?secret=".trim($privatekey)."&response=".$captcha."&remoteip=".sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) );
-					$resp = json_decode($response,true);
+					// reCAPTCHA v2 / v3 (classes/captcha.php)
+					$resp = array( 'success' => ( piereg_verify_captcha( $settings ) === true ) );
 					if($resp['success'] == false){
 						$error[] = '<strong>'.ucwords(__("error","pie-register")).'</strong>: '.apply_filters('piereg_forgot_invalid_captcha_error',__('Invalid Security Code','pie-register')); # newlyAddedHookFilter
 						$error_found++;
@@ -135,7 +132,7 @@ function pieResetFormOutput($piereg_widget = false){
 						$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
 						
 						// Now insert the new md5 key into the db
-						$wpdb->update($wpdb->users, array('user_activation_key' => $hashed), array('user_login' => $user_login));				
+						$wpdb->update($wpdb->users, array('user_activation_key' => $hashed), array('user_login' => $user_login)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- stores the hashed reset key exactly as core get_password_reset_key() did; read back by check_password_reset_key()
 						
 						$message_temp = "";
 						if($option['user_formate_email_forgot_password_notification'] == "0"){
@@ -209,7 +206,7 @@ function pieResetFormOutput($piereg_widget = false){
 
 	$forgot_pass_form = apply_filters( 'pie_register_forgot_pass_output_before', $forgot_pass_form );
 	$forgot_pass_form .= '<ul id="pie_register">';
-	$forgot_pass_form .= '<form method="post" action="'.esc_url_raw(htmlentities($_SERVER['REQUEST_URI'])).'" id="piereg_lostpasswordform">';
+	$forgot_pass_form .= '<form method="post" action="'.esc_url(htmlentities(isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '')).'" id="piereg_lostpasswordform">';
 	$forgot_pass_form .= '<li class="fields">';	
 		$forgot_pass_form .= $reset_form->add_email_or_username();
 	$forgot_pass_form .= '</li>';
@@ -349,8 +346,8 @@ function piereg_delete_authentication(){
 	global $wpdb;
 	$pie_register_base = new PieReg_Base();
 
-	$user_ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
-	$wpdb->query($wpdb->prepare("DELETE FROM `{$wpdb->prefix}pieregister_lockdowns` WHERE `user_ip` = %s AND `attempt_from` = 'is_forgot'", array($user_ip)));
+	$user_ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	$wpdb->query($wpdb->prepare("DELETE FROM `{$wpdb->prefix}pieregister_lockdowns` WHERE `user_ip` = %s AND `attempt_from` = 'is_forgot'", array($user_ip))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table, no WP API
 	if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 		$pie_register_base->pr_error_log($wpdb->last_error.($pie_register_base->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 	}

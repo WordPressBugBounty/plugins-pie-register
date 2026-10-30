@@ -67,7 +67,7 @@ class PieRegDivi {
 	 * @return bool
 	 */
 	private function is_divi_builder() {
-		return ! empty( $_GET['et_fb'] );
+		return ! empty( $_GET['et_fb'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only Divi builder flag, only decides whether editor assets/preview markup are used
 	}
 
 

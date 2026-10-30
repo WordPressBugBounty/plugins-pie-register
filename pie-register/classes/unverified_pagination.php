@@ -22,7 +22,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
   }
 
   function admin_header() {
-    $page = ( isset($_GET['page'] ) ) ? sanitize_key( $_GET['page'] ) : false;
+    $page = ( isset($_GET['page'] ) ) ? sanitize_key( $_GET['page'] ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only admin page slug used to decide whether to print column CSS
     if( 'my_list_test' != $page )
     return;
     echo '<style type="text/css">';
@@ -45,9 +45,9 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
         case 'reg_type':
         case 'role':
         case 'form_name':
-            return $item[ $column_name ];
+            return esc_html( $item[ $column_name ] );
         default:
-            return print_r( $item, true ) ; //Show the whole array for troubleshooting purposes
+            return '';
     }
   }
 
@@ -75,9 +75,12 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
 
   function usort_reorder( $a, $b ) {
     // If no sort, default to username
-    $orderby = ( ! empty( $_GET['orderby'] ) ) ? sanitize_key($_GET['orderby']) : 'username';
+    $orderby = ( ! empty( $_GET['orderby'] ) ) ? sanitize_key($_GET['orderby']) : 'username'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort column for the admin list table, allowlisted below
+    if ( ! in_array( $orderby, array_keys( $this->get_sortable_columns() ), true ) ) {
+      $orderby = 'username';
+    }
     // If no order, default to asc
-    $order = ( ! empty($_GET['order'] ) ) ? sanitize_key($_GET['order']) : 'asc';
+    $order = ( ! empty($_GET['order'] ) ) ? sanitize_key($_GET['order']) : 'asc'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort direction, only 'asc' is matched
     // Determine sort order
         
     /**
@@ -95,7 +98,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
               // 'delete'    => sprintf('<a href="?page=%s&action=%s&book=%s">Delete</a>',$_REQUEST['page'],'delete',$item['ID']),
           );
 
-    return sprintf('%1$s %2$s', $item['username'], $this->row_actions($actions) );
+    return sprintf('%1$s %2$s', esc_html( $item['username'] ), $this->row_actions($actions) );
   }
   function get_bulk_actions() {
 
@@ -116,7 +119,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
 
     // security check!
     if ( isset( $_POST['_wpnonce'] ) && ! empty( $_POST['_wpnonce'] ) ) {
-        $nonce  = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
+        $nonce  = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) );
         $action = 'bulk-' . $this->_args['plural'];
 
         if ( ! wp_verify_nonce( $nonce, $action ) )
@@ -167,7 +170,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
 
     $data = $this->getdata($search);
 
-    if(isset($_GET['orderby']) && !empty($_GET['orderby'])) usort( $data, array( &$this, 'usort_reorder' ) );
+    if(isset($_GET['orderby']) && !empty($_GET['orderby'])) usort( $data, array( &$this, 'usort_reorder' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort flag for the admin list table
 
     $user     = get_current_user_id();
     $screen   = get_current_screen();
@@ -191,6 +194,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
     $this->items = $this->found_data;
   }
   function extra_tablenav( $which ) {
+    // phpcs:disable WordPress.Security.NonceVerification.Missing -- read-only: the submitted filter values are only compared to constants to mark the selected option
     if ( $which === "top" ){
       ?>
       <div class="alignleft actions bulkactions">
@@ -233,16 +237,20 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
         //The code that goes after the table is there
 
     }
+    // phpcs:enable WordPress.Security.NonceVerification.Missing
   }
   
   function getdata($search="")
   {
 
+    // phpcs:disable WordPress.Security.NonceVerification.Missing -- read-only list filters (sanitize_key) for the admin unverified-users table
     $filter_reg_type = (isset($_POST['type-filter']) && !empty($_POST['type-filter'])) ? sanitize_key($_POST['type-filter']) : "";
     $filter_role     = (isset($_POST['role-filter']) && !empty($_POST['role-filter'])) ? sanitize_key($_POST['role-filter']) : "";
+    // phpcs:enable WordPress.Security.NonceVerification.Missing
     $search          = (!empty($search)) ? '*'.sanitize_text_field($search).'*' : "";
-    
-    $data = array();    
+
+    $data = array();
+    // phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value, WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- admin-only listing of users pending verification (active = 0) filtered by register_type
     $unverified = get_users(array(
                               'meta_key'    => 'active',
                               'meta_value'  => 0,
@@ -258,6 +266,7 @@ class Pie_Unverfied_users_Table extends WP_List_Table {
                                 )
                               )
                             ));
+    // phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value, WordPress.DB.SlowDBQuery.slow_db_query_meta_query
     
     foreach( $unverified as $key=>$un ) {
       if( isset($alt) ) $alt = ''; else $alt = "alternate";

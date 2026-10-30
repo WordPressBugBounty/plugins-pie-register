@@ -20,8 +20,10 @@ if (!$this->piereg_pro_is_activate())
                 <!-- PR WooCommerce AddOn Tabs -->
                 <div class="invite-tabs pr-woocommerce-addon-tabs clearfix">
                     <ul>
+                        <?php // phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only give_products tab flag used only to highlight the active tab ?>
                         <li <?php if(!isset($_GET['give_products'])){ echo 'class="invite-active"'; } ?>><a href="admin.php?page=pie-woocommerce&replace_forms"><?php esc_html_e("Replace Login and Registration Forms","pie-register") ?></a></li>
                         <li <?php if(isset($_GET['give_products'])){ echo 'class="invite-active"'; } ?>><a href="admin.php?page=pie-woocommerce&give_products"><?php esc_html_e("Assign Products to Registration Form","pie-register") ?></a></li>
+                        <?php // phpcs:enable WordPress.Security.NonceVerification.Recommended ?>
                     </ul>
                 </div>
             

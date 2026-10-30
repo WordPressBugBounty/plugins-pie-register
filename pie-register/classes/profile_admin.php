@@ -526,9 +526,11 @@ class Profile_admin extends PieReg_Base
     function edit_user_profile($user)
     {
 		$form_id = "default";
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- user_id (cast to int) from wp-admin/user-edit.php, which already checked current_user_can( 'edit_user', $user_id ) before firing edit_user_profile
 		if(isset($_GET['user_id'])){
 			$form_id = get_user_meta((intval(sanitize_key($_GET['user_id']))),"user_registered_form_id",true);
 			$user_id = intval(sanitize_key($_GET['user_id']));
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}elseif(is_admin()){
 			$form_id = get_user_meta((intval($user->ID)),"user_registered_form_id",true);
 			$user_id = intval($user->ID);
@@ -632,6 +634,7 @@ class Profile_admin extends PieReg_Base
 		/*
 			*	Sanitizing post data
 		*/
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- callback for core's user_profile_update_errors, which edit_user() fires after check_admin_referer( 'update-user_' . $user_id ) and the edit_user capability check
 		$this->pie_post_array	= $this->piereg_sanitize_post_data_escape( ( (isset($_POST) && !empty($_POST))?$_POST : array() ) );
         foreach ($this->data as $this->field) {
             $this->slug         = $this->createFieldName($this->field['label']);
@@ -681,7 +684,8 @@ class Profile_admin extends PieReg_Base
 		$form_id 	  	= get_user_meta($user_id,"user_registered_form_id",true);		
 		$this->data 	= $this->getCurrentFields($form_id);
 		
-		if( empty($this->pie_post_array) ) { 
+		if( empty($this->pie_post_array) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- runs on core personal_options_update / edit_user_profile_update, fired by wp-admin/user-edit.php after check_admin_referer( 'update-user_' . $user_id ) and current_user_can( 'edit_user', $user_id ); personal_options_update additionally requires edit_users (updateMyProfile)
 			$this->pie_post_array = $this->piereg_sanitize_post_data_escape( ( (isset($_POST) && !empty($_POST))?$_POST : array() ) );
 		}
 		
@@ -761,16 +765,23 @@ class Profile_admin extends PieReg_Base
         }
     }
 	function pie_profile_pictures_upload($user_id,$field,$field_slug,$form_id=0){
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- called only from updateProfile(), which runs on core profile-update hooks after check_admin_referer( 'update-user_' . $user_id ) and the edit_user capability check
 		global $errors;
 		$errors = new WP_Error();
-		if($_FILES[$field_slug]['name'] != ''){
-			/** 
+		if(isset($_FILES[$field_slug]['name']) && $_FILES[$field_slug]['name'] != ''){
+			/**
 			 * UPLOAD PROFILE PICTURE
 			 */
 			$result = $this->piereg_validate_files(sanitize_file_name($_FILES[$field_slug]['name']),array("gif","jpeg","jpg","png","bmp"));
+			// $_FILES tmp_name is a server-generated path; sniff the uploaded content the same way core media uploads do.
+			$tmp_file = isset( $_FILES[$field_slug]['tmp_name'] ) ? $_FILES[$field_slug]['tmp_name'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP-generated temp path, not user text
+			if ( $result ) {
+				$validate_file_ext_type = wp_check_filetype_and_ext( $tmp_file, sanitize_file_name( $_FILES[$field_slug]['name'] ) );
+				$result = ( $tmp_file !== '' && $validate_file_ext_type['ext'] !== false && $validate_file_ext_type['type'] !== false );
+			}
 			if($result)
 			{
-				$temp = explode(".", $_FILES[$field_slug]["name"]);
+				$temp = explode(".", sanitize_file_name($_FILES[$field_slug]["name"]));
 				$extension = end($temp);
 				$upload_dir = wp_upload_dir();
 				$temp_dir = realpath($upload_dir['basedir'])."/piereg_users_files/".$user_id;
@@ -779,7 +790,7 @@ class Profile_admin extends PieReg_Base
 				$temp_file_url = $upload_dir['baseurl']."/piereg_users_files/".$user_id."/".$temp_file_name;
 				$required           = $field['required'];
 				$wp_filesystem = $this->pie_get_filesystem();
-				if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
+				if(!$wp_filesystem->move($tmp_file,$temp_dir."/".$temp_file_name) && $required){
 					$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 				}else{
 					update_user_meta($user_id,$field_slug, $temp_file_url);
@@ -788,6 +799,7 @@ class Profile_admin extends PieReg_Base
 				$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_invalid_profile_picture",__('Invalid profile picture','pie-register' )));
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 	function pie_remove_upload($user_id,$field,$field_slug) {
 		$upload_dir = wp_upload_dir();
@@ -811,10 +823,13 @@ class Profile_admin extends PieReg_Base
 
 	function pie_upload_files($user_id,$field,$field_slug,$form_id=0)
 	{
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- called only from updateProfile(), which runs on core profile-update hooks after check_admin_referer( 'update-user_' . $user_id ) and the edit_user capability check
 		global $errors;
 		$errors = new WP_Error();
 		$required           = $field['required'];
-		if($_FILES[$field_slug]['name'] != ''){
+		if(isset($_FILES[$field_slug]['name']) && $_FILES[$field_slug]['name'] != ''){
+			// $_FILES tmp_name is a server-generated path; it is passed to wp_check_filetype_and_ext() so the content is sniffed like core media uploads.
+			$tmp_file = isset( $_FILES[$field_slug]['tmp_name'] ) ? $_FILES[$field_slug]['tmp_name'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP-generated temp path, not user text
 			if($field['file_types'] != ""){
 				$filter_string = stripcslashes($field['file_types']);
 				$filter_array = explode(",",$filter_string);
@@ -832,13 +847,13 @@ class Profile_admin extends PieReg_Base
 					$allowed_mime_types = get_allowed_mime_types();
 					$valid_mime_type = wp_check_filetype($temp_file_name,$allowed_mime_types);
 
-					// Validate file extension type
-					$validate_file_ext_type = wp_check_filetype_and_ext( $temp_file_url, $temp_file_name );
-					
+					// Validate file extension type and the uploaded content
+					$validate_file_ext_type = wp_check_filetype_and_ext( $tmp_file, $temp_file_name );
+
 					if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 					{
 						$wp_filesystem = $this->pie_get_filesystem();
-						if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
+						if(!$wp_filesystem->move($tmp_file,$temp_dir."/".$temp_file_name) && $required){
 							$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 						}else{
 							update_user_meta($user_id,$field_slug, $temp_file_url);
@@ -865,13 +880,13 @@ class Profile_admin extends PieReg_Base
 				$allowed_mime_types = get_allowed_mime_types();
 				$valid_mime_type = wp_check_filetype($temp_file_name,$allowed_mime_types);
 
-				// Validate file extension type
-				$validate_file_ext_type = wp_check_filetype_and_ext( $temp_file_url, $temp_file_name );
-				
+				// Validate file extension type and the uploaded content
+				$validate_file_ext_type = wp_check_filetype_and_ext( $tmp_file, $temp_file_name );
+
 				if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 				{
 					$wp_filesystem = $this->pie_get_filesystem();
-					if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name) && $required){
+					if(!$wp_filesystem->move($tmp_file,$temp_dir."/".$temp_file_name) && $required){
 						$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 					}else{
 						update_user_meta($user_id,$field_slug, $temp_file_url);
@@ -883,6 +898,7 @@ class Profile_admin extends PieReg_Base
 				}
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 	function delete_directory($dirname) {
 		$wp_filesystem = $this->pie_get_filesystem();
@@ -893,9 +909,17 @@ class Profile_admin extends PieReg_Base
 	}
 	private function pie_get_filesystem() {
 		global $wp_filesystem;
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		if ( empty( $wp_filesystem ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
 			WP_Filesystem();
+		}
+		// Only local plugin files are written here. When WordPress picks FTP/SSH and has no
+		// stored credentials, $wp_filesystem has no connection and its methods fatal on PHP 8
+		// (e.g. ftp_nlist() on null), so fall back to direct file access.
+		if ( ! is_object( $wp_filesystem ) || 'direct' !== $wp_filesystem->method ) {
+			require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php' );
+			require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php' );
+			return new WP_Filesystem_Direct( null );
 		}
 		return $wp_filesystem;
 	}

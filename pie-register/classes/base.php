@@ -66,7 +66,8 @@ if( !class_exists('PieReg_Base') ){
 			global $wpdb;
 			$this->user_table		= $wpdb->prefix . "users";
 			$this->user_meta_table 	= $wpdb->prefix . "usermeta";
-			$result	 = $wpdb->get_results( $wpdb->prepare("SELECT distinct(meta_key) FROM $this->user_meta_table WHERE `meta_key` like %s", 'pie_%') ); #WPS	
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- table name from $wpdb->prefix; no WP API lists distinct meta keys
+			$result	 = $wpdb->get_results( $wpdb->prepare("SELECT distinct(meta_key) FROM $this->user_meta_table WHERE `meta_key` like %s", 'pie_%') ); #WPS
 			if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
@@ -126,9 +127,9 @@ if( !class_exists('PieReg_Base') ){
 			{
 				$data 	= get_option("piereg_form_fields_".((int)$id));
 			}
-			else if(isset($_GET['form_id']) and ((int)$_GET['form_id']) != 0 ){
-				
-				$data 	= get_option("piereg_form_fields_".((int)sanitize_key($_GET['form_id'])));
+			else if(isset($_GET['form_id']) and ((int)$_GET['form_id']) != 0 ){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form_id (cast to int) used to load form fields for display
+
+				$data 	= get_option("piereg_form_fields_".((int)sanitize_key($_GET['form_id']))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only form_id (cast to int) used to load form fields for display
 			}
 			
 			else{
@@ -209,7 +210,8 @@ if( !class_exists('PieReg_Base') ){
 			}
 			
 			$pie_pages = get_option("pie_pages");
-			
+			$pie_pages = is_array($pie_pages) ? $pie_pages : array();
+
 			if(($piereg_login) === false && !isset($pie_pages[0]))//Login
 			{
 				$_p = array();
@@ -308,8 +310,8 @@ if( !class_exists('PieReg_Base') ){
 
 			global $PR_Bot_List;
 			$current 	= get_option(OPTION_PIE_REGISTER);
-			$update 	= $current;
-			
+			$update 	= is_array($current) ? $current : array();
+
 			$update["paypal_butt_id"] = (isset($current["paypal_butt_id"]) && !empty($current["paypal_butt_id"]))?$current["paypal_butt_id"]:"";
 			$update["paypal_pdt"]     = (isset($current["paypal_pdt"]) && $current["paypal_pdt"])?$current["paypal_pdt"]:"";
 			$update["paypal_sandbox"] = (isset($current["paypal_sandbox"]) && $current["paypal_sandbox"])?$current["paypal_sandbox"]:"";
@@ -697,9 +699,10 @@ if( !class_exists('PieReg_Base') ){
 			}
 			
 			global $wpdb;
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- install/upgrade of plugin tables in install_settings(); table names from $wpdb->prefix, no request data
 			$prefix=$wpdb->prefix."pieregister_";
 			$codetable=$prefix."code";
-			
+
 			if(!$wpdb->query("CREATE TABLE IF NOT EXISTS `{$codetable}` (`id` INT( 5 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , `created` DATE NOT NULL , `modified` DATE NOT NULL , `name` TEXT NOT NULL , `count` INT( 5 ) NOT NULL , `status` INT( 2 ) NOT NULL , `code_usage` INT( 5 ) NOT NULL, `expiry_date` DATE NOT NULL, `code_description` VARCHAR(255) NULL) ENGINE = MYISAM ;"))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
@@ -739,40 +742,40 @@ if( !class_exists('PieReg_Base') ){
 			
 			if($check === 2)
 			{
-				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` CHANGE `usage` `code_usage` int(11) NULL", array() ) ) ) {
+				if ( ! $wpdb->query( "ALTER TABLE `{$wpdb->prefix}pieregister_code` CHANGE `usage` `code_usage` int(11) NULL" ) ) {
 					$this->pr_error_log( $wpdb->last_error . ( $this->get_error_log_info( __FUNCTION__, __LINE__, __FILE__ ) ) );
 				}				
 			}
 			
 			if($check === 0)
 			{
-				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_usage` int(11) NULL", array() ) ) ) {
+				if ( ! $wpdb->query( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_usage` int(11) NULL" ) ) {
 					$this->pr_error_log( $wpdb->last_error . ( $this->get_error_log_info( __FUNCTION__, __LINE__, __FILE__ ) ) );
 				}
 			}
 
 			if( $check_expiry === 0 && PIEREG_DB_VERSION > "3.0" )
 			{
-				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `expiry_date` DATE NOT NULL", array() ) ) ) {
+				if ( ! $wpdb->query( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `expiry_date` DATE NOT NULL" ) ) {
 					$this->pr_error_log( $wpdb->last_error . ( $this->get_error_log_info( __FUNCTION__, __LINE__, __FILE__ ) ) );
 				}
 			}
 			if( $add_desc_columns )
 			{
-				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_description` varchar(255) NULL", array() ) ) ) {
+				if ( ! $wpdb->query( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_description` varchar(255) NULL" ) ) {
 					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 				}	
 			}
 
 			if( $add_role_columns )
 			{
-				if ( ! $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_user_role` varchar(255) NULL", array() ) ) ) {
+				if ( ! $wpdb->query( "ALTER TABLE `{$wpdb->prefix}pieregister_code` ADD COLUMN `code_user_role` varchar(255) NULL" ) ) {
 					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 				}	
 			}
 			$redirect_settings_table_name = $wpdb->prefix."pieregister_redirect_settings";
 			
-			if ( ! $wpdb->query( $wpdb->prepare( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_redirect_settings` (
+			if ( ! $wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_redirect_settings` (
 									  `id` int(11) NOT NULL AUTO_INCREMENT,
 									  `user_role` varchar(100) NOT NULL,
 									  `logged_in_url` text NOT NULL,
@@ -782,7 +785,7 @@ if( !class_exists('PieReg_Base') ){
 									  `status` bit(1) NOT NULL DEFAULT b'1',
 									  PRIMARY KEY (`user_role`),
 									  UNIQUE KEY `id` (`id`)
-									) ENGINE=MYISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;", array() ) ) )
+									) ENGINE=MYISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;" ) )
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
@@ -790,12 +793,12 @@ if( !class_exists('PieReg_Base') ){
 			// email count
 			$invite_code_emails_table_name = $wpdb->prefix."pieregister_invite_code_emails";
 			
-			if(!$wpdb->query($wpdb->prepare("CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_invite_code_emails` (
+			if(!$wpdb->query("CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_invite_code_emails` (
 											`id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 											`code_id` int NOT NULL,
 											`email_address` varchar(150) NOT NULL,
 											FOREIGN KEY (`code_id`) REFERENCES `{$wpdb->prefix}pieregister_code`(`id`)
-											) ENGINE=MYISAM;", array() )))
+											) ENGINE=MYISAM;"))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
@@ -813,7 +816,7 @@ if( !class_exists('PieReg_Base') ){
 			}
 			$lockdowns_table_name = $wpdb->prefix."pieregister_lockdowns";
 			
-			if(!$wpdb->query($wpdb->prepare("CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_lockdowns` (
+			if(!$wpdb->query("CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}pieregister_lockdowns` (
 									  `id` int(11) NOT NULL AUTO_INCREMENT,
 									  `user_id` int(11) NOT NULL,
 									  `login_attempt` int(11) NOT NULL,
@@ -824,16 +827,17 @@ if( !class_exists('PieReg_Base') ){
 									  `user_ip` varchar(30) NOT NULL,
 									  PRIMARY KEY (`id`)
 									) ENGINE=MYISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-			", array() )))
+			"))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
 			
 			$lockdowns_get_columns = $wpdb->get_results($wpdb->prepare("SHOW COLUMNS FROM `{$wpdb->prefix}pieregister_lockdowns` LIKE %s", 'attempt_from'));
 			if(empty($lockdowns_get_columns)){	
-				$wpdb->query($wpdb->prepare("ALTER TABLE `{$wpdb->prefix}pieregister_lockdowns` ADD attempt_from varchar(56) NOT NULL AFTER login_attempt", array()));
+				$wpdb->query("ALTER TABLE `{$wpdb->prefix}pieregister_lockdowns` ADD attempt_from varchar(56) NOT NULL AFTER login_attempt");
 			}
-		
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+
 			/*
 				*	Create Pie Register Stats array If Do not Exist
 			*/
@@ -1380,7 +1384,8 @@ if( !class_exists('PieReg_Base') ){
 				$invitation_code_table_name = $wpdb->prefix."pieregister_code";
 				$invite_codes = "";
 
-				if($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $invitation_code_table_name)) == $invitation_code_table_name) {
+				if($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $invitation_code_table_name)) == $invitation_code_table_name) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin table existence check, no WP API
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- custom plugin table, no WP API; table name from $wpdb->prefix
 					$result_invitaion_code = $wpdb->get_results( "SELECT * FROM `{$invitation_code_table_name}` ORDER BY `id` ASC" );
 					$today = gmdate('Y-m-d');
 					foreach($result_invitaion_code as $object){
@@ -1492,15 +1497,36 @@ if( !class_exists('PieReg_Base') ){
 			global $wpdb;
 			$option = get_option(OPTION_PIE_REGISTER);
 			do_action( 'pie_deactivation_base', $option );
-			
+			wp_clear_scheduled_hook( 'piereg_cron_hourly' );
+
 			//$this->uninstall_settings();
 		}
 		function uninstall_settings()
 		{
 			do_action( 'pie_uninstall_base' );
+			$this->remove_legacy_analytics_data();
 			
 			// Remove - deleting options and tables
 			// $this->uninstall_pieregister_license_key();
+		}
+		/*
+			* Tables, options and user meta written by modules that are no longer included (registration analytics, new form builder)
+		*/
+		function remove_legacy_analytics_data(){
+			delete_metadata( 'user', 0, 'piereg_new_builder', '', true );
+			global $wpdb;
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- dropping obsolete plugin tables; fixed table names from $wpdb->prefix
+			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pieregister_analytics_events" );
+			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pieregister_analytics_daily" );
+			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pieregister_analytics_utm" );
+			// phpcs:enable
+			delete_option( 'piereg_analytics_options' );
+			delete_option( 'piereg_analytics_db_version' );
+			delete_option( 'piereg_analytics_sources_rule' );
+			delete_option( 'piereg_cron_last_run' );
+			delete_metadata( 'user', 0, 'piereg_analytics_activated', '', true );
+			delete_metadata( 'user', 0, 'piereg_analytics_session', '', true );
+			wp_clear_scheduled_hook( 'piereg_cron_hourly' );
 		}
 		function uninstall_pieregister_license_key(){
 			global $wpdb, $blog_id;
@@ -1650,7 +1676,7 @@ if( !class_exists('PieReg_Base') ){
 			$invitation_code		= (isset($invitation_code[0]) && is_array($invitation_code))? $invitation_code[0] : "";
 			$custom_role			= get_user_meta( $user->ID, 'custom_role' ); // dropdown-ur
 			$custom_role			= (isset($custom_role[0]) && is_array($custom_role))? $custom_role[0] : ""; // dropdown-ur
-			$user_ip				= sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+			$user_ip				= isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 			$hash 					= get_user_meta( $user->ID, 'hash', true );
 			$admin_hash				= get_user_meta( $user->ID, 'admin_hash', true ); 			// task av
 			$wc_billing_address		= $this->woocommerce_and_piereg_wc_addon_active ? apply_filters("pieregister_display_woocommerce_billing_address", $user->ID) : "";
@@ -1740,7 +1766,8 @@ if( !class_exists('PieReg_Base') ){
 				$pending_payment_url = '<a href="'.esc_url($pending_payment_url).'">'.esc_html($pending_payment_url).'</a>';
 			}
 			// Verification Rejection Reason
-			$verif_reject_reason  = isset($_POST['piereg_user_verification_rejected_reason']) && !empty($_POST['piereg_user_verification_rejected_reason']) ? trim(sanitize_textarea_field($_POST['piereg_user_verification_rejected_reason'])) : '';
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- only set by the unverified-users bulk action, whose nonce and piereg_manage_cap are verified in pie-register.php before the rejection email is built
+			$verif_reject_reason  = isset($_POST['piereg_user_verification_rejected_reason']) && !empty($_POST['piereg_user_verification_rejected_reason']) ? trim(sanitize_textarea_field(wp_unslash($_POST['piereg_user_verification_rejected_reason']))) : '';
 			
 			$user_pass = !empty($user_pass) ? $user_pass : "********";
 			//////////////////////////////////////
@@ -1844,6 +1871,7 @@ if( !class_exists('PieReg_Base') ){
 			if(!is_object($user))
 			{
 				global $wpdb;
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- prepared single-row user lookup by email for the %all_field% email placeholder
 				$user = $wpdb->get_results( $wpdb->prepare("SELECT `ID`, `user_login`, `user_nicename`, `user_email`, `user_registered` FROM `{$wpdb->users}` WHERE `user_email` = %s", stripslashes( $user ) ) );
 				if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 					$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
@@ -2049,6 +2077,10 @@ if( !class_exists('PieReg_Base') ){
 
 		function piereg_default_settings()
 		{
+			if ( ! current_user_can( 'piereg_manage_cap' ) ) {
+				return false;
+			}
+
 			$pie_pages_id = get_option("pie_pages");
 			$update = get_option(OPTION_PIE_REGISTER);
 			//E-Mail TYpes
@@ -2075,7 +2107,7 @@ if( !class_exists('PieReg_Base') ){
 			global $wpdb;
 			global $PR_Bot_List;
 			$redirect_settings_table_name = $wpdb->prefix."pieregister_redirect_settings";
-			if(!$wpdb->query($wpdb->prepare("TRUNCATE TABLE `{$wpdb->prefix}pieregister_redirect_settings`", array())))
+			if(!$wpdb->query("TRUNCATE TABLE `{$wpdb->prefix}pieregister_redirect_settings`"))
 			{
 				$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
 			}
@@ -2217,8 +2249,8 @@ if( !class_exists('PieReg_Base') ){
 			$update['pie_email_invitecode']		= 0;
 			$update['pie_name_from']			= "Admin";
 			$update['pie_email_from']			= get_option( 'admin_email' );
-			$update['pie_email_subject']		= "Invitation to register with " . get_bloginfo('name');
-			$update['pie_email_content']		= 'Hi there,'.PHP_EOL.PHP_EOL.'You are invited to create an account with' . get_bloginfo('name') . '. Click <a href="%invitation_link%">this link</a> to complete registration.'.PHP_EOL.PHP_EOL.'Regards,'.PHP_EOL.get_bloginfo('name');
+			$update['pie_email_subject']		= "Invitation to register with %blogname%"; // placeholder, so a later Site Title change is picked up
+			$update['pie_email_content']		= 'Hi there,'.PHP_EOL.PHP_EOL.'You are invited to create an account with %blogname%. Click <a href="%invitation_link%">this link</a> to complete registration.'.PHP_EOL.PHP_EOL.'Regards,'.PHP_EOL.'%blogname%';
 			
 			$update['reg_form_submission_time_enable'] = "0";
 			$update['reg_form_submission_time'] = "0";
@@ -2393,8 +2425,8 @@ if( !class_exists('PieReg_Base') ){
 				$piereg_after_redirect_page = (intval($options['alternate_logout']) <= 0)? wp_logout_url() : $this->get_page_uri($options['alternate_logout']);
 				$redirect = $piereg_after_redirect_page;
 			}
-			elseif(isset($_GET['redirect_to']) && $_GET['redirect_to'] != ""){
-				$redirect = esc_url_raw($_GET['redirect_to']);
+			elseif(isset($_GET['redirect_to']) && $_GET['redirect_to'] != ""){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only redirect_to used to build the logout link (logout itself is nonce-protected)
+				$redirect = esc_url_raw(wp_unslash($_GET['redirect_to'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only redirect_to used to build the logout link (logout itself is nonce-protected)
 			}
 			
 			if(empty($redirect))
@@ -2428,15 +2460,15 @@ if( !class_exists('PieReg_Base') ){
 				$piereg_after_redirect_page = (intval($options['alternate_logout']) <= 0)? wp_logout_url() : self::get_page_uri($options['alternate_logout']);
 				$redirect = $piereg_after_redirect_page;
 			}
-			elseif(isset($_GET['redirect_to']) && $_GET['redirect_to'] != ""){
-				$redirect = esc_url_raw($_GET['redirect_to']);
+			elseif(isset($_GET['redirect_to']) && $_GET['redirect_to'] != ""){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only redirect_to used to build the logout link (logout itself is nonce-protected)
+				$redirect = esc_url_raw(wp_unslash($_GET['redirect_to'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only redirect_to used to build the logout link (logout itself is nonce-protected)
 			}
 			
 			if(empty($redirect))
 				$redirect = home_url();
 			
 			$redirect = urlencode($redirect);
-			$new_logout_url = home_url() . '/?piereg_logout_url=true&redirect_to=' . $redirect . '&=_logout_nonce=' . wp_create_nonce( 'pie-log-out' );
+			$new_logout_url = home_url() . '/?piereg_logout_url=true&redirect_to=' . $redirect . '&_logout_nonce=' . wp_create_nonce( 'pie-log-out' );
 			return $new_logout_url;
 		}
 		function pie_modify_custom_url($get_url,$query_string=false){
@@ -2465,9 +2497,9 @@ if( !class_exists('PieReg_Base') ){
 		function piereg_get_current_url($query_string = "") {
 			$current_url  = 'http';
 			$server_https = isset($_SERVER["HTTPS"]) ? sanitize_text_field(wp_unslash($_SERVER["HTTPS"])) : "";
-			$server_name  = sanitize_text_field($_SERVER["SERVER_NAME"]);
-			$server_port  = sanitize_text_field($_SERVER["SERVER_PORT"]);
-			$request_uri  = esc_url_raw($_SERVER["REQUEST_URI"]);
+			$server_name  = isset($_SERVER["SERVER_NAME"]) ? sanitize_text_field(wp_unslash($_SERVER["SERVER_NAME"])) : "";
+			$server_port  = isset($_SERVER["SERVER_PORT"]) ? sanitize_text_field(wp_unslash($_SERVER["SERVER_PORT"])) : "80";
+			$request_uri  = isset($_SERVER["REQUEST_URI"]) ? esc_url_raw(wp_unslash($_SERVER["REQUEST_URI"])) : "";
 			if (strtolower($server_https) == "on") 
 				$current_url .= "s";
 			$current_url .= "://";
@@ -2491,12 +2523,19 @@ if( !class_exists('PieReg_Base') ){
 		}
 
 		function pie_profile_pictures_upload($user_id,$field,$field_slug,$form_id=0){
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- called only from Registration_form::addUser() (nonce verified in pie_main()) and Edit_form::UpdateUser() (piereg_edit_profile_nonce verified in showProfile())
 			global $errors;
 			$errors = new WP_Error();
 			if( isset($_FILES[$field_slug]['name']) && $_FILES[$field_slug]['name'] != ''){
 				////////////////////////////UPLOAD PROFILE PICTURE//////////////////////////////
 				$allowedExts = array("gif", "GIF", "jpeg", "JPEG", "jpg", "JPG", "png", "PNG", "bmp", "BMP" );
 				$result = $this->piereg_validate_files(sanitize_file_name($_FILES[$field_slug]['name']),$allowedExts);
+				// $_FILES tmp_name is a server-generated path; sniff the uploaded content the same way core media uploads do.
+				$tmp_file = isset( $_FILES[$field_slug]['tmp_name'] ) ? $_FILES[$field_slug]['tmp_name'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP-generated temp path, not user text
+				if ( $result ) {
+					$validate_file_ext_type = wp_check_filetype_and_ext( $tmp_file, sanitize_file_name( $_FILES[$field_slug]['name'] ) );
+					$result = ( $tmp_file !== '' && $validate_file_ext_type['ext'] !== false && $validate_file_ext_type['type'] !== false );
+				}
 				if($result)
 				{
 					$temp = explode(".", sanitize_file_name($_FILES[$field_slug]["name"]));
@@ -2507,7 +2546,7 @@ if( !class_exists('PieReg_Base') ){
 					$temp_file_name = sanitize_file_name("profile_pic_".abs( crc32( wp_generate_password( wp_rand(7,12) ) ."_".time() ) )."_".$form_id.".".$extension);
 					$temp_file_url = $upload_dir['baseurl']."/piereg_users_files/".$user_id."/".$temp_file_name;
 					$wp_filesystem = $this->pie_get_filesystem();
-					if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
+					if(!$wp_filesystem->move($tmp_file,$temp_dir."/".$temp_file_name)){
 						$errors->add( $field_slug , '<strong>'.esc_html(ucwords(__('error','pie-register'))).'</strong>: '.apply_filters("piereg_fail_to_upload_profile picture",__('Failed to upload the profile picture.','pie-register' )));
 					}else{
 						/*Upload Index.html file on User dir*/
@@ -2532,7 +2571,7 @@ if( !class_exists('PieReg_Base') ){
 			}else{
 				update_user_meta($user_id,"pie_".$field_slug, "");
 			}
-	
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
 		}
 		function upload_forbidden_html_file($dir_name){
 			$wp_filesystem = $this->pie_get_filesystem();
@@ -2561,12 +2600,15 @@ if( !class_exists('PieReg_Base') ){
 			$this->pie_success = 1;
 		}
 		function pie_upload_files($user_id,$field,$field_slug,$form_id=0){
+			// phpcs:disable WordPress.Security.NonceVerification.Missing -- called only from Registration_form::addUser() (nonce verified in pie_main()) and Edit_form::UpdateUser() (piereg_edit_profile_nonce verified in showProfile())
 			global $errors;
 			$errors = new WP_Error();
 			$result = false;
-			if($_FILES[$field_slug]['name'] != ''){
+			if( isset($_FILES[$field_slug]['name']) && $_FILES[$field_slug]['name'] != ''){
 				///////////////////UPLOAD ALL FILES//////////////////////////
-				
+				// $_FILES tmp_name is a server-generated path; it is passed to wp_check_filetype_and_ext() so the content is sniffed like core media uploads.
+				$tmp_file = isset( $_FILES[$field_slug]['tmp_name'] ) ? $_FILES[$field_slug]['tmp_name'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP-generated temp path, not user text
+
 				if($field['file_types'] != ""){
 					$filter_string = stripcslashes($field['file_types']);
 					$filter_array = explode(",",$filter_string);
@@ -2585,13 +2627,13 @@ if( !class_exists('PieReg_Base') ){
 						$allowed_mime_types = get_allowed_mime_types();
 						$valid_mime_type = wp_check_filetype($temp_file_name,$allowed_mime_types);
 
-						// Validate file extension type
-						$validate_file_ext_type = wp_check_filetype_and_ext( $temp_file_url, $temp_file_name );
-						
+						// Validate file extension type and the uploaded content
+						$validate_file_ext_type = wp_check_filetype_and_ext( $tmp_file, $temp_file_name );
+
 						if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 						{
 							$wp_filesystem = $this->pie_get_filesystem();
-							if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
+							if(!$wp_filesystem->move($tmp_file,$temp_dir."/".$temp_file_name)){
 								$errors->add( $field_slug , '<strong>'.__('Error','pie-register').'</strong>: '.apply_filters("piereg_Fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 							}else{
 								/*Upload Index.html file on User dir*/
@@ -2631,13 +2673,13 @@ if( !class_exists('PieReg_Base') ){
 					$allowed_mime_types = get_allowed_mime_types();
 					$valid_mime_type = wp_check_filetype($temp_file_name,$allowed_mime_types);
 
-					// Validate file extension type
-					$validate_file_ext_type = wp_check_filetype_and_ext( $temp_file_url, $temp_file_name );
-					
+					// Validate file extension type and the uploaded content
+					$validate_file_ext_type = wp_check_filetype_and_ext( $tmp_file, $temp_file_name );
+
 					if ( ( $valid_mime_type['type'] !== false ) && ( $validate_file_ext_type['ext'] !== false ) && ( $validate_file_ext_type['type'] !== false) )
 					{
 						$wp_filesystem = $this->pie_get_filesystem();
-						if(!$wp_filesystem->move($_FILES[$field_slug]['tmp_name'],$temp_dir."/".$temp_file_name)){
+						if(!$wp_filesystem->move($tmp_file,$temp_dir."/".$temp_file_name)){
 							$errors->add( $field_slug , '<strong>'.ucwords(__('error','pie-register')).'</strong>: '.apply_filters("piereg_fail_to_upload_profile_picture",__('Failed to upload the profile picture.','pie-register' )));
 						}else{
 							/*Upload Index.html file on User dir*/
@@ -2664,6 +2706,7 @@ if( !class_exists('PieReg_Base') ){
 			}else{
 				update_user_meta($user_id,"pie_".$field_slug, "");
 			}
+			// phpcs:enable WordPress.Security.NonceVerification.Missing
 		}
 		function delete_directory($dirname) {
 			$wp_filesystem = $this->pie_get_filesystem();
@@ -2674,9 +2717,17 @@ if( !class_exists('PieReg_Base') ){
 		}
 		private function pie_get_filesystem() {
 			global $wp_filesystem;
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
 			if ( empty( $wp_filesystem ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/file.php' );
 				WP_Filesystem();
+			}
+			// Only local plugin files are written here. When WordPress picks FTP/SSH and has no
+			// stored credentials, $wp_filesystem has no connection and its methods fatal on PHP 8
+			// (e.g. ftp_nlist() on null), so fall back to direct file access.
+			if ( ! is_object( $wp_filesystem ) || 'direct' !== $wp_filesystem->method ) {
+				require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php' );
+				require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php' );
+				return new WP_Filesystem_Direct( null );
 			}
 			return $wp_filesystem;
 		}
@@ -2721,26 +2772,15 @@ if( !class_exists('PieReg_Base') ){
 				return false;
 			}
 			
-			$error_header = "[".date_i18n("D d-m-Y H:i:s")."] [Client : ".sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']))."] [URI : ".esc_url_raw($_SERVER['REQUEST_URI'])."] [".$error_type."] ";
+			$client_ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : "";
+			$request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : "";
+			$error_header = "[".date_i18n("D d-m-Y H:i:s")."] [Client : ".$client_ip."] [URI : ".$request_uri."] [".$error_type."] ";
 			$error_message = $error_header.$error."\r\n\r\n";
-			return error_log($error_message, $message_type, PIE_LOG_FILE."/piereg_log.log");
+			return error_log($error_message, $message_type, PIE_LOG_FILE."/piereg_log.log"); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- appends to the plugin's own log file in the protected wp-content/pie-logs directory
 		}
 		function pr_payment_log($log_message,$file_name = "payment-log",$error_type = 'error',$message_type = 3){
-			
 			// stoping payment logs - security reasons
 			return false;
-			
-			if(!$log_message)
-				return false;
-
-			$file_dir = PIE_LOG_FILE;
-			if(!file_exists($file_dir))
-			{
-				return false;
-			}
-			
-			$log_message = $log_message."\r\n============================================\r\n";
-			return error_log($log_message, $message_type, PIE_LOG_FILE."/".$file_name.".log");
 		}
 		/*
 			*	Return error info
@@ -3121,7 +3161,8 @@ if( !class_exists('PieReg_Base') ){
 		function piereg_sanitize_post_data_escape($post = array()){
 			if(!is_array($post) || empty($post))
 				return false;
-			
+
+			// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- pure sanitizing copy of $_POST (no side effects); callers (registration, profile edit, forgot/reset password) act on it only after verifying their form nonce. Values stay WP-slashed as before because consumers store them through update_user_meta(), which unslashes; piereg_post_array_filter() applies sanitize_textarea_field() recursively.
 			foreach($post as $key=>$val){
 				if( isset($_POST[$key]) && strpos($key,"username") !== false ){
 					$post[$key] = sanitize_user($_POST[$key]);
@@ -3131,7 +3172,8 @@ if( !class_exists('PieReg_Base') ){
 					$post[$key] = $this->piereg_post_array_filter($_POST[$key]);
 				}
 			}
-			
+			// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
 			return $post;
 		}
 		
@@ -3529,7 +3571,7 @@ if( !class_exists('PieReg_Base') ){
 								break;
 							
 							case 'restrict_bot_content':
-							case 'restrict_bot_content_message';
+							case 'restrict_bot_content_message':
 								$post[$key] = $this->sanitize_validate_as('html',$value);
 								break;
 							
@@ -3541,7 +3583,7 @@ if( !class_exists('PieReg_Base') ){
 
 					break;
 				
-				case 'piereg_settings_security_advanced';
+				case 'piereg_settings_security_advanced':
 					foreach ($post as $key => $value)
 					{
 						switch ($key)
@@ -3880,8 +3922,8 @@ if( !class_exists('PieReg_Base') ){
 				return false;
 			
 			foreach($get as $key=>$val){
-				if( isset($_GET[$key]) ){
-					$_GET[$key] = $this->piereg_post_array_filter($_GET[$key]);
+				if( isset($_GET[$key]) ){ // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- in-place sanitizer of query vars, no side effects
+					$_GET[$key] = $this->piereg_post_array_filter($_GET[$key]); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- in-place sanitizer: piereg_post_array_filter() applies sanitize_textarea_field() recursively; $_GET is kept WP-slashed as core expects
 				}
 			}
 		}
@@ -4460,18 +4502,21 @@ if( !class_exists('PieReg_Base') ){
 
 		public function piereg_admin_header() 
 		{		
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only admin page slug used to decide whether to show the header
+			$current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['page'] ) ) : '';
+
 			// Omit header from Welcome activation screen.
-			if ( isset($_REQUEST['page']) && 'pieregister-getting-started' === $_REQUEST['page'] ) 
+			if ( 'pieregister-getting-started' === $current_page )
 			{
 				return;
 			}
 
-			if ( empty( $_REQUEST['page'] ) || ( (strpos( $_REQUEST['page'], 'pie' ) === false) && (strpos( $_REQUEST['page'], 'pr_' ) === false) )) {
+			if ( empty( $current_page ) || ( (strpos( $current_page, 'pie' ) === false) && (strpos( $current_page, 'pr_' ) === false) )) {
 				return false;
 			}
 
 			// Pie Forms pages (pie-forms-for-wp, pie-addnew, pieforms-getting-started) also contain "pie"; they have their own header.
-			if ( strpos( $_REQUEST['page'], 'pie-forms' ) === 0 || strpos( $_REQUEST['page'], 'pieforms' ) === 0 || 'pie-addnew' === $_REQUEST['page'] ) {
+			if ( strpos( $current_page, 'pie-forms' ) === 0 || strpos( $current_page, 'pieforms' ) === 0 || 'pie-addnew' === $current_page ) {
 				return false;
 			}
 
@@ -4488,7 +4533,7 @@ if( !class_exists('PieReg_Base') ){
 					?>
 				</div>
 				<div class="piereg-logo">
-					<img class="piereg-header-logo" src="<?php echo esc_url(plugins_url("assets/images/pie-register-logo.svg", dirname(__FILE__) )); ?>" alt="Pie Register Logo">
+					<img class="piereg-header-logo" src="<?php echo esc_url(plugins_url("assets/images/pie-register-logo.svg", dirname(__FILE__) )); ?>" alt="Pie Register Logo" width="200" height="41">
 				</div>
 			</div>
 			<?php

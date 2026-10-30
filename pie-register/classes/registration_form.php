@@ -39,15 +39,17 @@ class Registration_form extends PieReg_Base
 		{
 			$this->name = $name;	
 		}
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- read-only: re-fills the submitted value into the re-rendered form; no state change, output is escaped by the template
 		if(isset($_POST[$this->name]))
 		{
 			if( is_array($_POST[$this->name]) ){
-				return $this->recursive_sanitize_array($_POST[$this->name]);
+				return $this->recursive_sanitize_array(wp_unslash($_POST[$this->name])); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- recursive_sanitize_array() applies sanitize_text_field() to every element
 			}
 			else{
-				return wp_kses_post($_POST[$this->name]);
-			}			
+				return wp_kses_post(wp_unslash($_POST[$this->name]));
+			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		return ((isset($this->field['default_value']))?$this->field['default_value']:"");
 	}
 	
@@ -173,7 +175,8 @@ class Registration_form extends PieReg_Base
 	
 	function validateRegistration($errors)
 	{
-		
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- only called from pie_save_registration()/check_payment_method_paypal() in pie-register.php, reached via check_register_form() after pie_main() verified piereg_registration_form_nonce
+
 		if(!is_wp_error($errors))
 		$errors = new WP_Error();
 		$piereg 	= get_option(OPTION_PIE_REGISTER);
@@ -387,8 +390,8 @@ class Registration_form extends PieReg_Base
 			//Handling File Field
 			if($field['type']=="profile_pic")
 			{
-				$field_name = sanitize_text_field($_FILES[$slug]['name']);
-				if($_FILES[$slug]['name'] != ''){
+				$field_name = isset($_FILES[$slug]['name']) ? sanitize_text_field($_FILES[$slug]['name']) : '';
+				if(isset($_FILES[$slug]['name']) && $_FILES[$slug]['name'] != ''){
 					$result = $this->piereg_validate_files(sanitize_file_name($_FILES[$slug]['name']),array("gif","GIF","jpeg","JPEG","jpg","JPG","png","PNG","bmp","BMP"));
 					if(!$result){
 						$errors->add( $slug , '<strong>'.esc_html(ucwords(__('error','pie-register'))).'</strong>: '.apply_filters("piereg_Invalid_File_Type_In_Profile_Picture",__('Invalid file type used for profile picture.','pie-register' )));
@@ -396,8 +399,8 @@ class Registration_form extends PieReg_Base
 				}
 			}
 			elseif($field['type']=="upload"){
-				$field_name = sanitize_text_field($_FILES[$slug]['name']);
-				if($_FILES[$slug]['name'] != '' and $field['file_types'] != ""){
+				$field_name = isset($_FILES[$slug]['name']) ? sanitize_text_field($_FILES[$slug]['name']) : '';
+				if(isset($_FILES[$slug]['name']) && $_FILES[$slug]['name'] != '' and $field['file_types'] != ""){
 					$filter_array = stripcslashes($field['file_types']);
 					$filter_array = explode(",",$filter_array);
 					$result = $this->piereg_validate_files(sanitize_file_name($_FILES[$slug]['name']),$filter_array);
@@ -426,7 +429,8 @@ class Registration_form extends PieReg_Base
 					if($required != "" || $this->pie_post_array['invitation'] != "")
 					{
 						$expiry     = '';
-						$codetable	= $this->codeTable();				
+						$codetable	= $this->codeTable();
+						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- custom plugin table, no WP API; table name from codeTable() ($wpdb->prefix), code value bound with prepare()
 						$codes = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $codetable where (BINARY `name`=%s OR `name`=%s) and status = %d", $code, $code, 1) );
 						if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 							$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
@@ -459,17 +463,10 @@ class Registration_form extends PieReg_Base
 			}
 			else if($field['type']=="captcha"){
 				$settings  		=  get_option(OPTION_PIE_REGISTER);
-				if($settings['piereg_recaptcha_type'] == "v2"){
-					$privatekey		= $settings['captcha_private'];
-				}elseif($settings['piereg_recaptcha_type'] == "v3"){
-					$privatekey		= $settings['captcha_private_v3'];
-				}
-				//No Captcha ReCaptcha
-				if( !empty($privatekey) && intval($settings['piereg_enable_recaptcha']) ){
-					$captcha	= (isset($_POST['g-recaptcha-response']) && ! empty( $_POST['g-recaptcha-response'] )) ? sanitize_text_field( $_POST['g-recaptcha-response'] ) : "";
-					$response = $this->read_file_from_url("https://www.google.com/recaptcha/api/siteverify?secret=".trim($privatekey)."&response=".$captcha."&remoteip=".sanitize_text_field( wp_unslash($_SERVER['REMOTE_ADDR']) ) );
-					$resp = json_decode($response,true);
-					if($resp['success'] == false){
+				// reCAPTCHA v2 / v3 (classes/captcha.php). Skipped when no secret key is saved, as before.
+				if( intval($settings['piereg_enable_recaptcha']) ){
+					$captcha_ok = piereg_verify_captcha( $settings );
+					if( $captcha_ok === false ){
 						$errors->add('recaptcha_mismatch',"<strong>".esc_html(ucwords(__('error','pie-register')))."</strong>: ". apply_filters("piereg_Invalid_Security_Code",__("Invalid Security Code", 'pie-register')));
 					}
 				}
@@ -480,14 +477,15 @@ class Registration_form extends PieReg_Base
 			{ 
 				if(isset($_POST['piereg_math_captcha']))
 				{
-					$currentTabId =  intval($_COOKIE['currentTabId']);		
-					$piereg_cookie_array =  ( (isset( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration'] ) && 0 < strpos( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration'], '|' )) ? sanitize_text_field($_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration']) : "");
+					$currentTabId =  isset($_COOKIE['currentTabId']) ? intval($_COOKIE['currentTabId']) : 0;
+					$piereg_cookie_raw = isset( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration'] ) ) : "";
+					$piereg_cookie_array =  ( 0 < strpos( $piereg_cookie_raw, '|' ) ) ? $piereg_cookie_raw : "";
 					$piereg_cookie_array = explode("|",$piereg_cookie_array);
 					$cookie_result1 = (intval(base64_decode($piereg_cookie_array[0])) - 12);
 					$cookie_result2 = (intval(base64_decode($piereg_cookie_array[1])) - 786);
 					$cookie_result3 = (intval(base64_decode($piereg_cookie_array[2])) + 5);
-					$field_name = sanitize_text_field($_POST['piereg_math_captcha']);
-					if( ($cookie_result1 == $cookie_result2) && ($cookie_result3 == $_POST['piereg_math_captcha'])){
+					$field_name = sanitize_text_field(wp_unslash($_POST['piereg_math_captcha']));
+					if( ($cookie_result1 == $cookie_result2) && ($cookie_result3 == $field_name)){
 					}
 					else{
 						$errors->add('math_captcha_mismatch',"<strong>".esc_html(ucwords(__('error','pie-register')))."</strong>: ". apply_filters("piereg_Invalid_Security_Code",__("Invalid Math Captcha", 'pie-register')));
@@ -495,14 +493,15 @@ class Registration_form extends PieReg_Base
 				}
 				elseif(isset($_POST['piereg_math_captcha_widget']))
 				{
-					$currentTabId =  intval($_COOKIE['currentTabId']);		
-					$piereg_cookie_array =  ( (isset( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration_widget'] ) && 0 < strpos( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration_widget'], '|' )) ? sanitize_text_field($_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration_widget']) : "");
+					$currentTabId =  isset($_COOKIE['currentTabId']) ? intval($_COOKIE['currentTabId']) : 0;
+					$piereg_cookie_raw = isset( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration_widget'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['tab_'.$currentTabId.'_piereg_math_captcha_registration_widget'] ) ) : "";
+					$piereg_cookie_array =  ( 0 < strpos( $piereg_cookie_raw, '|' ) ) ? $piereg_cookie_raw : "";
 					$piereg_cookie_array = explode("|",$piereg_cookie_array);
 					$cookie_result1 = (intval(base64_decode($piereg_cookie_array[0])) - 12);
 					$cookie_result2 = (intval(base64_decode($piereg_cookie_array[1])) - 786);
 					$cookie_result3 = (intval(base64_decode($piereg_cookie_array[2])) + 5);
-					$field_name = sanitize_text_field($_POST['piereg_math_captcha_widget']);
-					if( ($cookie_result1 == $cookie_result2) && ($cookie_result3 == $_POST['piereg_math_captcha_widget'])){
+					$field_name = sanitize_text_field(wp_unslash($_POST['piereg_math_captcha_widget']));
+					if( ($cookie_result1 == $cookie_result2) && ($cookie_result3 == $field_name)){
 					}
 					else{
 						$errors->add('math_captcha_mismatch',"<strong>".esc_html(ucwords(__('error','pie-register')))."</strong>: ". apply_filters("piereg_Invalid_Security_Code",__("Invalid Math Captcha", 'pie-register')));
@@ -582,6 +581,7 @@ class Registration_form extends PieReg_Base
 		do_action("pieregister_registration_validation_after", $this->pie_post_array, $errors);
 
 		return $errors;
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 	function addUser($user_id, $form_id = 0)
 	{
@@ -613,7 +613,8 @@ class Registration_form extends PieReg_Base
 						if ( $form_user_verification == "0" || $form_user_verification == "4" )
 						{
 							$prefix		= $wpdb->prefix."pieregister_";
-							$codetable	= $prefix."code";				
+							$codetable	= $prefix."code";
+							// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- custom plugin table, no WP API; table name from $wpdb->prefix, code value bound with prepare()
 							$codes 		= $wpdb->query( $wpdb->prepare("update $codetable set count = count + 1 where (BINARY `name`=%s OR `name`=%s) and status = %d", htmlentities($this->pie_post_array['invitation']), htmlentities($this->pie_post_array['invitation']), 1) );
 							if(isset($wpdb->last_error) && !empty($wpdb->last_error)){
 								$this->pr_error_log($wpdb->last_error.($this->get_error_log_info(__FUNCTION__,__LINE__,__FILE__)));
@@ -655,7 +656,7 @@ class Registration_form extends PieReg_Base
 					else if($field['type']=="upload")
 					{
 						$slug 			= $this->createFieldName($field['type']."_".$field['id']);
-						if(!empty($_FILES[$slug]['name'])){
+						if(!empty($_FILES[$slug]['name'])){ // phpcs:ignore WordPress.Security.NonceVerification.Missing -- addUser() is only called from pie_save_registration() after pie_main() verified piereg_registration_form_nonce
 							$field_name		= isset($this->pie_post_array[$slug]) ? $this->pie_post_array[$slug] : "";
 							$this->pie_upload_files($user_id,$field,$slug,$form_id);	
 						}
@@ -716,6 +717,7 @@ class Registration_form extends PieReg_Base
 	function get_usermeta_id_by_key($user_id, $meta_key)
 	{
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- needs the umeta_id row id, which the user meta API does not expose; values bound with prepare()
 		$query = $wpdb->get_row( $wpdb->prepare("SELECT * FROM `{$wpdb->prefix}usermeta` WHERE `user_id` = %d AND `meta_key` = %s", array($user_id, $meta_key)), OBJECT );
 		return $query->umeta_id;
 	}

@@ -20,6 +20,7 @@
 			?>
         <div class="invite-tabs notification-tabs clearfix">
           <ul>
+            <?php // phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only user_notification tab flag used for tab highlighting and template routing ?>
             <li <?php if(!isset($_GET['user_notification'])){ echo 'class="invite-active"'; } ?>><a href="admin.php?page=pie-notifications&admin_notification"><?php esc_html_e("Admin Notification","pie-register") ?></a></li>
             <li <?php if(isset($_GET['user_notification'])){ echo 'class="invite-active"'; } ?>><a href="admin.php?page=pie-notifications&user_notification"><?php esc_html_e("User Notification","pie-register") ?></a></li>
           </ul>
@@ -32,6 +33,7 @@
         	} else {
         		$this->require_once_file(PIEREG_DIR_NAME.'/menus/notification/PieRegUserNotification.php');
         	}
+        	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
          ?>
         

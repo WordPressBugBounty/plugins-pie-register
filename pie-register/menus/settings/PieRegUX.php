@@ -3,7 +3,7 @@
 <div class="forms_max_label ux_wrap">
 <form action="" method="post" id="frm_settings_ux">
 <?php if( function_exists( 'wp_nonce_field' )) wp_nonce_field( 'piereg_wp_settings_ux','piereg_settings_ux'); ?>
-<?php if( (isset($_GET['tab']) && $_GET['tab'] == 'ux') && (isset($_GET['subtab']) && $_GET['subtab'] == 'advanced')) { ?>
+<?php if( (isset($_GET['tab']) && sanitize_text_field(wp_unslash($_GET['tab'])) == 'ux') && (isset($_GET['subtab']) && sanitize_text_field(wp_unslash($_GET['subtab'])) == 'advanced')) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab/subtab slugs used for routing ?>
         <?php
           $_disable 			= true;
 			  ?>

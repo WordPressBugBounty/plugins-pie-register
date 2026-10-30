@@ -364,7 +364,7 @@ function hide_field(crnt, val) {
     };
     piereg.post(ajaxurl, inv_code_data, function(response) {
         if (response.trim() == "done") {
-            jQuery("#" + val).html(jQuery("#" + crnt.id).val());
+            jQuery("#" + val).text(jQuery("#" + crnt.id).val());
         } else if (response.trim() == "duplicate") {
             if (current != value) {
                 alert("This code (" + current + ") already exist");
@@ -640,64 +640,72 @@ function validateSettingsSecurity() {
 function piereg_recaptcha_validate() {
 
     var is_error = false;
+    // Key fields of the selected type: v2 or v3
+    var captcha_type = jQuery( 'select.piereg_recaptcha_type' ).val() || 'v2',
+        captcha_pub  = '#piereg_reCAPTCHA_Public_Key',
+        captcha_priv = '#piereg_reCAPTCHA_Private_Key';
+    if ( 'v3' === captcha_type ) {
+        captcha_pub  = '#piereg_reCAPTCHA_Public_Key_v3';
+        captcha_priv = '#piereg_reCAPTCHA_Private_Key_v3';
+    }
 
     if (!jQuery("#captcha_in_login_value_0").is(":checked") && jQuery("#piereg_capthca_in_login").val() != 2) {
-        if (jQuery("#piereg_reCAPTCHA_Public_Key").val() == "") {
+        if (jQuery(captcha_pub).val() == "") {
             jQuery("#piereg_reCAPTCHA_Public_Key_error").show();
-            jQuery("#piereg_reCAPTCHA_Public_Key").css({
+            jQuery(captcha_pub).css({
                 "border-color": "red"
             });
-            jQuery("#piereg_reCAPTCHA_Public_Key").focus();
+            jQuery(captcha_pub).focus();
             is_error = true;
-        } else if (jQuery("#piereg_reCAPTCHA_Private_Key").val() == "") {
+        } else if (jQuery(captcha_priv).val() == "") {
             jQuery("#piereg_reCAPTCHA_Public_Key_error").show();
-            jQuery("#piereg_reCAPTCHA_Private_Key").focus();
+            jQuery(captcha_priv).focus();
             is_error = true;
         }
     } else if (!jQuery("#captcha_in_forgot_value_0").is(":checked") && jQuery("#piereg_capthca_in_forgot_pass").val() != 2) {
-        if (jQuery("#piereg_reCAPTCHA_Public_Key").val() == "") {
+        if (jQuery(captcha_pub).val() == "") {
             jQuery("#piereg_reCAPTCHA_Public_Key_error").show();
-            jQuery("#piereg_reCAPTCHA_Public_Key").focus();
+            jQuery(captcha_pub).focus();
             is_error = true;
-        } else if (jQuery("#piereg_reCAPTCHA_Private_Key").val() == "") {
+        } else if (jQuery(captcha_priv).val() == "") {
             jQuery("#piereg_reCAPTCHA_Public_Key_error").show();
-            jQuery("#piereg_reCAPTCHA_Private_Key").css({
+            jQuery(captcha_priv).css({
                 "border-color": "red"
             });
-            jQuery("#piereg_reCAPTCHA_Private_Key").focus();
+            jQuery(captcha_priv).focus();
             is_error = true;
         }
     } else {
         jQuery("#piereg_reCAPTCHA_Public_Key_error").hide();
-        jQuery("#piereg_reCAPTCHA_Private_Key").css({
+        jQuery(captcha_priv).css({
             "border-color": ""
         });
     }
 
-    if (jQuery("#piereg_reCAPTCHA_Private_Key").val() != "" || jQuery("#piereg_reCAPTCHA_Public_Key").val()) {
+    if ( jQuery(captcha_priv).val() != "" || jQuery(captcha_pub).val() ) {
         var patt1 = /[0-9a-zA-Z_-]{40}/;
 
 
-        if (!jQuery("#piereg_reCAPTCHA_Public_Key").val().match(patt1)) {
+        if (!jQuery(captcha_pub).val().match(patt1)) {
 
             if (!jQuery("#tabs_5").is(":visible")) {
                 jQuery("#ui-id-5").click();
             }
 
-            jQuery("#piereg_reCAPTCHA_Public_Key").css({
+            jQuery(captcha_pub).css({
                 "color": "red"
             });
-            jQuery("#piereg_reCAPTCHA_Public_Key").focus();
+            jQuery(captcha_pub).focus();
             jQuery("#piereg_reCAPTCHA_Public_Key_error").show();
             is_error = true;
-        } else if (!jQuery("#piereg_reCAPTCHA_Private_Key").val().match(patt1)) {
+        } else if (!jQuery(captcha_priv).val().match(patt1)) {
             if (!jQuery("#tabs_5").is(":visible")) {
                 jQuery("#ui-id-5").click();
             }
-            jQuery("#piereg_reCAPTCHA_Private_Key").css({
+            jQuery(captcha_priv).css({
                 "color": "red"
             });
-            jQuery("#piereg_reCAPTCHA_Private_Key").focus();
+            jQuery(captcha_priv).focus();
             jQuery("#piereg_reCAPTCHA_Public_Key_error").show();
             is_error = true;
         }
@@ -796,17 +804,11 @@ jQuery(document).ready(function() {
             recaptcha_v3_site_key   = jQuery( '#piereg_reCAPTCHA_Public_Key_v3' ).parents( 'div.fields' ).eq( 0 ),
             recaptcha_v3_secret_key = jQuery( '#piereg_reCAPTCHA_Private_Key_v3' ).parents( 'div.fields' ).eq( 0 );
         
-        if ( 'v2' === jQuery( this ).val() ) {
-            recaptcha_v2_site_key.show();
-            recaptcha_v2_secret_key.show();
-            recaptcha_v3_site_key.hide();
-            recaptcha_v3_secret_key.hide();
-        } else {
-            recaptcha_v2_site_key.hide();
-            recaptcha_v2_secret_key.hide();
-            recaptcha_v3_site_key.show();
-            recaptcha_v3_secret_key.show();
-        }
+        var type = jQuery( this ).val();
+        recaptcha_v2_site_key.toggle( type === 'v2' );
+        recaptcha_v2_secret_key.toggle( type === 'v2' );
+        recaptcha_v3_site_key.toggle( type === 'v3' );
+        recaptcha_v3_secret_key.toggle( type === 'v3' );
     }).change();
 
     /* Notice Slider */

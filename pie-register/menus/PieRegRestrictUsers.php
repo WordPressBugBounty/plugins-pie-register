@@ -18,6 +18,7 @@
         </div> 
         <div class="invite-tabs restrictions-tabs clearfix">
           <ul>
+            <?php // phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only allowed_users tab flag used for tab highlighting and template routing ?>
             <li <?php if(!isset($_GET['allowed_users'])){ echo 'class="invite-active"'; } ?>><a href="admin.php?page=pie-black-listed-users&block_ussers"><?php esc_html_e("Block Users","pie-register") ?></a></li>
             <li <?php if(isset($_GET['allowed_users'])){ echo 'class="invite-active"'; } ?>><a href="admin.php?page=pie-black-listed-users&allowed_users"><?php esc_html_e("Allow Users","pie-register") ?></a></li>
           </ul>
@@ -30,6 +31,7 @@
           } else {
             $this->require_once_file(PIEREG_DIR_NAME.'/menus/restrictions/PieRegAllowedUsers.php');
           }
+          // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
          ?>
         

@@ -604,7 +604,7 @@ class Edit_form_template extends Edit_form
 				{
 					$dymanic_class = $this->field['type']."_".$this->field['id'];
 					$data .= "<label>";
-					$data .= '<input '.wp_kses_post($this->read_only).' '.$checked.' value="'.esc_attr($this->field['value'][$a]).'" data-field_id="piereg_field_'.esc_attr($this->no).'" type="'.$this->field['type'].'" name="'.esc_attr($this->name).'[]" class="'.esc_attr($this->addClass("")).' radio_fields" '.$this->addValidation().' data-map-field-by-class="'.esc_attr($dymanic_class).'" >';
+					$data .= '<input '.wp_kses_post($this->read_only).' '.$checked.' value="'.esc_attr($this->field['value'][$a]).'" data-field_id="piereg_field_'.esc_attr($this->no).'" type="'.esc_attr($this->field['type']).'" name="'.esc_attr($this->name).'[]" class="'.esc_attr($this->addClass("")).' radio_fields" '.$this->addValidation().' data-map-field-by-class="'.esc_attr($dymanic_class).'" >';
 					$data .= esc_html($this->field['display'][$a]);
 					$data .= "</label>";
 				}
@@ -1168,7 +1168,7 @@ class Edit_form_template extends Edit_form
 		{
 			if( $this->pageBreak_prev_type == 'url' ) 
 			{
-				$data .= '<img class="pie_prev" name="pie_prev" id="pie_prev_'.esc_attr($this->pages).'" src="'.$this->pageBreak_prev_label.'"  />';				
+				$data .= '<img class="pie_prev" name="pie_prev" id="pie_prev_'.esc_attr($this->pages).'" src="'.esc_url($this->pageBreak_prev_label).'"  />';
 			}else
 			{
 				if($this->pageBreak_prev_label == '')
