@@ -158,7 +158,7 @@ class Profile_front extends PieReg_Base
 								if(!file_exists($temp_dir."/".basename($upload_file_value))){
 									$upload_file_value = '';
 								}
-								$data .= '</td><td class="fields"><a class="uploaded_file" href="'.$upload_file_value.'" target="_blank">'.basename($upload_file_value).'</a></td></tr>';
+								$data .= '</td><td class="fields"><a class="uploaded_file" href="'.esc_url($upload_file_value).'" target="_blank">'.esc_html(basename($upload_file_value)).'</a></td></tr>';
 							break;						
 							case 'address':
 								$data .= '<tr><td class="fields fields2" style="vertical-align:top;">'.wp_kses_post($this->addLabel());

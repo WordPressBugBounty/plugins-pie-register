@@ -3,7 +3,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.16
+Version: 3.8.4.17
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -3867,7 +3867,16 @@ if (!class_exists('PieRegister')) {
 					'role' 			 => get_option('default_role')
 				);
 
-				if (isset($_POST['first_name']) && !empty($_POST['first_name'])) {
+				// Only take first/last name from the request when the submitted form actually contains a Name field
+				$form_has_name_field = false;
+				foreach ((array) maybe_unserialize($this->getCurrentFields($form_id)) as $form_field) {
+					if (is_array($form_field) && isset($form_field['type']) && 'name' === $form_field['type']) {
+						$form_has_name_field = true;
+						break;
+					}
+				}
+
+				if ($form_has_name_field && isset($_POST['first_name']) && !empty($_POST['first_name'])) {
 					$display_name = sanitize_text_field(wp_unslash($_POST['first_name'])) . ((isset($_POST['last_name']) && !empty($_POST['last_name'])) ? " " . sanitize_text_field(wp_unslash($_POST['last_name'])) : "");
 					$user_data['display_name'] 	= $display_name;
 					$user_data['user_nicename'] = $display_name;
@@ -3922,7 +3931,7 @@ if (!class_exists('PieRegister')) {
 				/*
 					*	Update Nickname User Meta
 				*/
-				if (isset($_POST['first_name']) && !empty($_POST['first_name'])) {
+				if ($form_has_name_field && isset($_POST['first_name']) && !empty($_POST['first_name'])) {
 					update_user_meta($user_id, 'nickname', (sanitize_text_field(wp_unslash($_POST['first_name'])) . ((isset($_POST['last_name']) && !empty($_POST['last_name'])) ? " " . sanitize_text_field(wp_unslash($_POST['last_name'])) : "")));
 				}
 				$new_role = 'subscriber';
@@ -7856,11 +7865,17 @@ if (!class_exists('PieRegister')) {
 
 					if (!is_numeric($id_or_email)) {
 						$user = get_user_by('email', $id_or_email);
+						if (!$user) {
+							return $avatar;
+						}
 						$id_or_email = $user->ID;
 					}
 
 					if (is_numeric($id_or_email) && $id_or_email != $current_user->ID) {
 						$current_user 			= get_userdata($id_or_email);
+						if (!$current_user) {
+							return $avatar;
+						}
 					}
 
 					$profile_pic_array 		= get_user_meta($current_user->ID);
@@ -7892,10 +7907,9 @@ if (!class_exists('PieRegister')) {
 
 					if ($user && is_object($user)) {
 
-						//if ( $user->data->ID == get_current_user_id() ) {
-						$avatar = $profile_pic;
-						$avatar = "<img alt='{$alt}' src='{$avatar}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
-						//}
+						// Every value is escaped: alt comes from the commenter's display name, src from user meta
+						$size   = absint($size);
+						$avatar = '<img alt="' . esc_attr($alt) . '" src="' . esc_url($profile_pic) . '" class="avatar avatar-' . $size . ' photo" height="' . $size . '" width="' . $size . '" />';
 
 					}
 				}

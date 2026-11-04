@@ -1359,7 +1359,7 @@ if( !class_exists('PieReg_Base') ){
 			
 			foreach($role as $key=>$value)
 			{
-				$structure["custom_role"] .= '<option value="'.$key.'"';
+				$structure["custom_role"] .= '<option value="'.esc_attr($key).'"';
 				$structure["custom_role"] .= '>'.$value['name'].'</option>';
 			}
 
@@ -1400,7 +1400,7 @@ if( !class_exists('PieReg_Base') ){
 								( intval($object->code_usage) > 0 && intval($object->code_usage) > intval($object->count) )
 							)
 						){
-							$invite_codes .= '<option value="'.$object->name.'" >'.$object->name.'</option>';
+							$invite_codes .= '<option value="'.esc_attr($object->name).'" >'.esc_html($object->name).'</option>';
 						}
 					}
 				}
@@ -1436,7 +1436,7 @@ if( !class_exists('PieReg_Base') ){
 				{
 					$piereg_selected_user_role = ' selected="selected" ';
 				}
-				$user_role_option .= '<option value="'.$key.'" '. $piereg_selected_user_role .' >'.$value['name'].'</option>';
+				$user_role_option .= '<option value="'.esc_attr($key).'" '. $piereg_selected_user_role .' >'.esc_html($value['name']).'</option>';
 				$piereg_selected_user_role = "";
 			}
 			
