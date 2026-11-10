@@ -3,7 +3,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.17
+Version: 3.8.4.18
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -3888,6 +3888,14 @@ if (!class_exists('PieRegister')) {
 
 				$this->set_pr_stats("register", "used");
 				$user_id = wp_insert_user($user_data);
+
+				// Bail out if the account could not be created (e.g. username longer than WordPress allows);
+				// otherwise the error object would be treated as a user ID in the code that follows.
+				if (is_wp_error($user_id)) {
+					global $errors;
+					$errors->add("registration-error", $user_id->get_error_message());
+					return false;
+				}
 
 				$email_user_password = false;
 
