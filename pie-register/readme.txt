@@ -5,7 +5,7 @@ Tags: login form, user profile, User Registration, registration form, membership
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 3.8.4.18
+Stable tag: 4.0.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -185,6 +185,30 @@ Learn more: [**WP Site Checker**](https://wpsitechecker.com/?utm_source=pieregis
 
 [**PB addons for WPBakery**](https://pagebuilderaddons.com/?utm_source=pieregister&utm_medium=repo&utm_campaign=detailtab): Build your website with premium quality Web and WooCommerce elements for WPBakery Page Builder.
 
+== External services ==
+
+Pie Register connects to the following third-party services. Each one is used only when the related feature is enabled by the site administrator.
+
+**Google reCAPTCHA**
+Used to protect registration, login and forgot-password forms from bots when reCAPTCHA is selected as the captcha type. The reCAPTCHA script is loaded from google.com on pages that show a protected form, and when a form is submitted the captcha response and the visitor's IP address are sent to Google to be verified.
+[Terms of Service](https://policies.google.com/terms) - [Privacy Policy](https://policies.google.com/privacy)
+
+**Cloudflare Turnstile**
+Used to protect forms from bots when Cloudflare Turnstile is selected as the captcha type. The Turnstile script is loaded from challenges.cloudflare.com on pages that show a protected form, and when a form is submitted the Turnstile response and the visitor's IP address are sent to Cloudflare to be verified.
+[Terms of Service](https://www.cloudflare.com/website-terms/) - [Privacy Policy](https://www.cloudflare.com/privacypolicy/)
+
+**PayPal**
+Used to accept registration payments when the PayPal payment gateway is enabled. The user is redirected to PayPal with the payment amount, the PayPal button ID and a reference to their account, and PayPal's payment notification (IPN) is sent back to PayPal for verification.
+[User Agreement](https://www.paypal.com/webapps/mpp/ua/useragreement-full) - [Privacy Statement](https://www.paypal.com/webapps/mpp/ua/privacy-full)
+
+**Pie Register license server (store.genetech.co)**
+Used only when an administrator activates or deactivates a premium add-on license key. The license key, the license email, the add-on name and version and the site URL are sent to verify the license.
+[Privacy Policy](https://pieregister.com/privacy-policy/)
+
+**Pie Register mobile app (Firebase Cloud Messaging)**
+Used only if an administrator signs in to the Pie Register mobile app. When a new user registers, the new username is sent through Google Firebase Cloud Messaging as a push notification to the administrator's device. Feedback written in the app is emailed to the Pie Register team.
+[Firebase Terms](https://firebase.google.com/terms) - [Google Privacy Policy](https://policies.google.com/privacy) - [Pie Register Privacy Policy](https://pieregister.com/privacy-policy/)
+
 == Frequently Asked Questions ==
 
 = Who should use Pie Register? =
@@ -237,9 +261,38 @@ Remove the password field from your forms and send an automated email on registr
 
 == CHANGELOG ==
 
+### 4.0.0.0
+
+*Released Date 12th November 2026*
+
+* New: Brand-new drag and drop Form Builder that replaces the classic builder screen. Existing forms open in it automatically, with nothing to migrate.
+* New: Form Builder - Field list with search. Click a field to add it, or drag it to any position on the form.
+* New: Form Builder - Live canvas with Desktop and Mobile preview. Click any field, the form title or the submit button to edit its settings in the side panel.
+* New: Form Builder - Field settings for label, placeholder, description, required, validation rule and message, CSS class and "Show in profile".
+* New: Form Builder - Visual conditional logic editor. Show or hide a field based on other answers, with rule groups (AND inside a group, OR between groups) and operators such as is / is not, empty / not empty, greater / less than, contains, starts / ends with and in range.
+* New: Form Builder - Multi-step forms. Add steps and page breaks; inserting a page break after a field moves all the fields below it to a new step. Each step's Next and Previous buttons can be text or an image.
+* New: Form Builder - Duplicate, move up / down, move to another step and remove fields from the field toolbar. Press Delete to remove the selected field.
+* New: Form Builder - Undo for every change, including each label or setting edit (button or Ctrl+Z / Cmd+Z), with a warning before leaving or reloading the page with unsaved changes.
+* New: Form Builder - Form settings (title, label alignment, user role, user verification including verification by conditional logic, success message or redirect) and submit button settings (text and optional Reset button) in the same screen.
+* New: Registration Analytics page (Pie Register > Analytics) with a conversion funnel for each form: Views > Started > Submitted > Registered > Activated.
+* New: Analytics - Daily trend chart of views and registrations for the last 7, 30 or 90 days, or a custom date range.
+* New: Analytics - Field drop-off report showing how many visitors used each field, where they abandoned the form and which fields caused validation errors. The field that loses the most visitors is highlighted.
+* New: Analytics - Traffic sources report built from UTM campaign tags (source, medium, campaign), with views, registrations and conversion rate for each.
+* New: Analytics - CSV export, and an "Analytics" link for each form on the Manage Forms screen (replaces the old Views / Submissions columns).
+* New: Analytics - Privacy-friendly by design: no IP address, user agent, user ID or field value is stored. Options to exclude logged-in users, respect Do-Not-Track / Global Privacy Control, require consent (WP Consent API supported), set data retention periods and delete all analytics data. Suggested text is added to the WordPress Privacy Policy guide.
+* New: Cloudflare Turnstile captcha. Select it under Settings > Security > reCAPTCHA Type, enter your Turnstile Site Key and Secret Key, and it protects the registration, login and forgot password forms.
+* New: Google reCAPTCHA v2 Invisible as a captcha type (uses the v2 key fields; create the keys as "Invisible reCAPTCHA badge").
+* Update: Font Awesome upgraded from 4.7.0 to 6.7.2.
+* Update: The bundled CKEditor 4 (no longer maintained) is replaced by the editor built into WordPress (TinyMCE) for HTML fields and email messages.
+* Update: The jquery.Wload loading overlay is replaced by a lightweight built-in version with the same API.
+* Update: Removed the outdated jQuery mCustomScrollbar, jQuery Mousewheel, jQuery Confirm and php.js libraries. Admin panels now use native browser scrolling.
+* Update: Form field settings are now passed to the builder as JSON instead of PHP-serialized data.
+* Update: Added a shared hourly scheduled task (WP-Cron) for background jobs such as analytics summaries and cleanup.
+* Security: Improved sanitization of form builder data.
+
 ### 3.8.4.18
 
-*Released Date 10th November 2026*
+*Released Date 9th November 2026*
 
 * Security: Hardened the user registration process to safely handle submissions that cannot create an account.
 

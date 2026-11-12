@@ -731,15 +731,7 @@ function add_scroll_dragable_area(id) // for piereg scroll in right side accordi
 
 {
 
-    piereg(id).mCustomScrollbar({
-
-        scrollButtons: {
-
-            enable: true
-
-        }
-
-    });
+    // The panels scroll natively with CSS (overflow-y: auto) since 4.0.0.0; kept for add-ons that call it.
 
 }
 
@@ -830,22 +822,16 @@ function bindButtons() {
 
         piereg(this).parents("li").fadeOut(function() {
 
-            piereg(this).remove();
-
-            /*
-             * Add snipt in 2.0.12
-             */
+            // Remove the HTML field's editor before the field itself
             try {
-                if (piereg(this).closest('li').find('textarea.ckeditor').attr('id')) {
-                    var piereg_ckeditorid;
-                    piereg_ckeditorid = piereg(this).closest('li').find('textarea.ckeditor').attr('id');
-                    if (piereg_ckeditorid.length > 0) {
-                        CKEDITOR.remove(CKEDITOR.instances[piereg_ckeditorid]);
-                    }
+                if (window.pieregEditor) {
+                    window.pieregEditor.removeAll(this);
                 }
             } catch (e) {
                 console.log(e);
             }
+
+            piereg(this).remove();
 // wc_billing_address check -- pie-register WooCommerce
             if (delType == "default" ||  delType == "password" || delType == "name" || delType == "address" || delType == "wc_billing_address" || delType == "wc_shipping_address" || delType == "captcha" || delType == "math_captcha" || delType == "two_way_login_phone" || delType == "invitation" || delType == "terms" || delType == "pricing" || delType == "username" || delType == "profile_pic" || delType == "custom_role") {
 
@@ -1572,17 +1558,9 @@ piereg(document).ready(function() {
 
             if (dragType == "html") {
 
-                CKEDITOR.replace("htmlbox_" + no, {});
-                /*
-                 wp.editor.initialize("htmlbox_" + no, { 
-                	tinymce: { 
-                	  wpautop:true, 
-                	  plugins : 'charmap colorpicker compat3x directionality fullscreen hr image lists media paste tabfocus textcolor wordpress wpautoresize wpdialogs wpeditimage wpemoji wpgallery wplink wptextpattern wpview', 
-                	  toolbar1: 'formatselect bold italic | bullist numlist | blockquote | alignleft aligncenter alignright | link unlink | wp_more | spellchecker' 
-                	}, 
-                	quicktags: true 
-                 });
-                 */
+                if (window.pieregEditor) {
+                    window.pieregEditor.init("htmlbox_" + no);
+                }
 
             }
 
@@ -1602,6 +1580,11 @@ piereg(document).ready(function() {
     });
 
     piereg("form#formeditor").submit(function(e) {
+
+        // Copy the HTML fields' editor content back to their textareas
+        if (window.pieregEditor) {
+            window.pieregEditor.save();
+        }
 
         piereg(".field_label").each(function(index, element) {
 
@@ -1695,23 +1678,18 @@ piereg(document).ready(function() {
 
         start: function(event, ui) {
 
-            for (var i in CKEDITOR.instances) {
-
-                CKEDITOR.instances[i].destroy();
-
+            // An editor can't be moved around the page; take it off while the field is dragged
+            if (window.pieregEditor) {
+                window.pieregEditor.removeAll(ui.item);
             }
 
         },
 
         stop: function(event, ui) {
 
-            piereg('.ckeditor').each(function() {
-
-                var id = piereg(this).attr("id");
-
-                CKEDITOR.replace(id, {});
-
-            });
+            if (window.pieregEditor) {
+                window.pieregEditor.initAll(ui.item);
+            }
 
             dragType = "";
 
@@ -1981,15 +1959,21 @@ piereg(window).on('load', function(){
 
 // To decode HTML entities in the data
 function pieregDecodeHTMLEntities(text) {
-    return piereg("<textarea/>")
-      .html(text)
-      .text();
+    // Decode entities only. Text set on a textarea is never parsed as tags, so HTML such as <style> or <h6>
+    // stays intact (jQuery .html().text() turned "<style>...</style><h6>x</h6>" into "...x").
+    if ( "string" !== typeof text && "number" !== typeof text ) {
+        return piereg("<textarea/>").html(text).text();
+    }
+    var box = document.createElement("textarea");
+    box.innerHTML = String(text);
+    return box.value;
 }
 
 function fillValues(data, num) //Function to fill meta data
 
 {
-    var field = unserialize(data);
+    // Field settings arrive as an object (JSON) since 4.0.0.0.
+    var field = ( "string" === typeof data ) ? JSON.parse( data ) : data;
 
     var mt = "field[" + num + "][type]";
 
@@ -2145,7 +2129,9 @@ function fillValues(data, num) //Function to fill meta data
 
 function createckeditor() {
 
-    piereg(".ckeditor").ckeditor();
+    if (window.pieregEditor) {
+        window.pieregEditor.initAll();
+    }
 
 }
 

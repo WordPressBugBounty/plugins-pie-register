@@ -1,4 +1,4 @@
-
+/* Pie Register loading overlay (since 4.0.0.0). */
 .w_load_body_parent{
   position: relative;
 }
@@ -9,16 +9,20 @@
   width: 100%;
   height: 100%;
   background: rgba(233, 233, 232, 0.2);
+  z-index: 100000;
 }
 .w_load_body .w_load_content{
   position: absolute;
   left: 50%;
-  top:50%;
-  width: 160px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 160px;
   background: #fff;
   border-radius: 5px;
-  padding: 20px 0;
+  padding: 20px 10px;
   text-align: center;
+  box-sizing: border-box;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 .w_load_body .w_load_content span{
   display: inline-block;
@@ -35,7 +39,17 @@
 }
 .w_load_icon{
   display: inline-block;
-  width: 32px;
-  height: 32px;
-  background: url(../images/w_load.gif) no-repeat;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #de3636;
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: piereg-w-load-spin 0.8s linear infinite;
+}
+@keyframes piereg-w-load-spin{
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce){
+  .w_load_icon{ animation-duration: 2s; }
 }

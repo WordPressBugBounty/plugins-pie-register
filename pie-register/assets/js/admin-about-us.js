@@ -26,7 +26,7 @@ piereg(document).ready(function($) {
             successText;
 
         $btn.prop( 'disabled', true ).addClass( 'loading' );
-        $btn.html( '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>' );
+        $btn.html( '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>' );
 
         if ( $btn.hasClass( 'status-active' ) ) {
             // Deactivate.
@@ -39,8 +39,8 @@ piereg(document).ready(function($) {
             buttonText = 'Activate';
             errorText  = 'Deactivate';
             if ( pluginType === 'addon' ) {
-                buttonText = '<i class="fa fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + buttonText;
-                errorText  = '<i class="fa fa-toggle-on" aria-hidden="true"></i>' + errorText;
+                buttonText = '<i class="fa-solid fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + buttonText;
+                errorText  = '<i class="fa-solid fa-toggle-on" aria-hidden="true"></i>' + errorText;
             }
 
         } else if ( $btn.hasClass( 'status-inactive' ) ) {
@@ -53,8 +53,8 @@ piereg(document).ready(function($) {
             statusText = 'Activate';
             buttonText = 'Deactivate';
             if ( pluginType === 'addon' ) {
-                buttonText = '<i class="fa fa-toggle-on" aria-hidden="true"></i>' + buttonText;
-                errorText  = '<i class="fa fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + 'Activate';
+                buttonText = '<i class="fa-solid fa-toggle-on" aria-hidden="true"></i>' + buttonText;
+                errorText  = '<i class="fa-solid fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + 'Activate';
             } else if ( pluginType === 'plugin' ) {
                 buttonText = 'Activated';
                 errorText  = 'Activate';
@@ -69,9 +69,9 @@ piereg(document).ready(function($) {
             }
             statusText = 'Activate';
             buttonText = 'Activated';
-            errorText  = '<i class="fa fa-cloud-download" aria-hidden="true"></i>';
+            errorText  = '<i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>';
             if ( pluginType === 'addon' ) {
-                buttonText = '<i class="fa fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + 'Deactivate';
+                buttonText = '<i class="fa-solid fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + 'Deactivate';
                 errorText += 'Install Addon';
             }
 
@@ -92,7 +92,7 @@ piereg(document).ready(function($) {
                     successText = res.data.msg;
                     if ( ! res.data.is_activated ) {
                         statusText = 'Inactive';
-                        buttonText = 'plugin' === pluginType ? 'Activate' : '<i class="fa fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + 'Activate';
+                        buttonText = 'plugin' === pluginType ? 'Activate' : '<i class="fa-solid fa-toggle-on fa-flip-horizontal" aria-hidden="true"></i>' + 'Activate';
                         cssClass   = 'plugin' === pluginType ? 'status-inactive button button-secondary' : 'status-inactive';
                     }
                 } else {

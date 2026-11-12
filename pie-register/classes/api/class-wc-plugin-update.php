@@ -199,9 +199,10 @@ class API_Manager_Example_Update_API_Check {
 		if( is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) != 200 )
 			return false;
 
-		$response = unserialize( wp_remote_retrieve_body( $request ) );
+		// The update server returns a serialized plain object; never create any other class from it.
+		$response = unserialize( wp_remote_retrieve_body( $request ), array( 'allowed_classes' => array( 'stdClass' ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
 
-		if( is_object( $response ) ) {
+		if( $response instanceof stdClass ) {
 			return $response;
 		} else {
 			return false;

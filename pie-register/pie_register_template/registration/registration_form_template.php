@@ -91,7 +91,7 @@ class Registration_form_template extends Registration_form
 		
 		if($this->field['field_name']=="description")
 		{
-			$data .= '<textarea name="description" id="description" rows="5" data-field_id="'.esc_attr($this->get_pr_widget_prefix()).'piereg_field_'.esc_attr($this->no).'" cols="80" >'.esc_textarea($this->getDefaultValue()).'</textarea>';	
+			$data .= '<textarea name="description" id="description" rows="5" data-field_id="'.esc_attr($this->get_pr_widget_prefix()).'piereg_field_'.esc_attr($this->no).'" cols="80" class="'.esc_attr( isset( $this->field['css'] ) ? $this->field['css'] : '' ).'">'.esc_textarea($this->getDefaultValue()).'</textarea>';	
 		}
 		else
 		{
@@ -698,7 +698,7 @@ class Registration_form_template extends Registration_form
 	{
 		$data  = '<div class="fieldset">';
 		$data .= wp_kses_post($this->addLabel());
-		$data .= '<div class="piereg-html-field-content" >';
+		$data .= '<div class="piereg-html-field-content '.esc_attr( isset( $this->field['css'] ) ? $this->field['css'] : '' ).'" >';
 		$data .= html_entity_decode($this->field['html']);
 		$data .= '</div>';
 		$data .= wp_kses_post($this->addDesc());
@@ -713,6 +713,7 @@ class Registration_form_template extends Registration_form
 			$class .= "wdth-lft ";
 		
 		$class .= "sectionBreak";
+		if( ! empty( $this->field['css'] ) ) $class .= " " . $this->field['css'];
 		
 		$data  = '<div class="fieldset aligncenter">';
 		if($this->field['label'] != ''){
@@ -1269,6 +1270,16 @@ class Registration_form_template extends Registration_form
 		
 		if($recaptcha_type == "v3" && $publickey_v3)
 			$class = ' piereg-recaptcha-v3';
+
+		// v2 Invisible and Cloudflare Turnstile (classes/captcha.php)
+		if( in_array( $recaptcha_type, array( 'v2_invisible', 'turnstile' ), true ) ){
+			$data .= '<div class="fieldset piereg-captcha-' . esc_attr( $recaptcha_type ) . '">';
+			if( $recaptcha_type === 'turnstile' ) $data .= wp_kses_post($this->addLabel());
+			$data .= piereg_captcha_extra_markup();
+			$data .= wp_kses_post($this->addDesc());
+			$data .= '</div>';
+			return $data;
+		}
 
 		$data .= '<div class="fieldset'.$class.'">';
 

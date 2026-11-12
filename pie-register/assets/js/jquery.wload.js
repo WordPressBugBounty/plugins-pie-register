@@ -1,65 +1,50 @@
-/* Author：wanrenya@gmail.com
- * Github:https://github.com/onfuns/jquery.Wload.js
- * Date：2017-7-1
+/*
+ * Pie Register: loading overlay.
+ * Small first-party replacement for the unmaintained jquery.Wload plugin (since 4.0.0.0).
+ * Keeps the same API and class names, so existing calls and add-ons keep working:
+ *   jQuery( 'body' ).Wload( { text: ' Loading', el: '.optional-container' } );
+ *   jQuery( 'body' ).Wload( 'hide', { time: 200 } );
  */
+(function ($) {
+	'use strict';
 
-;(function(w,f){
-  'use strict'
-  f(jQuery)
-}(window,function($){
-  if(!$){
-    throw new Error('jquery is must be imported')
-  }
-  function Wload(options){
-    this.defaultOpt = {
-      text:'',
-      time:'',
-      el:''
-    }
-    this.opt = $.extend({},this.defaultOpt,options)
-  }
-  Wload.prototype.hide = function(obj){
-    if(obj.time){
-      var _this = this
-      setTimeout(function(){
-        $(_this.opt.el).find('.w_load_body').remove()
-        $(_this.opt.el).removeClass('w_load_body_parent')
-      },obj.time)
-    }else{
-      $(this.opt.el).find('.w_load_body').remove()
-      $(this.opt.el).removeClass('w_load_body_parent')
-    }
-  }
-  Wload.prototype.bindEvent = function(){}
-  Wload.prototype.creatDom = function(){
-    var dom = $(this.opt.el)
-    var div = $('<div class="w_load_body"></div>')
-    div.append('<div class="w_load_content"><span class="w_load_icon"></span><span class="w_load_content_text">'+ this.opt.text || '' +'</span></div>')
-    dom.addClass('w_load_body_parent').append(div)
-    var con = dom.find('.w_load_content')
-    con.css({
-      'margin-left':-con.outerWidth()/2,
-      'margin-top':-con.outerHeight()/2
-    })
-  }
-  $.fn.Wload = function(options,other){
-    var dom = $(this)
-    var opt = options
-    if(typeof opt == 'object'){
-      opt = opt.el ? opt : $.extend({},opt,{el:dom})
-    }else{
-      if(typeof other == 'object'){
-        opt = $.extend({},{el:dom},other)
-      }else{
-        opt = {el:dom}
-      }
-    }
+	function hide(target, time) {
+		var remove = function () {
+			$( target ).find( '.w_load_body' ).remove();
+			$( target ).removeClass( 'w_load_body_parent' );
+		};
+		if ( time ) {
+			setTimeout( remove, time );
+		} else {
+			remove();
+		}
+	}
 
-    var W = new Wload(opt)
-    if(options == 'hide'){
-      W['hide'](other)
-      return
-    }
-    W.creatDom()
-  }
-}))
+	function show(target, text) {
+		var $target  = $( target );
+		var $overlay = $( '<div class="w_load_body" role="status" aria-live="polite"></div>' );
+		var $content = $( '<div class="w_load_content"></div>' );
+
+		$content.append( '<span class="w_load_icon" aria-hidden="true"></span>' );
+		// Text only: the message is never interpreted as HTML.
+		$content.append( $( '<span class="w_load_content_text"></span>' ).text( text ? String( text ) : '' ) );
+		$overlay.append( $content );
+		$target.addClass( 'w_load_body_parent' ).append( $overlay );
+	}
+
+	$.fn.Wload = function (options, other) {
+		var el = this;
+
+		if ( 'hide' === options ) {
+			if ( other && 'object' === typeof other && other.el ) {
+				el = other.el;
+			}
+			hide( el, other && other.time ? other.time : 0 );
+			return this;
+		}
+
+		options = ( options && 'object' === typeof options ) ? options : {};
+		show( options.el ? options.el : el, options.text );
+		return this;
+	};
+})( jQuery );

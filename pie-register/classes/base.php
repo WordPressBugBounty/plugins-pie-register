@@ -410,6 +410,8 @@ if( !class_exists('PieReg_Base') ){
 			$update['captcha_private'] 			= (isset($current["captcha_private"]) && $current['captcha_private'])?$current['captcha_private']:"";
 			$update['captcha_publc_v3'] 		 = (isset($current["captcha_publc_v3"]) && $current['captcha_publc_v3'])?$current['captcha_publc_v3']:"";
 			$update['captcha_private_v3'] 		 = (isset($current["captcha_private_v3"]) && $current['captcha_private_v3'])?$current['captcha_private_v3']:"";
+			$update['turnstile_site'] 			 = (isset($current["turnstile_site"]) && $current['turnstile_site'])?$current['turnstile_site']:"";
+			$update['turnstile_secret'] 		 = (isset($current["turnstile_secret"]) && $current['turnstile_secret'])?$current['turnstile_secret']:"";
 			$update['piereg_recaptcha_language'] = (isset($current["piereg_recaptcha_language"]) && $current['piereg_recaptcha_language'])?$current['piereg_recaptcha_language']:"en";
 			$update['paypal_button_id'] 		= (isset($current["paypal_button_id"]) && $current['paypal_button_id'])?$current['paypal_button_id']:"";
 			$update['paypal_pdt_token'] 		= (isset($current["paypal_pdt_token"]) && $current['paypal_pdt_token'])?$current['paypal_pdt_token']:"";
@@ -450,7 +452,8 @@ if( !class_exists('PieReg_Base') ){
 			//New Settings 
 			$update['captcha_in_login_value']				 = (isset($current["captcha_in_login_value"]) && $current['captcha_in_login_value']) ? $current['captcha_in_login_value'] : 0;
 			$update['piereg_security_attempts_login_value']  = (isset($current["piereg_security_attempts_login_value"]) && $current['piereg_security_attempts_login_value']) ? $current['piereg_security_attempts_login_value'] : '0';
-			$update['captcha_in_forgot_value']				 = (isset($current["capthca_in_forgot_pass"]) && $current['capthca_in_forgot_pass']) ? $current['capthca_in_forgot_pass'] : 0;
+			// Keep the saved on/off value (1 = on). Only sites that never had it get it from the old captcha type setting.
+			$update['captcha_in_forgot_value']				 = isset($current['captcha_in_forgot_value']) ? ( 1 === (int) $current['captcha_in_forgot_value'] ? 1 : 0 ) : ( ( isset($current['capthca_in_forgot_pass']) && $current['capthca_in_forgot_pass'] ) ? 1 : 0 );
 			$update['piereg_security_attempts_forgot_value'] = (isset($current["piereg_security_attempts_forgot_value"]) && $current['piereg_security_attempts_forgot_value'])? $current['piereg_security_attempts_forgot_value'] : "0";
 			
 			//security_attempts_login
@@ -1057,7 +1060,7 @@ if( !class_exists('PieReg_Base') ){
 			
 			$structure["aim"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" class="input_fields" name="field[%d%][type]"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" value="AIM" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="show_in_profile_%d%">'.__("Show in Profile","pie-register").'</label><select name="field[%d%][show_in_profile]" id="show_in_profile_%d%"  class="show_in_profile checkbox_fields"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div></div></div>';
            
-			$structure["url"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" class="input_fields" name="field[%d%][type]"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" value="Website" class="input_fields field_label"><input type="hidden" name="field[%d%][validation_rule]"><input type="hidden" id="default_url"></div>';
+			$structure["url"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" class="input_fields" name="field[%d%][type]"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" value="Website" class="input_fields field_label"><input type="hidden" name="field[%d%][validation_rule]"><input type="hidden" id="default_url"></div><div class="advance_fields"><label>'.__("Rules","pie-register").'</label><input name="field[%d%][required]" id="required_%d%" value="%d%" type="checkbox" class="checkbox_fields"><label for="required_%d%" class="required">'.__("Required","pie-register").'</label></div><div class="advance_fields"><label for="placeholder_%d%">'.__("Placeholder","pie-register").'</label><input type="text" name="field[%d%][placeholder]" id="placeholder_%d%" class="input_fields field_placeholder"></div><div class="advance_fields"><label for="css_%d%">'.__("CSS Class Name","pie-register").'</label><input type="text" name="field[%d%][css]" id="css_%d%" class="input_fields"></div>';
 
 			$structure["url"]  .=  '<div class="advance_fields"><label for="show_in_profile_%d%">'.__("Show in Profile","pie-register").'</label><select name="field[%d%][show_in_profile]" id="show_in_profile_%d%"  class="show_in_profile checkbox_fields"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div>';
            
@@ -1070,7 +1073,7 @@ if( !class_exists('PieReg_Base') ){
 
 			$structure["yim"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" class="input_fields" name="field[%d%][type]"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" value="Yahoo IM" class="input_fields field_label"></div><div class="advance_fields"><label for="show_in_profile_%d%">'.__("Show in Profile","pie-register").'</label><select name="field[%d%][show_in_profile]" id="show_in_profile_%d%"  class="show_in_profile checkbox_fields"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div></div></div>';
 
-			$structure["description"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" class="input_fields" name="field[%d%][type]"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" value="About Yourself" class="input_fields field_label"></div><div class="advance_fields"><label for="show_in_profile_%d%">'.__("Show in Profile","pie-register").'</label><select name="field[%d%][show_in_profile]" id="show_in_profile_%d%"  class="show_in_profile checkbox_fields"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div></div></div>';
+			$structure["description"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" class="input_fields" name="field[%d%][type]"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" value="About Yourself" class="input_fields field_label"></div><div class="advance_fields"><label for="show_in_profile_%d%">'.__("Show in Profile","pie-register").'</label><select name="field[%d%][show_in_profile]" id="show_in_profile_%d%"  class="show_in_profile checkbox_fields"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div></div></div><div class="advance_fields"><label for="css_%d%">'.__("CSS Class Name","pie-register").'</label><input type="text" name="field[%d%][css]" id="css_%d%" class="input_fields"></div>';
 			
 			$structure["jabber"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" class="input_fields" name="field[%d%][type]"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" value="Jabber / Google Talk" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="show_in_profile_%d%">'.__("Show in Profile","pie-register").'</label><select name="field[%d%][show_in_profile]" id="show_in_profile_%d%"  class="show_in_profile checkbox_fields"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div></div></div>';
 			$structure["password"] = '<div class="fields_main"><div class="advance_options_fields"><input type="hidden" value="1" name="field[%d%][required]"><input type="hidden" name="field[%d%][validation_rule]"><input type="hidden" value="0" class="input_fields" name="field[%d%][meta]" id="meta_%d%"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" value="Password" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="label2_%d%">'.__("Label2","pie-register").'</label><input type="text" name="field[%d%][label2]" value="Confirm Password" id="label2_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="desc_%d%">'.__("Description","pie-register").'</label><textarea name="field[%d%][desc]" id="desc_%d%" rows="8" cols="16"></textarea></div><div class="advance_fields"><label for="placeholder_%d%">Placeholder</label><input type="text" name="field[%d%][placeholder]" id="placeholder_%d%" class="input_fields field_placeholder"></div><div class="advance_fields"><label for="placeholder2_%d%">Placeholder 2</label><input type="text" name="field[%d%][placeholder2]" id="placeholder2_%d%" class="input_fields field_placeholder2"></div><div class="advance_fields"><label for="validation_message_%d%">'.__("Validation Message","pie-register").'</label><input type="text" name="field[%d%][validation_message]" id="validation_message_%d%" class="input_fields"></div><div class="advance_fields"><label for="css_%d%">'.__("CSS Class Name","pie-register").'</label><input type="text" name="field[%d%][css]" id="css_%d%" class="input_fields"></div><div class="advance_fields"><label for="password_generator_%d%">'.__("Password Generator","pie-register").'</label><input value="1" type="checkbox" name="field[%d%][password_generator]" id="password_generator_%d%" class="checkbox_fields"></div><div class="advance_fields"><label for="hide_confirm_password_%d%">'.__("Hide Confirm Password","pie-register").'</label><input value="1" type="checkbox" name="field[%d%][hide_confirm_password]" id="hide_confirm_password_%d%" class="hide_confirm_password checkbox_fields"></div><div class="advance_fields"><label for="show_meter_%d%">'.__("Show Strength Meter","pie-register").'</label><select class="strength_meter show_meter checkbox_fields" name="field[%d%][show_meter]" id="show_meter_%d%"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div><div class="strength_labels_div"><div class="advance_fields"><label for="pass_strength_indicator_label_%d%">'.__("Strength Indicator",'pie-register').'</label><input type="text" name="field[%d%][pass_strength_indicator_label]" id="pass_strength_indicator_label_%d%" class="input_fields" value="Strength Indicator" /></div><div class="advance_fields"><label for="pass_very_weak_label_%d%">'.__("Very Weak",'pie-register').'</label><input type="text" name="field[%d%][pass_very_weak_label]" id="pass_very_weak_label_%d%" class="input_fields" value="Very Weak" /></div><div class="advance_fields"><label for="pass_weak_label_%d%">'.__("Weak",'pie-register').'</label><input type="text" name="field[%d%][pass_weak_label]" id="pass_weak_label_%d%" class="input_fields" value="Weak" /></div><div class="advance_fields"><label for="pass_medium_label_%d%">'.__("Medium",'pie-register').'</label><input type="text" name="field[%d%][pass_medium_label]" id="pass_medium_label_%d%" class="input_fields" value="Medium" /></div><div class="advance_fields"><label for="pass_strong_label_%d%">'.__("Strong",'pie-register').'</label><input type="text" name="field[%d%][pass_strong_label]" id="pass_strong_label_%d%" class="input_fields" value="Strong" /></div><div class="advance_fields"><label for="pass_mismatch_label_%d%">'.__("Mismatch",'pie-register').'</label><input type="text" name="field[%d%][pass_mismatch_label]" id="pass_mismatch_label_%d%" class="input_fields" value="Mismatch" /></div><div class="advance_fields"><label for="restrict_strength_%d%">'.__("Minimum Strength","pie-register").'</label><select class="show_meter" name="field[%d%][restrict_strength]" id="restrict_strength_%d%"><option value="1" selected="selected">'.__("Very weak","pie-register").'</option><option value="2">'.__("Weak","pie-register").'</option><option value="3">'.__("Medium","pie-register").'</option><option value="4">'.__("Strong","pie-register").'</option></select></div><div class="advance_fields"><label for="strength_message_%d%">'.__("Strength Message","pie-register").'</label><input type="text" name="field[%d%][strength_message]" id="strength_message_%d%" class="input_fields" value="Weak Password"></div><input type="hidden" id="default_password"></div>';
@@ -1177,7 +1180,7 @@ if( !class_exists('PieReg_Base') ){
 
 			$structure["radio"] .= '</div></div>';
 
-			$structure["html"] 	= '<input type="hidden" value="0" class="input_fields" name="field[%d%][meta]" id="meta_%d%"><div class="fields_main"><div class="advance_options_fields"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><textarea rows="8" id="htmlbox_%d%" class="ckeditor" name="field[%d%][html]" cols="16"></textarea></div>';
+			$structure["html"] 	= '<input type="hidden" value="0" class="input_fields" name="field[%d%][meta]" id="meta_%d%"><div class="fields_main"><div class="advance_options_fields"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><textarea rows="8" id="htmlbox_%d%" class="ckeditor" name="field[%d%][html]" cols="16"></textarea></div><div class="advance_fields"><label for="css_%d%">'.__("CSS Class Name","pie-register").'</label><input type="text" name="field[%d%][css]" id="css_%d%" class="input_fields"></div>';
 
 			if($this->piereg_field_visbility_addon_active ){
 				$structure["html"] = apply_filters('pie_addon_field_visibility_settings', $structure["html"]);
@@ -1187,7 +1190,7 @@ if( !class_exists('PieReg_Base') ){
 
 			$structure["html"] .= '</div></div>';
 			
-			$structure["sectionbreak"] = '<input type="hidden" value="0" class="input_fields" name="field[%d%][meta]" id="meta_%d%"><div class="fields_main"><div class="advance_options_fields"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" class="input_fields field_label"></div>';
+			$structure["sectionbreak"] = '<input type="hidden" value="0" class="input_fields" name="field[%d%][meta]" id="meta_%d%"><div class="fields_main"><div class="advance_options_fields"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="css_%d%">'.__("CSS Class Name","pie-register").'</label><input type="text" name="field[%d%][css]" id="css_%d%" class="input_fields"></div>';
 
 			$structure["sectionbreak"] .=  '<div class="advance_fields"><label for="show_in_profile_%d%">'.__("Show in Profile","pie-register").'</label><select name="field[%d%][show_in_profile]" id="show_in_profile_%d%"  class="show_in_profile checkbox_fields"><option value="1" selected="selected">'.__("Yes","pie-register").'</option><option value="0">'.__("No","pie-register").'</option></select></div>';
 			
@@ -1374,7 +1377,7 @@ if( !class_exists('PieReg_Base') ){
 			$structure["custom_role"] .= '</div></div>';
 
 
-			$structure['hidden'] = '<div class="fields_main"><div class="advance_options_fields"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="default_value_%d%">'.__("Default Value","pie-register").'</label><input type="text" name="field[%d%][default_value]" id="default_value_%d%" class="input_fields field_default_value"><a href="javascript:;" class="piereg-toggle-tags  piereg-not-show-tags" ><i class="fa fa-tags"></i> <span>Show Smart Tags</span></a><div class="piereg-toggle-tag-display" style="display:none;"><ul class="piereg-others"><li class="heading">Other</li><li class="smart-tag-field" data-type="other" data-field_name="admin_email">Site Admin Email</li><li class="smart-tag-field" data-type="other" data-field_name="site_name">Site Name</li><li class="smart-tag-field" data-type="other" data-field_name="site_url">Site URL</li><li class="smart-tag-field" data-type="other" data-field_name="page_title">Page Title</li><li class="smart-tag-field" data-type="other" data-field_name="page_url">Page URL</li><li class="smart-tag-field" data-type="other" data-field_name="page_id">Page ID</li><li class="smart-tag-field" data-type="other" data-field_name="form_name">Form Name</li><li class="smart-tag-field" data-type="other" data-field_name="user_ip_address">User IP Address</li></ul></div></div></div></div>';
+			$structure['hidden'] = '<div class="fields_main"><div class="advance_options_fields"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="default_value_%d%">'.__("Default Value","pie-register").'</label><input type="text" name="field[%d%][default_value]" id="default_value_%d%" class="input_fields field_default_value"><a href="javascript:;" class="piereg-toggle-tags  piereg-not-show-tags" ><i class="fa-solid fa-tags"></i> <span>Show Smart Tags</span></a><div class="piereg-toggle-tag-display" style="display:none;"><ul class="piereg-others"><li class="heading">Other</li><li class="smart-tag-field" data-type="other" data-field_name="admin_email">Site Admin Email</li><li class="smart-tag-field" data-type="other" data-field_name="site_name">Site Name</li><li class="smart-tag-field" data-type="other" data-field_name="site_url">Site URL</li><li class="smart-tag-field" data-type="other" data-field_name="page_title">Page Title</li><li class="smart-tag-field" data-type="other" data-field_name="page_url">Page URL</li><li class="smart-tag-field" data-type="other" data-field_name="page_id">Page ID</li><li class="smart-tag-field" data-type="other" data-field_name="form_name">Form Name</li><li class="smart-tag-field" data-type="other" data-field_name="user_ip_address">User IP Address</li></ul></div></div></div></div>';
 			
 			$structure['invitation'] = '<div class="fields_main"><div class="advance_options_fields"><div class="advance_fields"><label for="label_%d%">'.__("Label","pie-register").'</label><input type="text" name="field[%d%][label]" id="label_%d%" class="input_fields field_label"></div><div class="advance_fields"><label for="desc_%d%">'.__("Description","pie-register").'</label><textarea name="field[%d%][desc]" id="desc_%d%" rows="8" cols="16"></textarea></div><div class="advance_fields"><label for="required_%d%">'.__("Rules","pie-register").'</label><input name="field[%d%][required]" id="required_%d%" value="%d%" type="checkbox" class="checkbox_fields"><label for="required_%d%" class="required">'.__("Required","pie-register").'</label></div><div class="advance_fields"><label for="placeholder_%d%">'.__("Placeholder","pie-register").'</label><input type="text" name="field[%d%][placeholder]" id="placeholder_%d%" class="input_fields field_placeholder"></div><div class="advance_fields"><label for="validation_message_%d%">'.__("Validation Message","pie-register").'</label><input type="text" name="field[%d%][validation_message]" id="validation_message_%d%" class="input_fields"></div><div class="advance_fields"><label for="css_%d%">'.__("CSS Class Name","pie-register").'</label><input type="text" name="field[%d%][css]" id="css_%d%" class="input_fields"></div>';
 
@@ -1504,29 +1507,9 @@ if( !class_exists('PieReg_Base') ){
 		function uninstall_settings()
 		{
 			do_action( 'pie_uninstall_base' );
-			$this->remove_legacy_analytics_data();
 			
 			// Remove - deleting options and tables
 			// $this->uninstall_pieregister_license_key();
-		}
-		/*
-			* Tables, options and user meta written by modules that are no longer included (registration analytics, new form builder)
-		*/
-		function remove_legacy_analytics_data(){
-			delete_metadata( 'user', 0, 'piereg_new_builder', '', true );
-			global $wpdb;
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- dropping obsolete plugin tables; fixed table names from $wpdb->prefix
-			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pieregister_analytics_events" );
-			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pieregister_analytics_daily" );
-			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pieregister_analytics_utm" );
-			// phpcs:enable
-			delete_option( 'piereg_analytics_options' );
-			delete_option( 'piereg_analytics_db_version' );
-			delete_option( 'piereg_analytics_sources_rule' );
-			delete_option( 'piereg_cron_last_run' );
-			delete_metadata( 'user', 0, 'piereg_analytics_activated', '', true );
-			delete_metadata( 'user', 0, 'piereg_analytics_session', '', true );
-			wp_clear_scheduled_hook( 'piereg_cron_hourly' );
 		}
 		function uninstall_pieregister_license_key(){
 			global $wpdb, $blog_id;
@@ -2237,6 +2220,8 @@ if( !class_exists('PieReg_Base') ){
 			$update['captcha_private'] 			= "";
 			$update['captcha_publc_v3'] 		= "";
 			$update['captcha_private_v3'] 		= "";
+			$update['turnstile_site'] 			= "";
+			$update['turnstile_secret'] 		= "";
 			$update['paypal_button_id'] 		= "";
 			$update['paypal_pdt_token'] 		= "";
 			$update['custom_css'] 				= "";
@@ -3567,6 +3552,8 @@ if( !class_exists('PieReg_Base') ){
 							case 'capthca_in_login_label':
 							case 'captcha_private':
 							case 'verification':
+							case 'turnstile_site':
+							case 'turnstile_secret':
 								$post[$key] = $this->sanitize_validate_as('text',$value);
 								break;
 							
@@ -3850,7 +3837,14 @@ if( !class_exists('PieReg_Base') ){
 					$_TMP_arr[$k] = $this->sanitize_validate_as($type,$v);
 					if($k === 'html')
 					{
-						$_TMP_arr[$k] = $this->sanitize_validate_as('html',$v);
+						// HTML field: users trusted with unfiltered HTML may also keep <style> blocks (CSS for their content).
+						// Remove script blocks with their content, so the code does not show as text on the form.
+						$v = preg_replace( '#<script\b[^>]*>.*?</script\s*>#is', '', (string) $v );
+						if ( current_user_can( 'unfiltered_html' ) ) {
+							$_TMP_arr[$k] = wp_kses( $v, $this->allowed_html_field_tags() );
+						} else {
+							$_TMP_arr[$k] = $this->sanitize_validate_as( 'html', preg_replace( '#<style\b[^>]*>.*?</style\s*>#is', '', $v ) );
+						}
 					} else {
 						$_TMP_arr[$k] = $this->sanitize_validate_as($type,$v);
 					}
@@ -3899,6 +3893,14 @@ if( !class_exists('PieReg_Base') ){
 		/*
 			*	Add iframe in allowed tags ep_kses
 		*/
+		/*
+			* Tags allowed in an HTML field saved by a user with the unfiltered_html capability: post tags, iframe and <style>.
+		*/
+		function allowed_html_field_tags() {
+			$allowed_tags = $this->alowed_iframe_tag_post();
+			$allowed_tags['style'] = array( 'type' => array(), 'media' => array() );
+			return $allowed_tags;
+		}
 		function alowed_iframe_tag_post() {
 				$allowed_tags = wp_kses_allowed_html( 'post' );
 				

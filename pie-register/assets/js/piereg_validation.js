@@ -8,6 +8,40 @@
  */
 var piereg = jQuery.noConflict();
 
+/* Put the password strength meter back to its default state, keeping the class the meter is found by while typing */
+function pieregResetStrengthMeter( $meter ) {
+	if ( ! $meter.length ) {
+		return;
+	}
+	var label = ( typeof piereg_pass_str_meter_string !== 'undefined' && piereg_pass_str_meter_string[0] ) ? piereg_pass_str_meter_string[0] : $meter.text();
+	$meter.attr( 'class', 'piereg_pass prPasswordStrengthMeter' ).text( label );
+}
+
+/* Show "Processing..." on the submit button and block further clicks while the form is being sent */
+function pieregSetProcessing( $btn ) {
+	if ( typeof $btn.data( 'pieregLabel' ) === 'undefined' ) {
+		$btn.data( 'pieregLabel', $btn.val() );
+	}
+	$btn.val( piereg_process_submission );
+	$btn.parent().parent().off( 'click.pieregProcessing' ).on( 'click.pieregProcessing', function(){
+		return false;
+	});
+}
+
+/* A page restored with the browser's Back button keeps its last state: make the submit button usable again */
+window.addEventListener( 'pageshow', function( event ) {
+	if ( ! event.persisted ) {
+		return;
+	}
+	piereg( '#pie_regiser_form, #pie_widget_regiser_form' ).find( 'input[name="pie_submit"]' ).each( function(){
+		var $btn = piereg( this );
+		if ( typeof $btn.data( 'pieregLabel' ) !== 'undefined' ) {
+			$btn.val( $btn.data( 'pieregLabel' ) );
+		}
+		$btn.parent().parent().off( 'click.pieregProcessing' );
+	});
+});
+
 piereg(document).ready(function($){
 	(function($){
 		var IsWidgetFields = false;
@@ -166,10 +200,7 @@ piereg(document).ready(function($){
 			}
 			else{
 				btn = piereg('#pie_widget_regiser_form input[name="pie_submit"]');
-				btn.val(piereg_process_submission);
-				btn.parent().parent().on('click', function(){
-					return false;
-				});
+				pieregSetProcessing( btn );
 			}
 		});
 		
@@ -179,11 +210,7 @@ piereg(document).ready(function($){
 				piereg(obj).closest("li").find(".legend_txt").remove();
 				piereg(obj).closest("div.fieldset").removeClass("error");
 			});				
-			if( piereg('#piereg_passwordStrength_widget').length > 0  ) {
-				piereg( "#piereg_passwordStrength_widget" ).removeAttr('class').attr('class', '');
-				piereg( "#piereg_passwordStrength_widget" ).addClass("piereg_pass");
-				piereg( "#piereg_passwordStrength_widget" ).html("Strength Indicator");
-			}
+			pieregResetStrengthMeter( piereg( "#piereg_passwordStrength_widget" ) );
 		});
 		
 		/* Remove validation and strength meter default on Reset */
@@ -193,11 +220,7 @@ piereg(document).ready(function($){
 				piereg(obj).closest("div.fieldset").removeClass("error");
 			});
 			
-			if( piereg('#piereg_passwordStrength').length > 0  ) {
-				piereg( "#piereg_passwordStrength" ).removeAttr('class').attr('class', '');
-				piereg( "#piereg_passwordStrength" ).addClass("piereg_pass");
-				piereg( "#piereg_passwordStrength" ).html("Strength Indicator");
-			}
+			pieregResetStrengthMeter( piereg( "#piereg_passwordStrength" ) );
 		});
 		
 		/* Validate On Submit Field(s) */
@@ -222,10 +245,7 @@ piereg(document).ready(function($){
 			}
 			else{
 				btn = piereg('#pie_regiser_form input[name="pie_submit"]');
-				btn.val(piereg_process_submission);
-				btn.parent().parent().on('click', function(){
-					return false;
-				});
+				pieregSetProcessing( btn );
 			}
 		});
 		

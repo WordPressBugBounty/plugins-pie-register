@@ -3,7 +3,7 @@
 Plugin Name: Pie Register - Basic
 Plugin URI: https://pieregister.com/
 Description: Create custom user registration forms, drag & drop form builder, send invitation codes, add conditional logic, 2-step authentication, assign user roles, accept payments and more!
-Version: 3.8.4.18
+Version: 4.0.0.0
 Author: Pie Register
 Author URI: https://pieregister.com/
 Text Domain: pie-register
@@ -44,8 +44,12 @@ require_once(PIEREG_DIR_NAME . '/classes/edit_form.php');
 require_once(PIEREG_DIR_NAME . '/widget.php');
 require_once(PIEREG_DIR_NAME . '/dash_widget.php');
 require_once(PIEREG_DIR_NAME . '/piereg_walker-nav-menu.php');
-// reCAPTCHA v2 / v3 verification
+// Shared hourly cron, registration analytics and captcha helpers (reCAPTCHA v2 Invisible / Cloudflare Turnstile)
+require_once(PIEREG_DIR_NAME . '/classes/cron.php');
+require_once(PIEREG_DIR_NAME . '/classes/analytics.php');
 require_once(PIEREG_DIR_NAME . '/classes/captcha.php');
+// New form builder layout
+require_once(PIEREG_DIR_NAME . '/classes/builder.php');
 
 /**
  * Include PR App Services files
@@ -164,12 +168,6 @@ if (!class_exists('PieRegister')) {
 		{
 			global $piereg_global_options, $pagenow;
 
-			# Cloudflare Turnstile and reCAPTCHA v2 Invisible are not included: sites that selected one go back to reCAPTCHA v2 (saved keys are kept)
-			if (isset($piereg_global_options['piereg_recaptcha_type']) && in_array($piereg_global_options['piereg_recaptcha_type'], array('turnstile', 'v2_invisible'), true)) {
-				$piereg_global_options['piereg_recaptcha_type'] = 'v2';
-				update_option(OPTION_PIE_REGISTER, $piereg_global_options);
-				$GLOBALS['PR_GLOBAL_OPTIONS'] = $piereg_global_options;
-			}
 			$option = $piereg_global_options;
 
 			//LOCALIZATION
@@ -227,11 +225,6 @@ if (!class_exists('PieRegister')) {
 
 				# Delete Unverified Users Over Grace Period
 				$this->deleteUnverifiedUsers();
-
-				# Remove the hourly event left behind by the removed registration analytics
-				if (wp_next_scheduled('piereg_cron_hourly')) {
-					wp_clear_scheduled_hook('piereg_cron_hourly');
-				}
 
 				#Assign pie register's all custom capabilities to administrator (default). 
 				do_action('piereg_add_custom_cap', array('piereg_manage_cap'));
@@ -593,6 +586,7 @@ if (!class_exists('PieRegister')) {
 
 			add_action('admin_init', array($this, 'piereg_register_scripts'));
 			add_action('admin_init', array($this, 'piereg_backendregister_scripts'));
+			add_action('admin_footer', array($this, 'piereg_load_wp_editor'));
 			#Adding Menus
 			add_action('admin_menu',  array($this, 'AddPanel'));
 			// Show Pie Register Menu on the Admin Bar
@@ -941,23 +935,18 @@ if (!class_exists('PieRegister')) {
 			wp_register_script('prBackendCustomLogo_script', plugins_url("/assets/js/prBackendCustomLogo.js", __FILE__), '', PIEREGISTER_VERSION, true);
 			wp_register_script('pie_datepicker_js', plugins_url("/assets/js/datepicker.js", __FILE__), array('jquery'), PIEREGISTER_VERSION, false);
 			wp_register_script('pie_drag_js', plugins_url("/assets/js/drag.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
-			wp_register_script('pie_mCustomScrollbar_js', plugins_url("/assets/js/jquery.mCustomScrollbar.min.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
-			wp_register_script('pie_mousewheel_js', plugins_url("/assets/js/jquery.mousewheel.min.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
-			wp_register_script('pie_phpjs_js', plugins_url("/assets/js/phpjs.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
 			wp_register_script('pie_registermain_js', plugins_url("/assets/js/pie-register-main.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
 			wp_register_script('pie_alphanum_js', plugins_url("/assets/js/jquery.alphanum.js", __FILE__), array('jquery'), PIEREGISTER_VERSION, false);
 			wp_register_script('pie_validation_js', plugins_url("/assets/js/piereg_validation.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
 			wp_register_script('pie_password_checker', plugins_url("/assets/js/pie_password_checker.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
 			wp_register_script('pie_recpatcha_script', '//www.google.com/recaptcha/api.js?onload=prRecaptchaCallBack', '', 'null', true);	// &render=explicit removed
-			wp_register_script('pie_confirm_js', plugins_url("/assets/js/jquery-confirm.min.js", __FILE__), array('jquery'), PIEREGISTER_VERSION, false);
 
 			wp_register_style('pie_front_css', plugins_url("/assets/css/front.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_wload_css', plugins_url("/assets/css/jquery.wload.css", __FILE__), false, PIEREGISTER_VERSION, "all");
-			wp_register_style('pie_confirm_css', plugins_url("/assets/css/jquery-confirm.min.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_style_css', plugins_url("/assets/css/style.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_ui_css', plugins_url("/assets/css/pie_ui.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_jquery_ui', plugins_url("/assets/css/jquery-ui-theme.css", __FILE__), false, '1.12.1', "all");
-			wp_register_style('pie_font_awesome', plugins_url("/assets/css/font-awesome.min.css", __FILE__), false, '4.7.0', "all");
+			wp_register_style('pie_font_awesome', plugins_url("/assets/lib/fontawesome/css/all.min.css", __FILE__), false, '6.7.2', "all");
 
 			// For notices
 			wp_enqueue_style('pie_notice_cs', plugins_url("/assets/css/pie_notice.css", __FILE__), false, PIEREGISTER_VERSION, "all");
@@ -971,14 +960,13 @@ if (!class_exists('PieRegister')) {
 			wp_register_style('pie_addons_menu_css', plugins_url("/assets/css/admin-addons-styles.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_admin_about_us_menu_css', plugins_url("/assets/css/admin-about-us.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_admin_about_us_slick_css', plugins_url("/assets/css/slick.min.css", __FILE__), false, PIEREGISTER_VERSION, "all");
-			wp_register_style('pie_mCustomScrollbar_css', plugins_url("/assets/css/jquery.mCustomScrollbar.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_notification_css', plugins_url("assets/css/pie_notifications.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_invite_users_css', plugins_url("assets/css/pie_invite_users.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			wp_register_style('pie_welcome_css', plugins_url("assets/css/welcome.css", __FILE__), false, PIEREGISTER_VERSION, "all");
 			//Scripts
-			wp_register_script('pie_ckeditor', plugins_url("/assets/lib/ckeditor/ckeditor.js", __FILE__), 'jquery', '1.0', false);
-			wp_register_script('pie_ckeditor_jquery_adapter', plugins_url("/assets/lib/ckeditor/adapters/jquery-adapter.js", __FILE__), array('jquery', 'pie_ckeditor'), '1.0', false);
-			wp_register_script('pie_wload_js', plugins_url("/assets/js/jquery.wload.js", __FILE__), 'jquery', '1.0', false);
+			// Rich text editor for HTML fields: WordPress's own editor (TinyMCE). The handle keeps its old name so add-ons that enqueue it keep working.
+			wp_register_script('pie_ckeditor', plugins_url("/assets/js/piereg-editor.js", __FILE__), array('jquery'), PIEREGISTER_VERSION, true);
+			wp_register_script('pie_wload_js', plugins_url("/assets/js/jquery.wload.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
 			wp_register_script('pie_restrict_widget_script', plugins_url("/restrict_widget/pie_register_widget_script.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
 
 			wp_register_script('pie_admin_about_us_menu_js', plugins_url("/assets/js/admin-about-us.js", __FILE__), 'jquery', PIEREGISTER_VERSION, false);
@@ -1223,6 +1211,10 @@ if (!class_exists('PieRegister')) {
 					continue;
 				}
 				if ($field['type'] == "url" || $field['type'] == "aim" || $field['type'] == "yim" || $field['type'] == "jabber" || $field['type'] == "description") {
+					// Keep the original type as the field name (the new builder saves these without one)
+					if (empty($field['field_name'])) {
+						$field['field_name'] = $field['type'];
+					}
 					$field['type'] = "default";
 				}
 
@@ -1236,7 +1228,7 @@ if (!class_exists('PieRegister')) {
 
 				$fillvalNum++;
 				array_push($fillvalKey, $field['id']);
-				array_push($fillvalValue, serialize($field));
+				array_push($fillvalValue, $field);
 			}
 			$this->pie_pr_backend_dec_vars_array = array(
 				'ajaxURL'				=> admin_url('admin-ajax.php'),
@@ -1353,7 +1345,6 @@ if (!class_exists('PieRegister')) {
 			//Enqueue Styles
 			wp_enqueue_style('pie_admin_css');
 			//wp_enqueue_style('pie_jqueryui_css');
-			wp_enqueue_style('pie_mCustomScrollbar_css');
 			wp_enqueue_style('pie_style_css');
 			#wp_enqueue_style('pie_tooltip_css');
 			wp_enqueue_style('pie_ui_css');
@@ -1366,9 +1357,6 @@ if (!class_exists('PieRegister')) {
 			wp_enqueue_script('jquery-ui-core');
 			wp_enqueue_script('pie_datepicker_js');
 			wp_enqueue_script('pie_drag_js');
-			wp_enqueue_script('pie_mCustomScrollbar_js');
-			wp_enqueue_script('pie_mousewheel_js');
-			wp_enqueue_script('pie_phpjs_js');
 			wp_enqueue_script('pie_registermain_js');
 			// wp_enqueue_script('pie_admin_about_us_menu_js');
 
@@ -1390,7 +1378,6 @@ if (!class_exists('PieRegister')) {
 			wp_enqueue_script('pie_alphanum_js');
 			wp_enqueue_script('pie_validation_js');
 			wp_enqueue_script("pie_ckeditor");
-			wp_enqueue_script("pie_ckeditor_jquery_adapter");
 			wp_enqueue_style('pie_font_awesome');
 		}
 
@@ -1469,6 +1456,9 @@ if (!class_exists('PieRegister')) {
 			}
 
 			if ($captcha_login_script || $captcha_reg_script || $captcha_forgot_script) {
+				if (function_exists('piereg_enqueue_captcha_extra') && piereg_captcha_enabled($piereg_global_options)) {
+					piereg_enqueue_captcha_extra(); // v2 Invisible and Cloudflare Turnstile
+				}
 				if ($piereg_global_options['piereg_recaptcha_type'] == 'v2') {
 					wp_enqueue_script("pie_recpatcha_script");
 				} elseif ($piereg_global_options['piereg_recaptcha_type'] == 'v3') {
@@ -1885,7 +1875,7 @@ if (!class_exists('PieRegister')) {
 		{
 			?>
 			<div class="notice is-dismissible">
-				<p><img src="<?php echo esc_url(PIEREG_PLUGIN_URL . 'assets/images/pie_gift_icon.png') ?>" alt="<?php echo esc_attr__('Go Pro', "pie-register") ?>" /><?php esc_html_e("Automate registrations through powerful features and addons. Get 20% off on ", 'pie-register'); ?><a href='https://pieregister.com/plan-and-pricing/?utm_source=adminarea&utm_medium=gopro&utm_campaign=viewplan/' target='_blank'><?php esc_html_e("all plans", "pie-register"); ?></a>.<?php esc_html_e(" Use code 'automate' at checkout. Limited time offer.", 'pie-register'); ?></p>
+				<p><img src="<?php echo esc_url(PIEREG_PLUGIN_URL . 'assets/images/pie_gift_icon.png') ?>" alt="<?php echo esc_attr__('Go Pro', "pie-register") ?>" /><?php /* translators: %s: plans and pricing page URL */ echo wp_kses( sprintf( __( '<strong>25%% OFF <a href="%s" target="_blank">Lifetime License</a>. Use code PIECV25</strong> at checkout.', 'pie-register' ), esc_url( 'https://pieregister.com/plan-and-pricing/?utm_source=adminarea&utm_medium=gopro&utm_campaign=viewplan/' ) ), array( 'strong' => array(), 'a' => array( 'href' => array(), 'target' => array() ) ) ); ?></p>
 			</div>
 			<?php
 		}
@@ -2953,7 +2943,7 @@ if (!class_exists('PieRegister')) {
 							} //New Recaptcha
 							elseif ($option['capthca_in_login'] == 3 || (isset($this->pie_post_array["recaptcha_challenge_field"], $this->pie_post_array["recaptcha_response_field"]) && !empty($this->pie_post_array["recaptcha_challenge_field"]) && !empty($this->pie_post_array["recaptcha_response_field"]))) {
 								$settings  	=  get_option(OPTION_PIE_REGISTER);
-								// reCAPTCHA v2 / v3 (classes/captcha.php)
+								// reCAPTCHA v2 / v2 Invisible / v3 or Cloudflare Turnstile (classes/captcha.php)
 								$resp = array('success' => (piereg_verify_captcha($settings) === true));
 								if ($resp['success'] == false) {
 
@@ -3473,10 +3463,17 @@ if (!class_exists('PieRegister')) {
 		}
 		function pieregister_ck_admin_scripts_styles()
 		{
-			//$this->pie_admin_enqueu_scripts();
-			//wp_enqueue_editor();
 			wp_enqueue_script("pie_ckeditor");
-			wp_enqueue_script("pie_ckeditor_jquery_adapter");
+		}
+
+		/**
+		 * Load the WordPress editor scripts on any admin page that uses the Pie Register editor (also when an add-on enqueues it).
+		 */
+		function piereg_load_wp_editor()
+		{
+			if (wp_script_is('pie_ckeditor', 'enqueued')) {
+				wp_enqueue_editor();
+			}
 		}
 		function pieregister_rw_admin_scripts_styles()
 		{
@@ -3515,8 +3512,8 @@ if (!class_exists('PieRegister')) {
 					$piereg_form_pricing_fields 	 = (array) get_option("piereg_form_pricing_fields", array()); // not set until a form is first saved
 					$piereg_form_pricing_fields_temp = array();
 
-					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- every field is sanitized by piereg_sanitize_post_data('piereg_form_builder') (esc_textarea per value); unslashing here would change the stored form definitions
-					$this->pie_post_array['field']	= $this->piereg_sanitize_post_data('piereg_form_builder', ((isset($_POST['field']) && !empty($_POST['field'])) ? $_POST['field'] : array()));
+					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- unslashed once, then every field is sanitized by piereg_sanitize_post_data('piereg_form_builder') (esc_textarea per value, wp_kses for HTML)
+					$this->pie_post_array['field']	= $this->piereg_sanitize_post_data('piereg_form_builder', ((isset($_POST['field']) && !empty($_POST['field'])) ? wp_unslash( $_POST['field'] ) : array()));
 					// var_dump($this->pie_post_array['field']);
 					foreach ($this->pie_post_array['field'] as $k => $fv) {
 
@@ -5134,7 +5131,9 @@ if (!class_exists('PieRegister')) {
 					$update['piereg_recapthca_skin_forgot_pass'] = isset($this->pie_post_array['piereg_recapthca_skin_forgot_pass']) ? $this->pie_post_array['piereg_recapthca_skin_forgot_pass'] : 0;
 					$update['capthca_in_forgot_pass'] = isset($this->pie_post_array['capthca_in_forgot_pass']) ? intval($this->pie_post_array['capthca_in_forgot_pass']) : 0;
 
-					$update['piereg_recaptcha_type']     = (isset($this->pie_post_array['piereg_recaptcha_type']) && in_array($this->pie_post_array['piereg_recaptcha_type'], array('v2', 'v3'), true)) ? $this->pie_post_array['piereg_recaptcha_type'] : "v2";
+					$update['piereg_recaptcha_type']     = (isset($this->pie_post_array['piereg_recaptcha_type']) && in_array($this->pie_post_array['piereg_recaptcha_type'], array('v2', 'v2_invisible', 'v3', 'turnstile'), true)) ? $this->pie_post_array['piereg_recaptcha_type'] : "v2";
+					$update['turnstile_site']            = isset($this->pie_post_array['turnstile_site']) ? sanitize_text_field($this->pie_post_array['turnstile_site']) : '';
+					$update['turnstile_secret']          = isset($this->pie_post_array['turnstile_secret']) ? sanitize_text_field($this->pie_post_array['turnstile_secret']) : '';
 					$update['captcha_publc'] = $this->pie_post_array['captcha_publc'];
 					$update['captcha_private'] = $this->pie_post_array['captcha_private'];
 					$update['piereg_recaptcha_language'] = $this->pie_post_array['piereg_recaptcha_language'];
@@ -5976,7 +5975,7 @@ if (!class_exists('PieRegister')) {
 							$fieldName = "e_mail";
 							break;
 						case "default":
-							$fieldName = $field['field_name'];
+							$fieldName = isset($field['field_name']) ? $field['field_name'] : "";
 							break;
 						default:
 							$fieldName = $field['type'] . "_" . $field['id'];
@@ -6809,6 +6808,8 @@ if (!class_exists('PieRegister')) {
 						$registration_from_fields .= '<form enctype="multipart/form-data" class="pie_register_reg_form" id="pie_' . esc_attr((trim($IsWidgetForm))) . 'regiser_form" method="post" action="' . (isset($_SERVER['REQUEST_URI']) ? esc_url(wp_unslash($_SERVER['REQUEST_URI'])) : '') . '" data-form="' . esc_attr($form_id) . '">'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- current URL escaped for the form action attribute with esc_url()
 						if (function_exists('wp_nonce_field')):
 							$registration_from_fields .= wp_nonce_field('piereg_wp_registration_form_nonce', 'piereg_registration_form_nonce', true, false);
+							// Extra hidden inputs from add-on code, e.g. analytics session id
+							$registration_from_fields .= apply_filters('piereg_registration_form_extra_inputs', '', $form_id);
 						endif;
 					else:
 						$registration_from_fields .= '<form onsubmit="return false" class="prRegFormPreview" id="pie_' . esc_attr((trim($IsWidgetForm))) . 'regiser_form" data-form="' . esc_attr($form_id) . '">';

@@ -463,8 +463,8 @@ class Registration_form extends PieReg_Base
 			}
 			else if($field['type']=="captcha"){
 				$settings  		=  get_option(OPTION_PIE_REGISTER);
-				// reCAPTCHA v2 / v3 (classes/captcha.php). Skipped when no secret key is saved, as before.
-				if( intval($settings['piereg_enable_recaptcha']) ){
+				// reCAPTCHA v2 / v2 Invisible / v3 or Cloudflare Turnstile (classes/captcha.php). Skipped when no secret key is saved, as before.
+				if( piereg_captcha_enabled( $settings ) ){
 					$captcha_ok = piereg_verify_captcha( $settings );
 					if( $captcha_ok === false ){
 						$errors->add('recaptcha_mismatch',"<strong>".esc_html(ucwords(__('error','pie-register')))."</strong>: ". apply_filters("piereg_Invalid_Security_Code",__("Invalid Security Code", 'pie-register')));

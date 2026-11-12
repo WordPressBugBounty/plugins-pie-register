@@ -46,7 +46,7 @@
     </label>
     <select name="capthca_in_login" id="piereg_capthca_in_login">
       <option value="3" <?php selected((isset($piereg['capthca_in_login']) && $piereg['capthca_in_login'] == 3 ), true); ?>>
-      <?php esc_html_e("No Captcha ReCaptcha",'pie-register') ?>
+      <?php echo ( function_exists( 'piereg_captcha_type' ) && piereg_captcha_type( $piereg ) === 'turnstile' ) ? esc_html__( 'Cloudflare Turnstile', 'pie-register' ) : esc_html__( 'No Captcha ReCaptcha', 'pie-register' ); ?>
       </option>
       
       <option value="2" <?php selected((isset($piereg['capthca_in_login']) && $piereg['capthca_in_login'] == 2 ), true); ?>>
@@ -160,7 +160,7 @@
     </label>
     <select name="capthca_in_forgot_pass" id="piereg_capthca_in_forgot_pass">
       <option value="3" <?php selected((isset($piereg['capthca_in_forgot_pass']) && $piereg['capthca_in_forgot_pass'] == 3), true ) ?>>
-      <?php esc_html_e("No Captcha ReCaptcha",'pie-register') ?>
+      <?php echo ( function_exists( 'piereg_captcha_type' ) && piereg_captcha_type( $piereg ) === 'turnstile' ) ? esc_html__( 'Cloudflare Turnstile', 'pie-register' ) : esc_html__( 'No Captcha ReCaptcha', 'pie-register' ); ?>
       </option>
       <!--
       <option value="1" <?php //echo ((isset($piereg['capthca_in_forgot_pass']) && $piereg['capthca_in_forgot_pass'] == 1 )?'selected="selected"':'') ?>>

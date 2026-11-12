@@ -82,7 +82,7 @@ function pieResetFormOutput($piereg_widget = false){
 				elseif($option['capthca_in_forgot_pass'] == 3){
 					
 					$settings  	=  get_option(OPTION_PIE_REGISTER);
-					// reCAPTCHA v2 / v3 (classes/captcha.php)
+					// reCAPTCHA v2 / v2 Invisible / v3 or Cloudflare Turnstile (classes/captcha.php)
 					$resp = array( 'success' => ( piereg_verify_captcha( $settings ) === true ) );
 					if($resp['success'] == false){
 						$error[] = '<strong>'.ucwords(__("error","pie-register")).'</strong>: '.apply_filters('piereg_forgot_invalid_captcha_error',__('Invalid Security Code','pie-register')); # newlyAddedHookFilter
@@ -224,7 +224,7 @@ function pieResetFormOutput($piereg_widget = false){
 			{
 				if(!empty($option['capthca_in_forgot_pass_label'])){
 					if($option['capthca_in_forgot_pass'] == 3){
-						if($option['piereg_recaptcha_type'] != 'v3')
+						if( ! in_array( $option['piereg_recaptcha_type'], array( 'v3', 'v2_invisible' ), true ) )
 							$forgot_pass_form .= $reset_form->add_capthca_label();
 
 					}else{
@@ -237,7 +237,7 @@ function pieResetFormOutput($piereg_widget = false){
 			}elseif($piereg_math_captcha_forgot_pass_widget == false && $piereg_widget == true && isset($option['captcha_in_forgot_value']) && $option['captcha_in_forgot_value'] == 1){
 				if(!empty($option['capthca_in_forgot_pass_label']) ){
 					if($option['capthca_in_forgot_pass'] == 3){
-						if($option['piereg_recaptcha_type'] != 'v3')
+						if( ! in_array( $option['piereg_recaptcha_type'], array( 'v3', 'v2_invisible' ), true ) )
 							$forgot_pass_form .= $reset_form->add_capthca_label();
 
 					}else{
@@ -325,6 +325,9 @@ if(!function_exists("forgot_pass_captcha"))
 				$cap_id = "is_forgot_widget";
 			}else{
 				$cap_id = "not_forgot_widget";
+			}
+			if( in_array( $recaptcha_type, array( 'v2_invisible', 'turnstile' ), true ) ){
+				return piereg_captcha_extra_markup(); // classes/captcha.php
 			}
 			if( ( $publickey && $recaptcha_type == 'v2') || ( $publickeyv3 && $recaptcha_type == 'v3' ) ){
 				if($recaptcha_type == 'v2')

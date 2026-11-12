@@ -90,6 +90,7 @@ table.piereg_form_table>tbody>tr>td.column-title strong{font-size: 16px; text-tr
 table.piereg_form_table>tbody>tr>td.column-title .piereg-actions{font-weight: 400;}
 table.piereg_form_table>tbody>tr>td.column-title .piereg-actions .edit{color: #363B3F;}
 table.piereg_form_table>tbody>tr>td.column-title .piereg-actions .edit a{color: #006ABE;}
+table.piereg_form_table>tbody>tr>td.column-analytics a{color: #006ABE;text-decoration:none;}
 table.piereg_form_table>tbody>tr>td.column-date:last-child .style_textarea{text-align: center; font-weight: 400; color: #363B3F;}
 
 table.piereg_form_table>tbody>tr>td:last-child{border-right:none;}
@@ -128,7 +129,8 @@ table.piereg_form_table>tbody>tr>td:nth-child(1),table.piereg_form_table>tbody>t
     outline: none;
 }
 .piereg-notice-slider .slick-prev.slick-arrow:after{
-    font-family: 'FontAwesome';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     content: "\f104";
     display: inline-block;
     font-size: 15px;
@@ -138,7 +140,8 @@ table.piereg_form_table>tbody>tr>td:nth-child(1),table.piereg_form_table>tbody>t
     text-indent: 0;
 }
 .piereg-notice-slider .slick-next.slick-arrow:after{
-    font-family: 'FontAwesome';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     content: "\f105";
     display: inline-block;
     font-size: 15px;

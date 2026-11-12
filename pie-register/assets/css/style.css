@@ -553,13 +553,10 @@ body .pieregister-admin.piereg-manage-forms .right_section .pie_wrap .piereg-fie
 .pieregister-admin .right_menu ul li > a{color: #ffffff; text-decoration: none;font-size: 18px;font-weight: 700; width: calc(100% - 50px); float: left; padding: 0px 0px 0px 50px; position: relative; margin: 0px; height: 60px; display: flex; align-items: center;}
 .pieregister-admin .right_menu ul li > a::before{content: ''; background: url(images/caret-down.svg) no-repeat center / 100% 100%; width: 13px; height: 8px; position: absolute; right: 35px; top: 50%; transform: translate(0%, -50%);}
 .pieregister-admin .right_menu ul li > a ul.pie-content-ul{background: rgba(54, 59, 63, 1);}
-.pieregister-admin .right_menu .mCSB_scrollTools .mCSB_buttonUp{display: none!important;}
-.pieregister-admin .right_menu .mCSB_scrollTools .mCSB_buttonDown{display: none!important;}
-.pieregister-admin .right_menu .mCSB_scrollTools{width: 10px;}
-.pieregister-admin .right_menu .mCSB_scrollTools .mCSB_draggerContainer{background: rgba(35, 35, 35, 1);margin: 0px;}
-.pieregister-admin .right_menu .mCSB_scrollTools .mCSB_draggerContainer .mCSB_dragger .mCSB_dragger_bar{ width: 100%; border-radius: 0px; margin: 0px;}
-.pieregister-admin .right_menu .mCSB_scrollTools .mCSB_draggerContainer .mCSB_dragger .mCSB_draggerRail {    background: rgba(35, 35, 35, 1);}
-.pieregister-admin .right_menu .mCSB_container{margin-right: 10px;}
+.pieregister-admin .right_menu ul.pie-content-ul{overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#808080 rgba(35, 35, 35, 1);}
+.pieregister-admin .right_menu ul.pie-content-ul::-webkit-scrollbar{width:10px;}
+.pieregister-admin .right_menu ul.pie-content-ul::-webkit-scrollbar-track{background:rgba(35, 35, 35, 1);}
+.pieregister-admin .right_menu ul.pie-content-ul::-webkit-scrollbar-thumb{background:#808080;}
 .pieregister-admin .right_menu li.ui-draggable{height: 55px; display: flex; align-items: center;border: 1px solid rgba(255, 255, 255, .1);}
 .pieregister-admin .right_menu li.ui-draggable a{width: 100%; padding-left: 70px; font-size: 16px; color: #fff;font-weight: 400;}
 .pieregister-admin .right_menu li.ui-draggable a::before{display: none;}

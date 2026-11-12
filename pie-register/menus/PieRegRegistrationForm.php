@@ -37,8 +37,7 @@
                 <th></th>
                 <th><?php esc_html_e("ID","pie-register"); ?></th>
                 <th><?php esc_html_e("Form Title","pie-register"); ?></th>
-                <th><?php esc_html_e("Views","pie-register"); ?></th>
-                <th><?php esc_html_e("Submissions","pie-register"); ?></th>
+                <th><?php esc_html_e("Analytics","pie-register"); ?></th>
                 <th><?php esc_html_e("Shortcode","pie-register"); ?></th>
               </tr>
             </thead>
@@ -47,8 +46,7 @@
                 <th></th>
                 <th><?php esc_html_e("ID","pie-register"); ?></th>
                 <th><?php esc_html_e("Form Title","pie-register"); ?></th>
-                <th><?php esc_html_e("Views","pie-register"); ?></th>
-                <th><?php esc_html_e("Submissions","pie-register"); ?></th>
+                <th><?php esc_html_e("Analytics","pie-register"); ?></th>
                 <th><?php esc_html_e("Shortcode","pie-register"); ?></th>
               </tr>
             </tfoot>
@@ -78,8 +76,7 @@ $form_on_free	= get_option("piereg_form_free_id");
             <span class="edit"><a class="underlinenone" href="<?php echo esc_url($preview_url); ?>" target="_blank" title="Preview this form">Preview</a> </span>
           </div>
         </td>
-        <td class="column-date"><strong><?php echo esc_html($option['Views']) ?></strong></td>
-        <td class="column-date"><strong><?php echo esc_html($option['Entries']); ?></strong></td>
+        <td class="column-date column-analytics"><a class="underlinenone" href="<?php echo esc_url( admin_url( 'admin.php?page=pie-analytics&form_id=' . absint( $option['Id'] ) ) ); ?>" title="<?php esc_attr_e( 'View analytics for this form', 'pie-register' ); ?>"><?php esc_html_e( 'View', 'pie-register' ); ?></a></td>
         <td class="column-date" ><div class="style_textarea" onclick="selectText('piereg-select-all-text-onclick_<?php echo esc_js($option['Id']); ?>')" id="piereg-select-all-text-onclick_<?php echo esc_attr($option['Id']); ?>" readonly="readonly"><?php echo '[pie_register_form id="'.esc_html($option['Id']).'" title="true" description="true" ]' ?></div></td>
       </tr>
               <?php 

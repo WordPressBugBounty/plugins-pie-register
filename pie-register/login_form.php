@@ -42,7 +42,8 @@ $newpasspageLock = 0;
 			}
 			if(isset($errors->errors['login-error'][0]) > 0)
 			{
-				$login_error = apply_filters("piereg_login_error",esc_html($errors->errors['login-error'][0]));
+				// WordPress login errors contain markup (<strong>, a "Lost your password?" link); it is filtered with wp_kses() where it is printed
+				$login_error = apply_filters("piereg_login_error",$errors->errors['login-error'][0]);
 				$newpasspageLock = 1;
 			}
 			elseif( 
@@ -229,7 +230,7 @@ $newpasspageLock = 0;
         }
 		if(isset($wp_session['message']) && trim($wp_session['message']) != "" )
 		{
-			$form_data .= '<p class="piereg_login_error"> ' . apply_filters('piereg_messages',esc_html($wp_session['message'])) . "</p>";
+			$form_data .= '<p class="piereg_login_error"> ' . apply_filters('piereg_messages',wp_kses($wp_session['message'], $pie_register_base->piereg_forms_get_allowed_tags())) . "</p>";
 			$wp_session['message'] = "";
 		}
 		if ( !empty($login_error) )
@@ -245,7 +246,7 @@ $newpasspageLock = 0;
 			$form_data .= '<p class="piereg_message">'.apply_filters('piereg_messages',esc_html($pie_register_base->pie_post_array['success'])).'</p>';
 
 		if(isset($pie_register_base->pie_post_array['error']) && $pie_register_base->pie_post_array['error'] != "")
-			$form_data .= '<p class="piereg_login_error">'.apply_filters('piereg_messages',esc_html($pie_register_base->pie_post_array['error'])).'</p>';
+			$form_data .= '<p class="piereg_login_error">'.apply_filters('piereg_messages',wp_kses($pie_register_base->pie_post_array['error'], $pie_register_base->piereg_forms_get_allowed_tags())).'</p>';
 
 
 if ( isset($_GET['action']) && ('rp' == $action || 'resetpass' == $action) && ($newpasspageLock == 0) ){
@@ -341,7 +342,7 @@ else{
 					if($piereg_math_captcha_login == false && $piereg_widget == false){
 						if( !empty($option['capthca_in_login_label']) ){
 							if($option['capthca_in_login'] == 3){
-								if($option['piereg_recaptcha_type'] != 'v3')
+								if( ! in_array( $option['piereg_recaptcha_type'], array( 'v3', 'v2_invisible' ), true ) )
 									$form_data .= $login_form->add_capthca_label();
 							}else{
 								$form_data .= $login_form->add_capthca_label();
@@ -353,7 +354,7 @@ else{
 					}elseif($piereg_math_captcha_login_widget == false && $piereg_widget == true){
 						if( !empty($option['capthca_in_login_label']) ){
 							if($option['capthca_in_login'] == 3){
-								if($option['piereg_recaptcha_type'] != 'v3')
+								if( ! in_array( $option['piereg_recaptcha_type'], array( 'v3', 'v2_invisible' ), true ) )
 									$form_data .= $login_form->add_capthca_label();
 							}else{
 								$form_data .= $login_form->add_capthca_label();
@@ -446,6 +447,9 @@ if(!function_exists("pie_login_form_captcha"))
 				$style_inline = "display:inline-block;";
 			}
 
+			if( in_array( $recaptcha_type, array( 'v2_invisible', 'turnstile' ), true ) ){
+				return piereg_captcha_extra_markup(); // classes/captcha.php
+			}
 			if( ( $publickey && $recaptcha_type == 'v2') || ( $publickeyv3 && $recaptcha_type == 'v3' ) ){
 				if($recaptcha_type == 'v2')
 					$data .= '<div style="'.esc_attr($style_inline).'" class="piereg_recaptcha_widget_div" id="'.esc_attr($cap_id).'">';

@@ -1,4 +1,11 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
+<?php
+// The new builder is used for editing the form (classes/builder.php)
+if ( isset( $GLOBALS['piereg_builder'] ) && $GLOBALS['piereg_builder']->is_new() && file_exists( PIEREG_DIR_NAME . '/menus/PieRegBuilderNew.php' ) ) {
+	include PIEREG_DIR_NAME . '/menus/PieRegBuilderNew.php';
+	return;
+}
+?>
 <style type="text/css">#wpbody-content > div:not(.pieregister-admin){display:none;}</style>
 <?php 
 $data 	= $this->getCurrentFields();

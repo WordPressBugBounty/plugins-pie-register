@@ -1,0 +1,227 @@
+/*
+	Pie Register: new form builder screen (design: docs/form-builder-modernisation.html)
+	Colours and type follow the Pie Register admin: Roboto, red #de3636, charcoal #363b3f, flat #f1f1f1 inputs.
+	Front-end previews follow front.css: Poppins, 1.5px inputs, #464646 buttons.
+	Since v4.0.0.0
+*/
+body.piereg-newbuilder #wpbody-content > div:not(.pieregister-admin){display:none}
+body.piereg-newbuilder #wpcontent{padding-left:0}
+.piereg-nb{font-family:Roboto,Arial,sans-serif;color:#363b3f;background:#e4e4e4;min-height:calc(100vh - 32px);display:flex;flex-direction:column}
+.piereg-nb *{box-sizing:border-box}
+
+/* Top bar */
+.piereg-nb .nb-top{position:sticky;top:32px;z-index:20;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#363b3f;color:#fff;padding:10px 16px}
+.piereg-nb .nb-back{color:#fff;text-decoration:none;font-weight:700}
+.piereg-nb .nb-back:hover{color:#f0b849}
+.piereg-nb .nb-name{font:inherit;font-weight:700;font-size:15px;color:#fff;background:#464a4e;border:1px solid transparent;padding:6px 12px;border-radius:2px;width:300px;max-width:40vw}
+.piereg-nb .nb-name:hover{border-color:#66696b}
+.piereg-nb .nb-name:focus{outline:0;border-color:#de3636;background:#2d3033}
+.piereg-nb .nb-name::placeholder{color:#c3c4c7;font-weight:400}
+.piereg-nb .nb-sp{flex:1}
+.piereg-nb .nb-dev{display:inline-flex}
+.piereg-nb .nb-dev button{background:transparent;border:1px solid #66696b;color:#c3c4c7;padding:5px 12px;cursor:pointer;font:inherit;font-size:12px}
+.piereg-nb .nb-dev button.on{background:#fff;color:#363b3f;border-color:#fff}
+.piereg-nb .nb-status{font-size:12px;color:#f0b849}
+.piereg-nb .nb-btn{display:inline-block;border:0;padding:7px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;border-radius:2px}
+.piereg-nb .nb-ghostbtn{background:#fff;color:#363b3f}
+.piereg-nb .nb-save{background:#de3636;color:#fff;min-width:90px}
+.piereg-nb .nb-btn[disabled]{opacity:.55;cursor:not-allowed}
+.piereg-nb .nb-top .piereg-builder-switch{margin:0;padding:0}
+.piereg-nb .nb-top .piereg-builder-switch a{color:#fff;font-size:12px}
+
+/* Three columns */
+.piereg-nb .nb-body{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;flex:1;min-height:0}
+.piereg-nb .nb-left,.piereg-nb .nb-right{background:#fff;position:sticky;top:84px;align-self:start;max-height:calc(100vh - 84px);overflow:auto}
+.piereg-nb .nb-left{border-right:1px solid #d0d0d0;background:#fafafa}
+.piereg-nb .nb-right{border-left:1px solid #d0d0d0}
+
+/* Palette */
+.piereg-nb .nb-search{padding:10px}
+.piereg-nb .nb-search input{width:100%;height:36px;border:0;background:#f1f1f1;padding:0 10px;font:inherit;border-radius:2px}
+.piereg-nb .nb-search input:focus{outline:2px solid #de3636;background:#fff}
+.piereg-nb .nb-gh{margin:10px 12px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#66696b;cursor:pointer;user-select:none}
+.piereg-nb .nb-gh:before{content:"\25BE";display:inline-block;margin-right:4px;transition:transform .15s}
+.piereg-nb .nb-collapsed .nb-gh:before{transform:rotate(-90deg)}
+.piereg-nb .nb-collapsed .nb-grid{display:none}
+.piereg-nb .nb-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 6px}
+.piereg-nb .nb-tile{background:#fff;border:1px solid #d0d0d0;padding:9px 4px;text-align:center;font-size:12px;line-height:1.25;cursor:default;border-radius:2px}
+.piereg-nb .nb-tile:hover{border-color:#de3636;color:#de3636}
+.piereg-nb .nb-ico{display:block;margin:0 auto 4px;width:20px;height:20px;font-size:20px;color:#363b3f}
+.piereg-nb .nb-tile:hover .nb-ico{color:#de3636}
+.piereg-nb .nb-nomatch{padding:0 14px;color:#66696b;font-size:13px}
+
+/* Canvas */
+.piereg-nb .nb-center{padding:16px 24px 40px;min-width:0}
+.piereg-nb .nb-steps{display:flex;gap:4px;flex-wrap:wrap;max-width:620px;margin:0 auto 10px}
+.piereg-nb .nb-step{background:#fff;border:0;border-bottom:3px solid transparent;padding:8px 16px;font:inherit;font-weight:500;cursor:pointer}
+.piereg-nb .nb-step.on{border-bottom-color:#de3636;font-weight:700}
+.piereg-nb .nb-step small{color:#66696b;font-weight:400}
+.piereg-nb .nb-canvas{background:#fff;max-width:620px;margin:0 auto;padding:28px;font-family:Poppins,Arial,sans-serif;color:#222;box-shadow:0 1px 3px rgba(0,0,0,.15);transition:max-width .2s}
+.piereg-nb .nb-canvas.nb-mobile{max-width:360px}
+.piereg-nb .nb-form-title{margin:0 0 4px;font-size:22px;font-weight:600}
+.piereg-nb .nb-form-desc{margin:0 0 16px;color:#666;font-size:13px}
+.piereg-nb .nb-field{position:relative;padding:10px 12px;margin:0 -12px 4px;border:2px solid transparent;border-radius:3px;cursor:pointer;outline:0}
+.piereg-nb .nb-field:hover{border-color:#e4e4e4}
+.piereg-nb .nb-field.sel,.piereg-nb .nb-field:focus{border-color:#de3636;background:#fff9f9}
+.piereg-nb .nb-label{display:block;font-weight:500;font-size:13px;margin:0 0 4px;cursor:pointer}
+.piereg-nb .nb-req{color:#de3636}
+.piereg-nb .nb-label2{margin-top:10px}
+.piereg-nb .nb-chip{font-size:10px;background:#fcf9e8;color:#6e5600;border:1px solid #f0d97a;padding:0 5px;margin-left:6px;border-radius:2px;font-family:Roboto,Arial,sans-serif}
+.piereg-nb .nb-in{border:1.5px solid rgba(0,0,0,.5);padding:9px 12px;color:#999;font-size:13px;background:#fff;min-height:40px}
+.piereg-nb .nb-area{min-height:70px}
+.piereg-nb .nb-select:after{content:"\25BE";float:right;color:#666}
+.piereg-nb .nb-ghost{border-style:dashed}
+.piereg-nb .nb-captcha{width:200px}
+.piereg-nb .nb-file{color:#555}
+.piereg-nb .nb-row{display:flex;gap:8px;margin-top:6px}
+.piereg-nb .nb-row:first-child{margin-top:0}
+.piereg-nb .nb-row .nb-in{flex:1}
+.piereg-nb .nb-opts{display:flex;flex-wrap:wrap;gap:6px 16px}
+.piereg-nb .nb-opt{font-size:13px;color:#444}
+.piereg-nb .nb-opt:before{content:"";display:inline-block;width:13px;height:13px;border:1.5px solid rgba(0,0,0,.5);margin-right:6px;vertical-align:-2px}
+.piereg-nb .nb-radio:before{border-radius:50%}
+.piereg-nb .nb-html{background:#f6f6f6;padding:10px;color:#777;font-size:12px;border:1px dashed #ccc}
+.piereg-nb .nb-hr{border:0;border-top:2px solid #e4e4e4;margin:6px 0}
+.piereg-nb .nb-help{font-size:11px;color:#888;margin-top:3px}
+.piereg-nb .nb-empty{border:2px dashed #ccc;padding:24px;text-align:center;color:#999;font-size:13px}
+.piereg-nb .nb-nav{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.piereg-nb .nb-fbtn{background:#464646;color:#fff;padding:10px 22px;font-size:13px}
+.piereg-nb .nb-prev{margin-right:auto;background:#e4e4e4;color:#363b3f;cursor:pointer}
+
+/* Settings panel */
+.piereg-nb .nb-rtabs{display:flex;position:sticky;top:0;z-index:6;background:#e4e4e4;box-shadow:0 1px 0 #d0d0d0}
+/* the plugin's style.css gives every input position:relative; keep panel content under the sticky tabs */
+.piereg-nb .nb-rbody{position:relative;z-index:1}
+.piereg-nb .nb-rtabs button{border:0;cursor:pointer;font-family:inherit;color:#363b3f;flex:1;text-align:center;padding:11px 0;background:#e4e4e4;font-weight:500;font-size:13px;border-right:1px solid rgba(84,84,84,.25)}
+.piereg-nb .nb-rtabs button:last-child{border-right:0}
+.piereg-nb .nb-rtabs button.on{background:#de3636;color:#fff;font-weight:700}
+.piereg-nb .nb-rbody{padding:14px 16px}
+.piereg-nb .nb-none{color:#66696b;text-align:center;padding:30px 6px;margin:0}
+.piereg-nb .nb-kv{margin:0 0 12px}
+.piereg-nb .nb-kv b{display:block;font-size:12px;font-weight:500;color:#2d2f30;margin-bottom:3px}
+.piereg-nb .nb-kv div{background:#f1f1f1;padding:8px 10px;min-height:34px;font-size:13px;border-radius:2px;word-break:break-word}
+.piereg-nb .nb-note{font-size:12px;color:#66696b;font-style:italic;margin-top:14px}
+
+/* Step 2: editing */
+.piereg-nb .nb-status.nb-good{color:#9fd8aa}
+.piereg-nb .nb-status.nb-bad{color:#ff9b9b}
+.piereg-nb .nb-tile{cursor:grab}
+.piereg-nb .nb-tile.nb-off{opacity:.45;cursor:not-allowed;border-style:dashed}
+.piereg-nb .nb-tile.nb-off:hover{border-color:#d0d0d0;color:inherit}
+.piereg-nb .nb-tile.nb-off:hover .nb-ico{color:#363b3f}
+.ui-draggable-dragging.nb-tile{width:110px;background:#fff;border:1px solid #de3636;box-shadow:0 6px 16px rgba(0,0,0,.25);font:12px Roboto,Arial,sans-serif;text-align:center;padding:9px 4px;list-style:none}
+.piereg-nb .nb-hint{padding:4px 14px 14px;color:#66696b;font-size:12px;font-style:italic;margin:0}
+.piereg-nb .nb-step .nb-step-cog{font-size:15px;width:15px;height:15px;margin-left:6px;color:#66696b;vertical-align:-2px;cursor:pointer}
+.piereg-nb .nb-step .nb-step-cog:hover,.piereg-nb .nb-step.nb-step-sel .nb-step-cog{color:#de3636}
+.piereg-nb .nb-step.nb-step-sel{box-shadow:inset 0 0 0 2px #de3636}
+.piereg-nb .nb-step .nb-step-x{margin-left:6px;color:#de3636;font-weight:700;cursor:pointer}
+.piereg-nb .nb-addstep{background:transparent;color:#de3636;border:1px dashed #de3636;border-bottom-width:1px}
+.piereg-nb .nb-page{min-height:60px}
+.piereg-nb .nb-page .nb-tile{display:none}
+.piereg-nb .nb-placeholder{height:64px;border:2px dashed #de3636;background:#fff5f5;margin:0 -12px 4px;border-radius:3px}
+.piereg-nb .nb-new{animation:nbflash 1.2s ease-out}
+@keyframes nbflash{0%{background:#fff0c2}100%{background:transparent}}
+.piereg-nb .nb-tools{position:absolute;top:-14px;right:8px;display:flex;gap:2px;background:#de3636;padding:2px;border-radius:2px;z-index:3}
+.piereg-nb .nb-tools button{background:transparent;border:0;color:#fff;cursor:pointer;font-size:13px;line-height:1;padding:4px 7px}
+.piereg-nb .nb-tools button:hover{background:rgba(0,0,0,.2)}
+.piereg-nb .nb-tools select{height:24px;font-size:11px;border:0;margin-left:2px}
+.piereg-nb .nb-inputs,.piereg-nb .nb-break{display:none}
+.piereg-nb .nb-nav{border-top:1px solid #eee;padding-top:14px}
+.piereg-nb .nb-nav .nb-fbtn{cursor:default}
+.piereg-nb .nb-nav .nb-prev,.piereg-nb .nb-nav .nb-next{cursor:pointer}
+
+/* Settings editor (classic settings form, restyled for the panel) */
+.piereg-nb .nb-ptitle{font-weight:700;font-size:15px;margin:0 0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.piereg-nb .nb-rtabs button[disabled]{opacity:.45;cursor:not-allowed}
+.piereg-nb .nb-editor .nb-dep-off{display:none!important}
+.piereg-nb .nb-editor .fields_main,.piereg-nb .nb-editor .advance_options_fields{display:block;width:auto;float:none;padding:0;margin:0;background:transparent}
+.piereg-nb .nb-editor .advance_fields{display:flow-root;float:none;width:auto;margin:0 0 14px;padding:0}
+/* Classic settings markup floats some option boxes inline (e.g. Next/Previous button text and image URL): stack them full width */
+.piereg-nb .nb-editor .advance_fields > div[style*="float"]{float:none!important;width:auto;margin-top:8px}
+.piereg-nb .nb-editor label{display:block;float:none;width:auto;min-width:0;margin:0 0 4px;font-size:12px;font-weight:500;color:#2d2f30;text-align:left}
+.piereg-nb .nb-editor input[type=text],.piereg-nb .nb-editor input[type=number],.piereg-nb .nb-editor input[type=url],.piereg-nb .nb-editor input[type=email],.piereg-nb .nb-editor select,.piereg-nb .nb-editor textarea{display:block;width:100%;max-width:100%;height:34px;border:0;background:#f1f1f1;border-radius:2px;padding:0 10px;font:inherit;font-size:13px;margin:0;color:#363b3f}
+.piereg-nb .nb-editor select[multiple]{height:auto;min-height:70px;padding:4px}
+.piereg-nb .nb-editor textarea{height:70px;padding:8px 10px}
+.piereg-nb .nb-editor input:focus,.piereg-nb .nb-editor select:focus,.piereg-nb .nb-editor textarea:focus{outline:2px solid #de3636;background:#fff}
+/* Checkboxes and radios: our own box (the plugin's global style.css draws a tick image on every checked box) */
+.piereg-nb input[type=checkbox],.piereg-nb input[type=radio]{-webkit-appearance:none;appearance:none;display:inline-block!important;position:relative;flex:none;width:18px!important;height:18px!important;min-width:18px;margin:0 8px 0 0!important;padding:0!important;border:1.5px solid #8c8f94!important;border-radius:3px!important;background:#fff!important;box-shadow:none!important;vertical-align:middle;cursor:pointer;transition:background .12s,border-color .12s}
+.piereg-nb input[type=radio]{border-radius:50%!important}
+.piereg-nb input[type=checkbox]:hover,.piereg-nb input[type=radio]:hover{border-color:#de3636!important}
+.piereg-nb input[type=checkbox]:focus-visible,.piereg-nb input[type=radio]:focus-visible{outline:2px solid #de3636;outline-offset:2px}
+.piereg-nb input[type=checkbox]:checked,.piereg-nb input[type=radio]:checked{background:#de3636!important;border-color:#de3636!important}
+.piereg-nb input[type=checkbox]::before,.piereg-nb input[type=checkbox]:checked::before,.piereg-nb input[type=radio]::before,.piereg-nb input[type=radio]:checked::before{content:none!important;display:none!important;background:none!important}
+.piereg-nb input[type=checkbox]:checked::after{content:""!important;position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);background:none}
+.piereg-nb input[type=radio]:checked::after{content:""!important;position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#fff}
+.piereg-nb .nb-editor input[type=checkbox] + label,.piereg-nb .nb-editor input[type=radio] + label{display:inline-block!important;vertical-align:middle;margin:0 14px 0 0!important;font-weight:400}
+.piereg-nb .nb-editor a.info{display:block;font-size:11px;color:#66696b;font-style:italic;margin-top:3px;text-decoration:none;pointer-events:none}
+.piereg-nb .nb-editor .advance_fields > span{font-size:12px;color:#66696b}
+.piereg-nb .nb-editor[data-tab="basic"] .pr-g-rules,.piereg-nb .nb-editor[data-tab="basic"] .pr-g-logic,
+.piereg-nb .nb-editor[data-tab="rules"] .pr-g-basic,.piereg-nb .nb-editor[data-tab="rules"] .pr-g-logic,
+.piereg-nb .nb-editor[data-tab="logic"] .pr-g-basic,.piereg-nb .nb-editor[data-tab="logic"] .pr-g-rules{display:none!important}
+.piereg-nb .nb-options .nb-orow{display:grid;grid-template-columns:1fr 1fr auto auto;gap:4px 6px;align-items:end;background:#fafafa;border:1px solid #e4e4e4;padding:8px;margin:0 0 6px;position:relative}
+.piereg-nb .nb-options .nb-orow label{grid-column:span 1;margin:0}
+.piereg-nb .nb-options .nb-orow{grid-template-columns:repeat(2,minmax(0,1fr))}
+.piereg-nb .nb-options .nb-orow input[type=radio],.piereg-nb .nb-options .nb-orow input[type=checkbox]{justify-self:start}
+.piereg-nb .nb-o-x,.piereg-nb .nb-l-x{position:absolute;top:4px;right:4px;border:0;background:transparent;color:#de3636;font-size:16px;cursor:pointer;line-height:1}
+.piereg-nb .nb-o-add,.piereg-nb .nb-l-and,.piereg-nb .nb-l-or{background:transparent;border:1px dashed #de3636;color:#de3636;padding:6px 10px;font:inherit;font-size:12px;cursor:pointer;border-radius:2px}
+.piereg-nb .nb-logic-body{margin-top:10px}
+.piereg-nb .nb-logic-head{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px}
+.piereg-nb .nb-logic-head select{width:auto!important;display:inline-block!important}
+.piereg-nb .nb-lgroup{border:1px solid #e4e4e4;background:#fafafa;padding:8px;border-radius:2px}
+.piereg-nb .nb-lrule{position:relative;display:grid;grid-template-columns:1fr;gap:4px;padding:6px 22px 6px 0;border-bottom:1px dashed #e4e4e4;margin-bottom:6px}
+.piereg-nb .nb-lrule:last-of-type{border-bottom:0}
+.piereg-nb .nb-or{text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;color:#66696b;margin:6px 0}
+.piereg-nb .nb-l-or{margin-top:8px}
+
+/* Form settings and submit button */
+.piereg-nb #nb-formset .dashicons{font-size:16px;width:16px;height:16px;vertical-align:-3px}
+.piereg-nb .nb-formhead{position:relative;padding:8px 12px;margin:-8px -12px 12px;border:2px solid transparent;border-radius:3px;cursor:pointer;outline:0}
+.piereg-nb .nb-formhead:hover{border-color:#e4e4e4}
+.piereg-nb .nb-formhead.sel,.piereg-nb .nb-formhead:focus{border-color:#de3636;background:#fff9f9}
+.piereg-nb .nb-formhead .nb-form-desc{margin:0}
+.piereg-nb .nb-title-chip{display:none;margin:0 0 4px}
+.piereg-nb .nb-title-off .nb-form-title{opacity:.4}
+.piereg-nb .nb-title-off .nb-title-chip{display:inline-block}
+.piereg-nb .nb-nav .nb-submit{cursor:pointer;outline:0;border:2px solid transparent}
+.piereg-nb .nb-nav .nb-submit:hover{box-shadow:0 0 0 2px #e4e4e4}
+.piereg-nb .nb-nav .nb-submit.sel,.piereg-nb .nb-nav .nb-submit:focus{border-color:#de3636}
+.piereg-nb .nb-nav .nb-reset{background:#e4e4e4;color:#363b3f}
+.piereg-nb .nb-progress{position:relative;height:26px;border:1px solid #aaa;border-radius:5px;background:#fff;overflow:hidden;margin:0 0 16px}
+.piereg-nb .nb-progress-bar{height:100%;background:#464646;transition:width .3s}
+.piereg-nb .nb-progress-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;mix-blend-mode:difference}
+.piereg-nb .nb-panel .advance_fields > input[type=radio] + label{margin-right:14px!important}
+.piereg-nb .nb-vrules{margin:-4px 0 14px}
+.piereg-nb .nb-vrule{position:relative;display:grid;grid-template-columns:1fr;gap:5px;padding:10px 24px 10px 10px;margin:0 0 8px}
+.piereg-nb .nb-vrule label{margin:0!important;font-size:11px!important;color:#66696b!important;text-transform:uppercase;letter-spacing:.04em}
+.piereg-nb .nb-v-x{position:absolute;top:4px;right:4px;border:0;background:transparent;color:#de3636;font-size:16px;cursor:pointer;line-height:1}
+.piereg-nb .nb-v-add{margin-top:0}
+
+/* Dialog */
+.nb-modal{position:fixed;inset:0;z-index:100000;background:rgba(29,35,39,.6);display:flex;align-items:center;justify-content:center;padding:16px;font-family:Roboto,Arial,sans-serif;animation:nbfade .12s ease-out}
+.nb-modal-box{background:#fff;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.35);border-top:4px solid #de3636;border-radius:2px}
+.nb-modal-head{background:#363b3f;color:#fff;font-weight:700;font-size:16px;padding:14px 20px}
+.nb-modal-body{padding:20px;color:#363b3f;font-size:14px;line-height:1.5}
+.nb-modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:0 20px 20px}
+.nb-modal-foot .nb-btn{display:inline-block;border:0;padding:9px 20px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;border-radius:2px}
+.nb-modal-foot .nb-ghostbtn{background:#e4e4e4;color:#363b3f}
+.nb-modal-foot .nb-save{background:#de3636;color:#fff}
+.nb-modal-foot .nb-save:hover{background:#c12a2a}
+.nb-modal-foot .nb-btn:focus{outline:2px solid #de3636;outline-offset:2px}
+@keyframes nbfade{from{opacity:0}to{opacity:1}}
+
+@media (max-width:1200px){
+	.piereg-nb .nb-body{grid-template-columns:210px minmax(0,1fr) 260px}
+}
+@media (max-width:900px){
+	.piereg-nb .nb-body{grid-template-columns:1fr}
+	.piereg-nb .nb-left,.piereg-nb .nb-right{position:static;max-height:none}
+}
+/* Name field preview: the last name box carries its own label (Label2), as on the front end */
+.piereg-nb .nb-name-row .nb-col{flex:1;min-width:0}
+/* Same line as the field label: top = field padding, left = start of the second column (50% + half the 8px gap) */
+.piereg-nb .nb-name-row .nb-label2{position:absolute;top:10px;left:calc(50% + 4px);right:12px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Long labels (one unbroken word) wrap inside the field box */
+.piereg-nb .nb-field .nb-label{overflow-wrap:anywhere;word-break:break-word}
+/* Math Captcha preview: the sum, then a half-width answer box (as on the front end) */
+.piereg-nb .nb-math{font-size:15px;font-weight:600;color:#444;letter-spacing:1px;margin-bottom:6px}
+.piereg-nb .nb-math-answer{width:50%}

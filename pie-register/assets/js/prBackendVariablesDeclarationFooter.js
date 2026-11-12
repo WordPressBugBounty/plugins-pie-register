@@ -640,13 +640,16 @@ function validateSettingsSecurity() {
 function piereg_recaptcha_validate() {
 
     var is_error = false;
-    // Key fields of the selected type: v2 or v3
+    // Key fields of the selected type: v2 / v2 Invisible, v3 or Cloudflare Turnstile
     var captcha_type = jQuery( 'select.piereg_recaptcha_type' ).val() || 'v2',
         captcha_pub  = '#piereg_reCAPTCHA_Public_Key',
         captcha_priv = '#piereg_reCAPTCHA_Private_Key';
     if ( 'v3' === captcha_type ) {
         captcha_pub  = '#piereg_reCAPTCHA_Public_Key_v3';
         captcha_priv = '#piereg_reCAPTCHA_Private_Key_v3';
+    } else if ( 'turnstile' === captcha_type ) {
+        captcha_pub  = '#piereg_turnstile_site';
+        captcha_priv = '#piereg_turnstile_secret';
     }
 
     if (!jQuery("#captcha_in_login_value_0").is(":checked") && jQuery("#piereg_capthca_in_login").val() != 2) {
@@ -682,7 +685,7 @@ function piereg_recaptcha_validate() {
         });
     }
 
-    if ( jQuery(captcha_priv).val() != "" || jQuery(captcha_pub).val() ) {
+    if ( 'turnstile' !== captcha_type && ( jQuery(captcha_priv).val() != "" || jQuery(captcha_pub).val() ) ) {
         var patt1 = /[0-9a-zA-Z_-]{40}/;
 
 
@@ -805,10 +808,12 @@ jQuery(document).ready(function() {
             recaptcha_v3_secret_key = jQuery( '#piereg_reCAPTCHA_Private_Key_v3' ).parents( 'div.fields' ).eq( 0 );
         
         var type = jQuery( this ).val();
-        recaptcha_v2_site_key.toggle( type === 'v2' );
-        recaptcha_v2_secret_key.toggle( type === 'v2' );
+        recaptcha_v2_site_key.toggle( type === 'v2' || type === 'v2_invisible' );
+        recaptcha_v2_secret_key.toggle( type === 'v2' || type === 'v2_invisible' );
         recaptcha_v3_site_key.toggle( type === 'v3' );
         recaptcha_v3_secret_key.toggle( type === 'v3' );
+        jQuery( '.piereg-turnstile-row' ).toggle( type === 'turnstile' );
+        jQuery( '.piereg-invisible-note' ).toggle( type === 'v2_invisible' );
     }).change();
 
     /* Notice Slider */
